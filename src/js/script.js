@@ -86,9 +86,6 @@ function crearUsuario(name,email){
         
         USER_DB.push(nuevoUsuario)
         registrarUsuario()
-    
-    
-    
 }
 /**
  * Saves the current state of the USER_DB array to local storage.
