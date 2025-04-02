@@ -1,11 +1,12 @@
 //@ts-check
 import { User } from '../js/classes/User.js'
+import { Club } from '../js/classes/Club.js'
 import { SingletonDB } from '../js/classes/SingletonDB.js'
-
+import { ClubDB } from '../js/classes/ClubDB.js'
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
 const USER_DB = new SingletonDB()
-
+const CLUB_DB = new ClubDB()
 /**
  * Evento que se lanza cuando el contenido de la pagina ha sido cargado en memoria
  * y se puede acceder a el.
@@ -22,11 +23,17 @@ function onDOMContentLoaded() {
     let formularioRegistro = document.getElementById('sig-in')
     let formularioLogin = document.getElementById('log-in')
     let formularioBorrado = document.getElementById('borrar-usuario')
+    let formularioLogOut = document.getElementById('cerrar-sesion')
+    let formularioClub = document.getElementById('registro-club')
+
     formularioRegistro?.addEventListener('submit', datosSigIN)//La interrogacion vale para ver si existe el form 
     formularioLogin?.addEventListener('submit', datosLogIn)//si no no hace el eventListener
     formularioBorrado?.addEventListener('submit', borrarUsuario)
+    formularioLogOut?.addEventListener('submit', cerrarSesion)
+    formularioClub?.addEventListener('submit', datosClub)
+
     leerBD()
-    comprobarSession()
+    //comprobarSession()
 }
 /**
  * Takes the data from the form and creates a new User object with that data.
@@ -38,8 +45,10 @@ function datosSigIN(event) {
 
     let name = /** @type {HTMLInputElement} */(document.getElementById('usuario'))?.value
     let email = /** @type {HTMLInputElement} */(document.getElementById('email'))?.value
+    let apellidos = /** @type {HTMLInputElement} */(document.getElementById('apellidos'))?.value
+    let telefono = /** @type {HTMLInputElement} */(document.getElementById('telefono'))?.value
 
-    crearUsuario(name,email)
+    crearUsuario(name,email,apellidos,telefono)
     
 }
 /**
@@ -53,8 +62,11 @@ function datosLogIn(event){
     let usuarioInput = document.getElementById('usuario-login')
     let emailInput = document.getElementById('email-login')
 
+
+
     let usuario =/** @type {HTMLInputElement} */(usuarioInput)?.value
     let email = /** @type {HTMLInputElement} */(emailInput)?.value
+
     
     logIn(usuario,email)//ojo al orden en el qe enviamos los parametros 
 }
@@ -63,18 +75,19 @@ function datosLogIn(event){
  * This function takes a user's name and email, constructs a User
  * object, and stores it in the user database. It then calls the
  * registrarUsuario function to save the updated database to local storage.
- * 
  * @param {string} name - The name of the user.
  * @param {string} email - The email address of the user.
+ * @param {string} apellidos - El apellidos del usuario
+ * @param {string} telefono - El telefono del usuario
  */
-function crearUsuario(name,email){
-    let nuevoUsuario = new User(name, email)
+function crearUsuario(name,email,apellidos,telefono){
+    let nuevoUsuario = new User(name, email,apellidos,telefono)
     if(USER_DB.get().findIndex((user) => user.email === email) >= 0){
         console.log('error registro')
         document.getElementById('error-registro')?.classList.remove('hidden')//estilos
         setTimeout(() => {
             document.getElementById('error-registro')?.classList.add('hidden')
-        }, 2000)
+        }, 1000)
         return
     }
         console.log('ok registro')
@@ -85,6 +98,7 @@ function crearUsuario(name,email){
         }, 2000)
         
         USER_DB.push(nuevoUsuario)
+        console.log(nuevoUsuario)
         registrarUsuario()
 }
 /**
@@ -122,6 +136,19 @@ function borrarUsuario(event){
 
 }
 /**
+ * Handles the sign-out form submission, preventing the default form behavior.
+ * If a user is logged in, it removes the user session data and redirects to the home page.
+ * 
+ * @param {Event} event - The event object associated with the form submission.
+ */
+function cerrarSesion(event){
+    event.preventDefault()
+
+    sessionStorage.removeItem('user')
+    location.href = '/index.html'
+
+}
+/**
  * Logs in a user by checking their credentials against the USER_DB.
  * 
  * This function retrieves the user's name and email from the login form,
@@ -153,8 +180,6 @@ function logIn(usuario,email){
         }, 2000)
         
     }
-    
-    
 }
 /**
  * Reads the user database from local storage and updates the USER_DB array.
@@ -179,7 +204,7 @@ function leerBD(){
         } //ejemplo en clase: me parece redundante ya que al entrar en el primer if sabemos que no es null
 
         listaUsuarios = JSON.parse(listaUsuariosDB)
-        .map((/** @type {User} */ user) => new User(user.name, user.email))
+        .map((/** @type {User} */ user) => new User(user.name, user.email, 'apellidos', 'nTelefonmo'))
     }
     if(USER_DB.get() === undefined){
         console.log('inicializo el singleton de la base de datos')
@@ -202,4 +227,50 @@ function comprobarSession(){
         // Redirigimos a la home si el usuario no está identificado
         location.href = '/index.html'
     }
+}
+/**
+ * Event handler for the club registration form. Prevents the default form
+ * submission action and creates a new Club object with the data from the
+ * form. Then, it saves the club data to local storage using the key
+ * 'CLUB_DB'.
+ * @param {Event} event - The event that triggered this function
+ */
+function datosClub(event){
+    event.preventDefault()
+
+    let nombre = /** @type {HTMLInputElement} */(document.getElementById('nombre-club'))?.value
+    let siglas = /** @type {HTMLInputElement} */(document.getElementById('siglas-club'))?.value
+    let codigoPostal = /** @type {HTMLInputElement} */(document.getElementById('codigo-club'))?.value
+    let telClub = /** @type {HTMLInputElement} */(document.getElementById('tel-club'))?.value
+    let emailClub = /** @type {HTMLInputElement} */(document.getElementById('email-club'))?.value
+
+    crearClub(nombre,siglas,codigoPostal,telClub,emailClub)
+}
+/**
+ * Crea un nuevo club con los datos proporcionados y lo almacena en
+ * local storage con la clave 'CLUB_DB'.
+ * @param {string} nombre - Nombre del club
+ * @param {string} siglas - Siglas del club
+ * @param {string} codigoPostal - Codigo del club
+ * @param {string} telClub - Telefono del club
+ * @param {string} emailClub - Email del club
+ * 
+ */
+function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
+    let nuevoClub = new Club(nombre,siglas,codigoPostal,telClub,emailClub, CLUB_DB.get().length)
+    if(CLUB_DB.get().findIndex((club) => club.email === emailClub) >= 0){
+        document.getElementById('error-registro-club')?.classList.remove('hidden')
+        setTimeout(() => {
+            document.getElementById('error-registro-club')?.classList.add('hidden')
+        }, 1000)
+        return
+    }
+    document.getElementById('registrado-club')?.classList.remove('hidden')
+    CLUB_DB.push(nuevoClub)
+    localStorage.setItem('CLUB_DB',JSON.stringify(CLUB_DB.get()))
+    setTimeout(() => {
+        location.href = '/index.html'
+    }, 2000)
+
+   
 }

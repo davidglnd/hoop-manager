@@ -4,33 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script type="module" src="js/script.js" defer></script>
+    <!-- <script type="module" src="js/script.js" defer></script> -->
     <link rel="stylesheet" href="css/style.desktop.css">
 </head>
 <body>
     <header>
         <nav>
             <h1>Proyecto bootcamp</h1>
-                <form id="sig-in">
-                    <h5>Registro</h5>
-                    <label for="usuario">Nombre de usuario</label>
-                    <input type="text" id="usuario">
-                    <label for="email">Email</label>
-                    <input type="email" id="email">
-                    <button type="submit">Registrarse</button>
-                </form>
-                <form id="log-in">
-                    <h5>Entrar</h5>
-                    <label for="usuario-login">Nombre de usuario</label><input type="text" id="usuario-login">
-                    <label for="email-login">Email</label> <input type="email" id="email-login">
-                    <button type="submit">Entrar</button>
-                </form>
-                <p id="registrado" class="hidden">Se ha registrado correctamente</p>
-                <p id="log-correcto" class="hidden">Se ha logeado correctamente</p>
-                <p id="error-registro" class="hidden">Error de registro</p>
-                <p id="error-login" class="hidden">Error de login</p>
-                <p id="ir-perfil" class="hidden"><a href="user.html">Perfil usuario</a></p>
+            <p><a href="registro-usuario.html">REgistro usuario</a></p>
+            <p><a href="registro-club.html">REgistro club</a></p>
         </nav>
     </header>
+    <main>
+        <form id="sig-in">
+            <h5>Registro</h5>
+            <label for="usuario">Nombre de usuario</label>
+            <input type="text" id="usuario">
+            <label for="email">Email</label>
+            <input type="email" id="email">
+            <label for="apellidos">Apellidos</label>
+            <input type="text" id="apellidos">
+            <label for="n-telefono">Numero telefono</label>
+            <input type="tel" id="n-telefono">
+            <button type="submit">Registrarse</button>
+        </form>
+        <form id="log-in">
+            <h5>Entrar</h5>
+            <label for="usuario-login">Nombre de usuario</label><input type="text" id="usuario-login">
+            <label for="email-login">Email</label> <input type="email" id="email-login">
+            <button type="submit">Entrar</button>
+        </form>
+        <p id="registrado" class="hidden">Se ha registrado correctamente</p>
+        <p id="log-correcto" class="hidden">Se ha logeado correctamente</p>
+        <p id="error-registro" class="hidden">Error de registro</p>
+        <p id="error-login" class="hidden">Error de login</p>
+        <p id="ir-perfil" class="hidden"><a href="user.html">Perfil usuario</a></p>
+    </main>
 </body>
 </html>

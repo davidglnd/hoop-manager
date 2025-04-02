@@ -2,6 +2,7 @@
 
 /** @import { User } from "./User.js"*/
 
+
 //patron de diseño Singleton
 export class SingletonDB{
     /**
@@ -22,7 +23,7 @@ export class SingletonDB{
         }
         return this.usuariosDB
     }
-    /**
+        /**
      * Agrega uno o mas usuarios a la base de datos.
      * @param  {...User} usuarios - Uno o mas objetos de tipo User
      */
