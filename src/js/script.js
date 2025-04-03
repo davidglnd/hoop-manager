@@ -21,19 +21,51 @@ const CLUB_DB = new ClubDB()
  */
 function onDOMContentLoaded() {
     let formularioRegistro = document.getElementById('sig-in')
-    let formularioLogin = document.getElementById('log-in')
-    let formularioBorrado = document.getElementById('borrar-usuario')
-    let formularioLogOut = document.getElementById('cerrar-sesion')
     let formularioClub = document.getElementById('registro-club')
 
+    let logInUsuario = document.getElementById('log-in-usuario')
+    let logInClub = document.getElementById('log-in-club')
+
+    let botonSignIn = document.getElementById('boton-sign-in')
+    let botonLogIn = document.getElementById('boton-log-in')
+    let mostrarLogUsuario = document.getElementById('iniciar-sesion-usuario')
+    let mostrarLogClub = document.getElementById('iniciar-sesion-club')
+
+    let formularioBorrado = document.getElementById('borrar-usuario')
+    let formularioLogOut = document.getElementById('cerrar-sesion')
+
     formularioRegistro?.addEventListener('submit', datosSigIN)//La interrogacion vale para ver si existe el form 
-    formularioLogin?.addEventListener('submit', datosLogIn)//si no no hace el eventListener
+    logInUsuario?.addEventListener('submit', datosLogIn)//si no no hace el eventListener
     formularioBorrado?.addEventListener('submit', borrarUsuario)
     formularioLogOut?.addEventListener('submit', cerrarSesion)
-    formularioClub?.addEventListener('submit', datosClub)
+    
+    formularioClub?.addEventListener('submit', datosSignClub)
+    mostrarLogUsuario?.addEventListener('click', mostrarLogInUsuario)
+
+    mostrarLogClub?.addEventListener('click', mostrarLogInClub)
+    logInClub?.addEventListener('submit', datosLogInClub)
+
+    botonLogIn?.addEventListener('click', mostrarLogIn)
+    botonSignIn?.addEventListener('click', mostrarSignIn)
 
     leerBD()
-    //comprobarSession()
+    comprobarSession()
+}
+function mostrarLogIn(){
+    document.getElementById('contenedor-log-in')?.classList.remove('hidden')
+    document.getElementById('contenedor-sign-in')?.classList.add('hidden')
+}
+function mostrarSignIn(){
+    document.getElementById('contenedor-sign-in')?.classList.remove('hidden')
+    document.getElementById('contenedor-log-in')?.classList.add('hidden')
+}
+function mostrarLogInClub(){
+    document.getElementById('log-in-club')?.classList.remove('hidden')
+    document.getElementById('log-in-usuario')?.classList.add('hidden')
+}
+function mostrarLogInUsuario(){
+    document.getElementById('log-in-usuario')?.classList.remove('hidden')
+    document.getElementById('log-in-club')?.classList.add('hidden')
 }
 /**
  * Takes the data from the form and creates a new User object with that data.
@@ -46,10 +78,29 @@ function datosSigIN(event) {
     let name = /** @type {HTMLInputElement} */(document.getElementById('usuario'))?.value
     let email = /** @type {HTMLInputElement} */(document.getElementById('email'))?.value
     let apellidos = /** @type {HTMLInputElement} */(document.getElementById('apellidos'))?.value
-    let telefono = /** @type {HTMLInputElement} */(document.getElementById('telefono'))?.value
-
-    crearUsuario(name,email,apellidos,telefono)
+    let telefono = /** @type {HTMLInputElement} */(document.getElementById('n-telefono'))?.value
+    let codClub = /** @type {HTMLInputElement} */(document.getElementById('cod-club'))?.value
+    console.log(telefono)
+    crearUsuario(name,email,apellidos,telefono,codClub)
     
+}
+/**
+ * Event handler for the club registration form. Prevents the default form
+ * submission action and creates a new Club object with the data from the
+ * form. Then, it saves the club data to local storage using the key
+ * 'CLUB_DB'.
+ * @param {Event} event - The event that triggered this function
+ */
+function datosSignClub(event){
+    event.preventDefault()
+
+    let nombre = /** @type {HTMLInputElement} */(document.getElementById('nombre-club'))?.value
+    let siglas = /** @type {HTMLInputElement} */(document.getElementById('siglas-club'))?.value
+    let codigoPostal = /** @type {HTMLInputElement} */(document.getElementById('codigo-club'))?.value
+    let telClub = /** @type {HTMLInputElement} */(document.getElementById('tel-club'))?.value
+    let emailClub = /** @type {HTMLInputElement} */(document.getElementById('email-club'))?.value
+
+    crearClub(nombre,siglas,codigoPostal,telClub,emailClub)
 }
 /**
  * Takes the data from the form and uses it to log in the user.
@@ -59,16 +110,25 @@ function datosSigIN(event) {
 function datosLogIn(event){
     event.preventDefault()
 
-    let usuarioInput = document.getElementById('usuario-login')
-    let emailInput = document.getElementById('email-login')
+    let emailInput = document.getElementById('email-usuario')
 
-
-
-    let usuario =/** @type {HTMLInputElement} */(usuarioInput)?.value
     let email = /** @type {HTMLInputElement} */(emailInput)?.value
 
-    
-    logIn(usuario,email)//ojo al orden en el qe enviamos los parametros 
+    logIn(email)//ojo al orden en el qe enviamos los parametros 
+}
+/**
+ * Takes the data from the form and uses it to log in the club.
+ * It then calls the logInClub function to log in the club.
+ * @param {Event} event - the event that triggered this function.
+ */
+function datosLogInClub(event){
+    event.preventDefault()
+    console.log('log in club')
+    let emailInput = document.getElementById('email-club')
+
+    let email = /** @type {HTMLInputElement} */(emailInput)?.value
+
+    logInClub(email)
 }
 /**
  * Creates a new User instance and adds it to the USER_DB array.
@@ -79,27 +139,67 @@ function datosLogIn(event){
  * @param {string} email - The email address of the user.
  * @param {string} apellidos - El apellidos del usuario
  * @param {string} telefono - El telefono del usuario
+ * @param {string} codClub - El codigo del club
  */
-function crearUsuario(name,email,apellidos,telefono){
-    let nuevoUsuario = new User(name, email,apellidos,telefono)
+function crearUsuario(name,email,apellidos,telefono,codClub){
+    let nuevoUsuario = new User(name, email,apellidos,telefono,codClub)
+    console.log(CLUB_DB.get().findIndex((club) => club.codigo === codClub))
     if(USER_DB.get().findIndex((user) => user.email === email) >= 0){
-        console.log('error registro')
-        document.getElementById('error-registro')?.classList.remove('hidden')//estilos
+        console.log('error registro email')
+        document.getElementById('error-registro1')?.classList.remove('hidden')//estilos
         setTimeout(() => {
-            document.getElementById('error-registro')?.classList.add('hidden')
-        }, 1000)
+            document.getElementById('error-registro1')?.classList.add('hidden')
+        }, 5000)
         return
+    }else{
+        if(CLUB_DB.get().findIndex((club) => club.codigo === codClub) < 0){
+            console.log('error registro')
+            document.getElementById('error-registro2')?.classList.remove('hidden')//estilos
+            setTimeout(() => {
+                document.getElementById('error-registro2')?.classList.add('hidden')
+            }, 5000)
+            return
+        }
     }
         console.log('ok registro')
         //estilos
         document.getElementById('registrado')?.classList.remove('hidden')
         setTimeout(() => {
             document.getElementById('registrado')?.classList.add('hidden')
+            location.href = '/index.html'
         }, 2000)
         
         USER_DB.push(nuevoUsuario)
         console.log(nuevoUsuario)
         registrarUsuario()
+}
+/**
+ * Crea un nuevo club con los datos proporcionados y lo almacena en
+ * local storage con la clave 'CLUB_DB'.
+ * @param {string} nombre - Nombre del club
+ * @param {string} siglas - Siglas del club
+ * @param {string} codigoPostal - Codigo del club
+ * @param {string} telClub - Telefono del club
+ * @param {string} emailClub - Email del club
+ *
+ */
+function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
+    let nuevoClub = new Club(nombre,siglas,codigoPostal,telClub,emailClub, siglas + CLUB_DB.get().length)
+    if(CLUB_DB.get().findIndex((club) => club.email === emailClub) >= 0){
+        document.getElementById('error-registro-club')?.classList.remove('hidden')
+        setTimeout(() => {
+            document.getElementById('error-registro-club')?.classList.add('hidden')
+        }, 1000)
+        return
+    }
+    document.getElementById('registrado-club')?.classList.remove('hidden')
+    CLUB_DB.push(nuevoClub)
+    localStorage.setItem('CLUB_DB',JSON.stringify(CLUB_DB.get()))    
+    
+    setTimeout(() => {
+        document.getElementById('registrado-club')?.classList.add('hidden')
+        location.href = '/index.html'
+    }, 2000)
 }
 /**
  * Saves the current state of the USER_DB array to local storage.
@@ -149,28 +249,16 @@ function cerrarSesion(event){
 
 }
 /**
- * Logs in a user by checking their credentials against the USER_DB.
- * 
- * This function retrieves the user's name and email from the login form,
- * searches for a matching user in the USER_DB, and if found, stores the 
- * user in session storage and updates the UI to indicate a successful login.
- * If the user is not found, it updates the UI to show an error message.
- * 
- * @param {string} usuario - The username entered in the login form.
- * @param {string} email - The email entered in the login form.
- * @returns {void}
+ * Checks if a user exists in the USER_DB array and logs in the user if they do.
+ * If the user exists, it redirects to the club page. Otherwise, it shows an error message.
+ * @param {string} email - The email address of the user attempting to log in.
  */
-function logIn(usuario,email){
-    console.log(USER_DB.get())
-    if(USER_DB.get().findIndex((user) => user.name === usuario && user.email === email) >= 0){
-        console.log('log in')
-        sessionStorage.setItem('user', JSON.stringify(USER_DB.get()[USER_DB.get().findIndex((user) => user.name === usuario && user.email === email)]))
-        //estilos
-        document.getElementById('log-correcto')?.classList.remove('hidden')
-        setTimeout(() => {
-            document.getElementById('log-correcto')?.classList.add('hidden')
-        }, 2000)
-        comprobarSession()
+function logIn(email){
+    console.log(USER_DB.get().find((user) => user.email === email))
+    if(USER_DB.get().findIndex((user) => user.email === email) >= 0){
+        sessionStorage.setItem('user', JSON.stringify(USER_DB.get().find((user) => user.email === email)))
+        location.href = '/club.html'
+
     }else{
         console.log('no existe el usuario')
         //estilos
@@ -182,19 +270,53 @@ function logIn(usuario,email){
     }
 }
 /**
- * Reads the user database from local storage and updates the USER_DB array.
- * 
- * This function checks if there is a 'USER_DB' entry in the local storage.
- * If present, it parses the JSON string into an array of users and appends
- * these users to the existing USER_DB array.
- * 
- * This ensures that the USER_DB array is populated with the latest data
- * from previous sessions on page load.
+ * Checks if a club exists in the CLUB_DB array and logs in the club if they do.
+ * If the club exists, it redirects to the club page. Otherwise, it shows an error message.
+ * @param {string} email - The email address of the club attempting to log in.
+ */
+function logInClub(email){
+    console.log(email)
+    if(CLUB_DB.get().findIndex((club) => club.email === email) >= 0){
+        sessionStorage.setItem('user', JSON.stringify(CLUB_DB.get().find((club) => club.email === email)))
+        location.href = '/club.html'
+    }else{
+        console.log('no existe el club')
+        //estilos
+        document.getElementById('error-login-club')?.classList.remove('hidden')
+        setTimeout(() => {
+            document.getElementById('error-login-club')?.classList.add('hidden')
+        }, 2000)
+    }
+}
+/**
+ * Reads the user and club databases from local storage and populates
+ * the corresponding SingletonDB instances with the data.
+ *
+ * This function checks local storage for 'USER_DB' and 'CLUB_DB' keys.
+ * If they exist, it parses the JSON strings into User and Club objects,
+ * respectively, and adds them to the SingletonDB instances USER_DB and CLUB_DB.
+ * If the databases are not already initialized, it logs a message indicating
+ * their initialization. This ensures that the user and club data are
+ * available in memory for further operations.
  */
 function leerBD(){
     let listaUsuarios = []
+    let listaClubs = []
+    if(localStorage.getItem('CLUB_DB')){
+        let listaClubsDB = localStorage.getItem('CLUB_DB')
 
-    // comprobamos si hay algo en localstorage
+        if(listaClubsDB === null){
+            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
+            listaClubsDB = ''               
+        }
+
+        listaClubs = JSON.parse(listaClubsDB)
+        .map((/** @type {Club} */ club) => new Club(club.nombre, club.siglas, club.codigoPostal, club.telefono, club.email, club.codigo))
+    }
+    if(CLUB_DB.get() === undefined){
+        console.log('inicializo el singleton ClubDB de la base de datos')
+    }   
+    // comprobamos si hay algo en localstorage 
     if(localStorage.getItem('USER_DB')){
         let listaUsuariosDB = localStorage.getItem('USER_DB')
 
@@ -204,12 +326,13 @@ function leerBD(){
         } //ejemplo en clase: me parece redundante ya que al entrar en el primer if sabemos que no es null
 
         listaUsuarios = JSON.parse(listaUsuariosDB)
-        .map((/** @type {User} */ user) => new User(user.name, user.email, 'apellidos', 'nTelefonmo'))
+        .map((/** @type {User} */ user) => new User(user.name, user.email, user.apellidos, user.nTelefono, user.clubAsoc))
     }
     if(USER_DB.get() === undefined){
-        console.log('inicializo el singleton de la base de datos')
+        console.log('inicializo el singleton UserDB de la base de datos')
     }
     USER_DB.push(...listaUsuarios)
+    CLUB_DB.push(...listaClubs)
 }
 /**
  * Checks if the user is logged in by verifying session storage for user data.
@@ -220,57 +343,10 @@ function leerBD(){
 function comprobarSession(){
     if(sessionStorage.getItem('user') !== null){
         console.log('estas login')
-        document.getElementById('sigIn')?.classList.add('hidden')
-        document.getElementById('logIn')?.classList.add('hidden')
-        document.getElementById('ir-perfil')?.classList.remove('hidden')
     } else if (location.pathname !== '/index.html') {
         // Redirigimos a la home si el usuario no está identificado
         location.href = '/index.html'
     }
 }
-/**
- * Event handler for the club registration form. Prevents the default form
- * submission action and creates a new Club object with the data from the
- * form. Then, it saves the club data to local storage using the key
- * 'CLUB_DB'.
- * @param {Event} event - The event that triggered this function
- */
-function datosClub(event){
-    event.preventDefault()
 
-    let nombre = /** @type {HTMLInputElement} */(document.getElementById('nombre-club'))?.value
-    let siglas = /** @type {HTMLInputElement} */(document.getElementById('siglas-club'))?.value
-    let codigoPostal = /** @type {HTMLInputElement} */(document.getElementById('codigo-club'))?.value
-    let telClub = /** @type {HTMLInputElement} */(document.getElementById('tel-club'))?.value
-    let emailClub = /** @type {HTMLInputElement} */(document.getElementById('email-club'))?.value
 
-    crearClub(nombre,siglas,codigoPostal,telClub,emailClub)
-}
-/**
- * Crea un nuevo club con los datos proporcionados y lo almacena en
- * local storage con la clave 'CLUB_DB'.
- * @param {string} nombre - Nombre del club
- * @param {string} siglas - Siglas del club
- * @param {string} codigoPostal - Codigo del club
- * @param {string} telClub - Telefono del club
- * @param {string} emailClub - Email del club
- * 
- */
-function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
-    let nuevoClub = new Club(nombre,siglas,codigoPostal,telClub,emailClub, CLUB_DB.get().length)
-    if(CLUB_DB.get().findIndex((club) => club.email === emailClub) >= 0){
-        document.getElementById('error-registro-club')?.classList.remove('hidden')
-        setTimeout(() => {
-            document.getElementById('error-registro-club')?.classList.add('hidden')
-        }, 1000)
-        return
-    }
-    document.getElementById('registrado-club')?.classList.remove('hidden')
-    CLUB_DB.push(nuevoClub)
-    localStorage.setItem('CLUB_DB',JSON.stringify(CLUB_DB.get()))
-    setTimeout(() => {
-        location.href = '/index.html'
-    }, 2000)
-
-   
-}

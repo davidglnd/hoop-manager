@@ -1,5 +1,5 @@
 {
-  "include": ["./src/js/**/*.js", "src/js/classes/ClubDB.js"],
+  "include": ["./src/js/**/*.js", "src/js/classes/ClubDB.js", "_hidden/sessionCheck.js"],
   "exclude": ["./**/_hidden/**/*"],
   "compilerOptions": {
     "resolveJsonModule": true,

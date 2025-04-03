@@ -4,6 +4,7 @@ export class User {
   email
   apellidos
   nTelefono
+  clubAsoc
   rol = 'basico'
 /**
  * Creates an instance of User.
@@ -13,13 +14,15 @@ export class User {
  * @param {string} apellidos - The surname(s) of the user.
  * @param {string} nTelefono - The phone number of the user.
  * @param {string} [rol='basico'] - The role of the user, default is 'basico'.
+ * @param {string} clubAsoc - The club associated with the user, default is undefined.
  */
 
-  constructor(name, email, apellidos, nTelefono, rol = 'basico') {
+  constructor(name, email, apellidos, nTelefono, clubAsoc, rol = 'basico') {
     this.name = name
     this.email = email
     this.apellidos = apellidos
     this.nTelefono = nTelefono
+    this.clubAsoc = clubAsoc
     this.rol = rol
   }
 }

@@ -6,7 +6,7 @@
 //patron de diseño Singleton
 export class ClubDB{
     /**
-     * @type {any[] | undefined}
+     * @type {Club[] | undefined}
      */
     database
     constructor(){
@@ -23,6 +23,10 @@ export class ClubDB{
         }
         return this.database
     }
+    /**
+     * Adds one or more clubs to the database.
+     * @param {...Club} clubs - One or more Club objects to add to the database.
+     */
     push(){
         this.database?.push(...arguments)
     }
