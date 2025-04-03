@@ -15,6 +15,9 @@ export class Club {
      * @param {string} codigo - codigo del club
      */
     constructor(nombre, siglas, codigoPostal, telefono, email, codigo) {
+      const timestamp = new Date()
+      //generamos id aleatorio
+      this.id = String(timestamp.getTime())
       this.nombre = nombre
       this.siglas = siglas
       this.codigoPostal = codigoPostal

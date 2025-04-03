@@ -5,7 +5,7 @@ import { SingletonDB } from '../js/classes/SingletonDB.js'
 import { ClubDB } from '../js/classes/ClubDB.js'
 import { store } from '../js/store/redux.js'
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
-
+// TO DO desacernos por completo del ClubDB e implementarlo a traves de redux y el store
 const USER_DB = new SingletonDB()
 const CLUB_DB = new ClubDB()
 /**
@@ -50,7 +50,7 @@ function onDOMContentLoaded() {
     botonSignIn?.addEventListener('click', mostrarSignIn)
     
     leerBD()
-    console.log(store.user.getAll())
+    console.log(store.club.getAll())
     comprobarSession()
 }
 function mostrarLogIn(){
