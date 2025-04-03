@@ -18,6 +18,9 @@ export class User {
  */
 
   constructor(name, email, apellidos, nTelefono, clubAsoc, rol = 'basico') {
+    const timestamp = new Date()
+    //generamos id aleatorio
+    this.id = String(timestamp.getTime())
     this.name = name
     this.email = email
     this.apellidos = apellidos
