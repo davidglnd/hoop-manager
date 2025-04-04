@@ -2,7 +2,7 @@
 import { User } from '../js/classes/User.js'
 import { Club } from '../js/classes/Club.js'
 import { SingletonDB } from '../js/classes/SingletonDB.js'
-import { store } from '../js/store/redux.js'
+import { INITIAL_STATE, store } from '../js/store/redux.js'
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 // TO DO desacernos por completo del ClubDB e implementarlo a traves de redux y el store
 const USER_DB = new SingletonDB()
@@ -46,9 +46,9 @@ function onDOMContentLoaded() {
 
     botonLogIn?.addEventListener('click', mostrarLogIn)
     botonSignIn?.addEventListener('click', mostrarSignIn)
-    
-    leerBD()
-    
+
+    leerUsuariosBD()
+    leerClubsBD()
     comprobarSession()
 }
 function mostrarLogIn(){
@@ -99,7 +99,7 @@ function datosSignClub(event){
     let codigoPostal = /** @type {HTMLInputElement} */(document.getElementById('codigo-club'))?.value
     let telClub = /** @type {HTMLInputElement} */(document.getElementById('tel-club'))?.value
     let emailClub = /** @type {HTMLInputElement} */(document.getElementById('email-club'))?.value
-    console.log(emailClub)
+
     crearClub(nombre,siglas,codigoPostal,telClub,emailClub)
 }
 /**
@@ -143,8 +143,7 @@ function datosLogInClub(event){
  */
 function crearUsuario(name,email,apellidos,telefono,codClub){
     let nuevoUsuario = new User(name, email,apellidos,telefono,codClub)
-
-    if(store.user.getAll().findIndex((/** @type {{ email: string; }} */ user) => user.email === email) >= 0){
+    if(store.user.getAll().findIndex((/** @type {{ email: string; }} */ user) => user.email === email) >= 0 || email === ''){
         console.log('error registro email')
         document.getElementById('error-registro1')?.classList.remove('hidden')//estilos
         setTimeout(() => {
@@ -155,7 +154,7 @@ function crearUsuario(name,email,apellidos,telefono,codClub){
     }
 
     if(store.club.getAll().findIndex((/** @type {{ codigo: string; }} */ club) => club.codigo === codClub) < 0){
-        console.log('error registro')
+        console.log('error registro codigo')
         document.getElementById('error-registro2')?.classList.remove('hidden')//estilos
         setTimeout(() => {
             document.getElementById('error-registro2')?.classList.add('hidden')
@@ -211,7 +210,14 @@ function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
  * This allows the user database to be persisted across sessions.
  */
 function registrarUsuario(){
-    localStorage.setItem('USER_DB', JSON.stringify(store.user.getAll()))
+    //localStorage.setItem('USER_DB', JSON.stringify(store.user.getAll()))
+    let listaUsuarios = JSON.parse(localStorage.getItem('REDUX_DB') || '')
+
+    listaUsuarios.users = [...store.user.getAll()]
+
+    localStorage.setItem('REDUX_DB', JSON.stringify(listaUsuarios))
+
+    
 }
 /**
  * Saves the current state of the CLUB_DB array to local storage.
@@ -221,7 +227,12 @@ function registrarUsuario(){
  * This allows the club database to be persisted across sessions.
  */
 function registrarClub(){
-    localStorage.setItem('CLUB_DB',JSON.stringify(store.club.getAll()))
+    //localStorage.setItem('CLUB_DB',JSON.stringify(store.club.getAll()))
+    let listaClubs = JSON.parse(localStorage.getItem('REDUX_DB') || '')
+
+    listaClubs.clubs = [...store.club.getAll()]
+
+    localStorage.setItem('REDUX_DB', JSON.stringify(listaClubs))
 }
 /**
  * Handles the user deletion process upon form submission, preventing the default form behavior.
@@ -269,7 +280,7 @@ function logIn(email){
     if(store.user.getByEmail?.(email) !== undefined){
         sessionStorage.setItem('user', JSON.stringify(store.user.getByEmail?.(email)))
         //location.href = '/club.html'
-
+        console.log('Login user.....')
     }else{
         console.log('no existe el usuario')
         //estilos
@@ -310,44 +321,58 @@ function logInClub(email){
  * their initialization. This ensures that the user and club data are
  * available in memory for further operations.
  */
-function leerBD(){
-    let listaUsuarios = []
-    let listaClubs = []
-    if(localStorage.getItem('CLUB_DB')){
-        let listaClubsDB = localStorage.getItem('CLUB_DB')
+function leerUsuariosBD(){
+    /**
+     * @type {User[]}
+     */
+    let usersAlmacenadosDB = []
+    if(localStorage.getItem('REDUX_DB')){
+        let usersDB = localStorage.getItem('REDUX_DB')
 
-        if(listaClubsDB === null){
+        if(usersDB === null){
             // Asignamos una cadena de texto vacía, para no romper JSON.parse()
-            listaClubsDB = ''               
+            usersDB = ''
         }
-
-        listaClubs = JSON.parse(listaClubsDB)
-        .map((/** @type {Club} */ club) => new Club(club.nombre, club.siglas, club.codigoPostal, club.telefono, club.email, club.codigo))
-    }
-    // comprobamos si hay algo en localstorage 
-    if(localStorage.getItem('USER_DB')){
-        let listaUsuariosDB = localStorage.getItem('USER_DB')
-
-        if(listaUsuariosDB === null){
-            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
-            listaUsuariosDB = ''
-        } //ejemplo en clase: me parece redundante ya que al entrar en el primer if sabemos que no es null
-
-        listaUsuarios = JSON.parse(listaUsuariosDB)
-        .map((/** @type {User} */ user) => new User(user.name, user.email, user.apellidos, user.nTelefono, user.clubAsoc))
+        usersAlmacenadosDB = JSON.parse(usersDB).users
+    }else{
+        localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
     }
 
-    listaUsuarios.forEach(( /** @type {User} */newUser) => {
+    usersAlmacenadosDB.forEach(( /** @type {User} */newUser) => {
         store.user.create(newUser)
     });
-    listaClubs.forEach(( /** @type {Club} */newClub) => {
+}
+/**
+ * Reads the club database from local storage and populates the store
+ * with the data.
+ *
+ * This function checks local storage for the 'REDUX_DB' key. If it exists,
+ * it parses the JSON string to extract the array of Club objects and adds them
+ * to the store. If the key does not exist, it initializes it with the default
+ * state. This ensures that the club data is available in memory for further
+ * operations.
+ */
+function leerClubsBD(){
+    /**
+     * @type {Club[]}
+     */
+    let clubsAlmacenadosDB = []
+    if(localStorage.getItem('REDUX_DB')){
+        let clubsDB = localStorage.getItem('REDUX_DB')
+        if(clubsDB === null){
+            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
+            clubsDB = ''
+        }
+        clubsAlmacenadosDB = JSON.parse(clubsDB).clubs
+    }else{
+        localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
+
+    }
+
+    clubsAlmacenadosDB.forEach(( /** @type {Club} */newClub) => {
         store.club.create(newClub)
     });
-    // if(USER_DB.get() === undefined){
-    //     console.log('inicializo el singleton UserDB de la base de datos')
-    // }
-    //USER_DB.push(...listaUsuarios)
-    //CLUB_DB.push(...listaClubs)
+
 }
 /**
  * Checks if the user is logged in by verifying session storage for user data.
