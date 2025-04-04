@@ -2,12 +2,10 @@
 import { User } from '../js/classes/User.js'
 import { Club } from '../js/classes/Club.js'
 import { SingletonDB } from '../js/classes/SingletonDB.js'
-import { ClubDB } from '../js/classes/ClubDB.js'
 import { store } from '../js/store/redux.js'
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 // TO DO desacernos por completo del ClubDB e implementarlo a traves de redux y el store
 const USER_DB = new SingletonDB()
-const CLUB_DB = new ClubDB()
 /**
  * Evento que se lanza cuando el contenido de la pagina ha sido cargado en memoria
  * y se puede acceder a el.
@@ -50,7 +48,7 @@ function onDOMContentLoaded() {
     botonSignIn?.addEventListener('click', mostrarSignIn)
     
     leerBD()
-    console.log(store.club.getAll())
+    
     comprobarSession()
 }
 function mostrarLogIn(){
@@ -101,7 +99,7 @@ function datosSignClub(event){
     let codigoPostal = /** @type {HTMLInputElement} */(document.getElementById('codigo-club'))?.value
     let telClub = /** @type {HTMLInputElement} */(document.getElementById('tel-club'))?.value
     let emailClub = /** @type {HTMLInputElement} */(document.getElementById('email-club'))?.value
-
+    console.log(emailClub)
     crearClub(nombre,siglas,codigoPostal,telClub,emailClub)
 }
 /**
@@ -126,7 +124,7 @@ function datosLogIn(event){
 function datosLogInClub(event){
     event.preventDefault()
     console.log('log in club')
-    let emailInput = document.getElementById('email-club')
+    let emailInput = document.getElementById('email-club-log-in')
 
     let email = /** @type {HTMLInputElement} */(emailInput)?.value
 
@@ -156,7 +154,7 @@ function crearUsuario(name,email,apellidos,telefono,codClub){
 
     }
 
-    if(CLUB_DB.get().findIndex((club) => club.codigo === codClub) < 0){
+    if(store.club.getAll().findIndex((/** @type {{ codigo: string; }} */ club) => club.codigo === codClub) < 0){
         console.log('error registro')
         document.getElementById('error-registro2')?.classList.remove('hidden')//estilos
         setTimeout(() => {
@@ -165,14 +163,14 @@ function crearUsuario(name,email,apellidos,telefono,codClub){
         return
     }
     
-    console.log('ok registro')
     store.user.create(nuevoUsuario)
-    console.log(store.user.getAll())
+
     registrarUsuario()
     //estilos
     document.getElementById('registrado')?.classList.remove('hidden')
     setTimeout(() => {
         document.getElementById('registrado')?.classList.add('hidden')
+        location.href = '/index.html'
     }, 2000)
 }
 /**
@@ -186,8 +184,8 @@ function crearUsuario(name,email,apellidos,telefono,codClub){
  *
  */
 function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
-    let nuevoClub = new Club(nombre,siglas,codigoPostal,telClub,emailClub, siglas + CLUB_DB.get().length)
-    if(CLUB_DB.get().findIndex((club) => club.email === emailClub) >= 0){
+    let nuevoClub = new Club(nombre,siglas,codigoPostal,telClub,emailClub, siglas + store.club.getAll().length)
+    if(store.club.getAll().findIndex((/** @type {{ email: string; }} */ club) => club.email === emailClub) >= 0){
         document.getElementById('error-registro-club')?.classList.remove('hidden')
         setTimeout(() => {
             document.getElementById('error-registro-club')?.classList.add('hidden')
@@ -195,8 +193,10 @@ function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
         return
     }
     document.getElementById('registrado-club')?.classList.remove('hidden')
-    CLUB_DB.push(nuevoClub)
-    localStorage.setItem('CLUB_DB',JSON.stringify(CLUB_DB.get()))    
+    
+    store.club.create(nuevoClub)
+
+    registrarClub()    
     
     setTimeout(() => {
         document.getElementById('registrado-club')?.classList.add('hidden')
@@ -212,6 +212,16 @@ function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
  */
 function registrarUsuario(){
     localStorage.setItem('USER_DB', JSON.stringify(store.user.getAll()))
+}
+/**
+ * Saves the current state of the CLUB_DB array to local storage.
+ * 
+ * This function serializes the CLUB_DB array into a JSON string
+ * and stores it in local storage under the key 'CLUB_DB'.
+ * This allows the club database to be persisted across sessions.
+ */
+function registrarClub(){
+    localStorage.setItem('CLUB_DB',JSON.stringify(store.club.getAll()))
 }
 /**
  * Handles the user deletion process upon form submission, preventing the default form behavior.
@@ -256,9 +266,8 @@ function cerrarSesion(event){
  * @param {string} email - The email address of the user attempting to log in.
  */
 function logIn(email){
-
     if(store.user.getByEmail?.(email) !== undefined){
-        sessionStorage.setItem('user', JSON.stringify(USER_DB.get().find((user) => user.email === email)))
+        sessionStorage.setItem('user', JSON.stringify(store.user.getByEmail?.(email)))
         //location.href = '/club.html'
 
     }else{
@@ -278,9 +287,9 @@ function logIn(email){
  */
 function logInClub(email){
     console.log(email)
-    if(CLUB_DB.get().findIndex((club) => club.email === email) >= 0){
-        sessionStorage.setItem('user', JSON.stringify(CLUB_DB.get().find((club) => club.email === email)))
-        location.href = '/club.html'
+    if(store.club.getByEmail?.(email) !== undefined){
+        sessionStorage.setItem('user', JSON.stringify(store.club.getByEmail?.(email)))
+        console.log('Login club.....')
     }else{
         console.log('no existe el club')
         //estilos
@@ -315,9 +324,6 @@ function leerBD(){
         listaClubs = JSON.parse(listaClubsDB)
         .map((/** @type {Club} */ club) => new Club(club.nombre, club.siglas, club.codigoPostal, club.telefono, club.email, club.codigo))
     }
-    if(CLUB_DB.get() === undefined){
-        console.log('inicializo el singleton ClubDB de la base de datos')
-    }   
     // comprobamos si hay algo en localstorage 
     if(localStorage.getItem('USER_DB')){
         let listaUsuariosDB = localStorage.getItem('USER_DB')
@@ -330,15 +336,18 @@ function leerBD(){
         listaUsuarios = JSON.parse(listaUsuariosDB)
         .map((/** @type {User} */ user) => new User(user.name, user.email, user.apellidos, user.nTelefono, user.clubAsoc))
     }
-    if(USER_DB.get() === undefined){
-        console.log('inicializo el singleton UserDB de la base de datos')
-    }
-    USER_DB.push(...listaUsuarios)
+
     listaUsuarios.forEach(( /** @type {User} */newUser) => {
         store.user.create(newUser)
     });
-    
-    CLUB_DB.push(...listaClubs)
+    listaClubs.forEach(( /** @type {Club} */newClub) => {
+        store.club.create(newClub)
+    });
+    // if(USER_DB.get() === undefined){
+    //     console.log('inicializo el singleton UserDB de la base de datos')
+    // }
+    //USER_DB.push(...listaUsuarios)
+    //CLUB_DB.push(...listaClubs)
 }
 /**
  * Checks if the user is logged in by verifying session storage for user data.

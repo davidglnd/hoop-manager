@@ -92,7 +92,7 @@ const appReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         clubs: [
-          ...state.club,
+          ...state.clubs,
           actionWithClub.club
         ]
       };
