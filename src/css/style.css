@@ -1,0 +1,30 @@
+/* Estilos de colores y tipografias
+
+
+
+
+
+*/
+body{
+    background-color: #013c8067;/* hay que trabajar el fondo de detras del contenido */
+   
+    header{
+        background-color: #013c80;
+        color: #FFF;
+    }
+
+    main{
+        background-color: #FFF;
+        color: #013c80;
+        
+        aside{
+            background-color: #F5F5F5;
+            color:#212121;
+            border:red 2px solid;
+        }
+    }
+    
+    footer{
+        background-color: #013c80;
+    }
+}

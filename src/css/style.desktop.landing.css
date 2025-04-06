@@ -1,0 +1,89 @@
+/* Estilos para escritorio
+
+
+*/
+html{
+    font-size: 18px;
+}
+
+h1{
+    font-size: 45px;
+}
+
+a{
+    text-decoration: none;
+}
+
+/* Clase hidden para mensajes */
+
+.hidden {
+    display: none;
+}
+
+body{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+
+    header{
+        width:75%;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        gap:2%;
+
+        nav{
+            width:80%;
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+            gap:20%;
+
+            ol{
+                display:flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width:100%;
+                height: 123px;
+                font-size: 30px;
+            }
+
+
+        }
+
+        img{
+            width:120px;
+            height: 120px;
+        }
+
+    }
+
+    main{
+        width:75%;
+        min-height: 70vh;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        article{
+            width:40%;
+            min-height: 70vh;
+        }
+
+        aside{
+            width:40%;
+            height:calc(70vh - 150px);
+            display:flex;
+
+        }
+
+    }
+
+    footer{
+        width:75%;
+    }
+    
+
+
+}

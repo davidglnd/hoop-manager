@@ -3,8 +3,11 @@ import { User } from '../js/classes/User.js'
 import { Club } from '../js/classes/Club.js'
 import { SingletonDB } from '../js/classes/SingletonDB.js'
 import { INITIAL_STATE, store } from '../js/store/redux.js'
+import { comprobarSession } from '../js/checkSession.js'
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
-// TO DO desacernos por completo del ClubDB e implementarlo a traves de redux y el store
+//TO DO DISEÑAR EL HTML PARA PODER AÑADIR MAS COSAS
+// TO DO desacernos por completo del ClubDB e implementarlo a traves de redux y el store (solo falta en borrar usuario que hace
+// falta implementarlo primero en el html )
 const USER_DB = new SingletonDB()
 /**
  * Evento que se lanza cuando el contenido de la pagina ha sido cargado en memoria
@@ -36,7 +39,7 @@ function onDOMContentLoaded() {
     formularioRegistro?.addEventListener('submit', datosSigIN)//La interrogacion vale para ver si existe el form 
     logInUsuario?.addEventListener('submit', datosLogIn)//si no no hace el eventListener
     formularioBorrado?.addEventListener('submit', borrarUsuario)
-    formularioLogOut?.addEventListener('submit', cerrarSesion)
+    formularioLogOut?.addEventListener('click', cerrarSesion)
     
     formularioClub?.addEventListener('submit', datosSignClub)
     mostrarLogUsuario?.addEventListener('click', mostrarLogInUsuario)
@@ -279,7 +282,7 @@ function cerrarSesion(event){
 function logIn(email){
     if(store.user.getByEmail?.(email) !== undefined){
         sessionStorage.setItem('user', JSON.stringify(store.user.getByEmail?.(email)))
-        //location.href = '/club.html'
+        location.href = '/club.html'
         console.log('Login user.....')
     }else{
         console.log('no existe el usuario')
@@ -299,8 +302,9 @@ function logIn(email){
 function logInClub(email){
     console.log(email)
     if(store.club.getByEmail?.(email) !== undefined){
-        sessionStorage.setItem('user', JSON.stringify(store.club.getByEmail?.(email)))
+        sessionStorage.setItem('club', JSON.stringify(store.club.getByEmail?.(email)))
         console.log('Login club.....')
+        location.href = '/admin-club.html'
     }else{
         console.log('no existe el club')
         //estilos
@@ -352,7 +356,7 @@ function leerUsuariosBD(){
  * state. This ensures that the club data is available in memory for further
  * operations.
  */
-function leerClubsBD(){
+export function leerClubsBD(){
     /**
      * @type {Club[]}
      */
@@ -374,19 +378,6 @@ function leerClubsBD(){
     });
 
 }
-/**
- * Checks if the user is logged in by verifying session storage for user data.
- * If a user is logged in, it updates the UI to show the user link and log out form,
- * while hiding the sign-in and log-in forms. If no user is logged in and the current
- * page is not the home page, it redirects to the home page.
- */
-function comprobarSession(){
-    if(sessionStorage.getItem('user') !== null){
-        console.log('estas login')
-    } else if (location.pathname !== '/index.html') {
-        // Redirigimos a la home si el usuario no está identificado
-        location.href = '/index.html'
-    }
-}
+
 
 
