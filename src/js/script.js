@@ -268,10 +268,11 @@ function borrarUsuario(event){
  * 
  * @param {Event} event - The event object associated with the form submission.
  */
-function cerrarSesion(event){
+export function cerrarSesion(event){
     event.preventDefault()
 
     sessionStorage.removeItem('user')
+    sessionStorage.removeItem('club')
     location.href = '/index.html'
 
 }

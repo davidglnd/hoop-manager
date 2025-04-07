@@ -1,17 +1,31 @@
 import { Equipo } from "./classes/Equipo.js";
 import { registrarUsuario } from "./script.js";
+import { cerrarSesion } from "./script.js"; // preguntar porque no la usamos porque no la necesitamos
 import { INITIAL_STATE, store } from './store/redux.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
 function onDOMContentLoaded(){
     let formCrearEquipo = document.getElementById('form-crear-equipo')
-    let botonRoolUsuarios = document.getElementById('rol-usuarios')
+    let botonRolUsuarios = document.getElementById('rol-usuarios')
+    let botonEntrenadores = document.getElementById('listado-entrenadores')
+    let botonEquipos = document.getElementById('add-equipo')
 
     formCrearEquipo?.addEventListener('submit', datosEquipo)
-    botonRoolUsuarios?.addEventListener('click', mostrarDivRol)
+    botonRolUsuarios?.addEventListener('click', mostrarDivRol)
+    botonEntrenadores?.addEventListener('click', mostrarDivEntrenadores)
+    botonEquipos?.addEventListener('click', mostrarDivEquipos)
 
     leerEquipoBD()
+}
+function mostrarDivEquipos(){
+    //vamos a escodnder el resto de contenedores
+    document.getElementById('inicio')?.classList.add('hidden')
+    document.getElementById('establecer-roles')?.classList.add('hidden')
+    document.getElementById('entrenadores')?.classList.add('hidden')
+    
+    //enseñamos el contenedor en cuestion
+    document.getElementById('añadir-equipo')?.classList.remove('hidden')
 }
 function datosEquipo(event){
     event.preventDefault()
@@ -59,15 +73,23 @@ function leerEquipoBD(){
 //TO DOfunction lanzarMensaje(){}
 function mostrarDivRol(){
     //vamos a escodnder el resto de contenedores
+    document.getElementById('inicio')?.classList.add('hidden')
     document.getElementById('añadir-equipo')?.classList.add('hidden')
+    document.getElementById('entrenadores')?.classList.add('hidden')
     
     //enseñamos el contenedor en cuestion
-    document.getElementById('establecer-roles')?.classList.remove('hidden')
-    
+    let contenedorRoles = document.getElementById('establecer-roles')
+    contenedorRoles?.classList.remove('hidden')
     // una vez lo hemos mostrado vamos a rellenarlo
     // leemos los usuarios por codigo
     let arrayUsuarios = store.user.getAllByCodigo(JSON.parse(sessionStorage.getItem('club')).codigo)
-    console.log(arrayUsuarios)
+    //llamamos a la funcion que borra los elementos del contenedor 
+    borrado(contenedorRoles)
+    //pintamos la info
+    let pInformando = document.createElement('p')
+    pInformando.innerHTML = 'Edite aqui los roles de los usarios registrados en su club'
+    document.getElementById('establecer-roles').appendChild(pInformando)
+
     arrayUsuarios.forEach((usuarioLista) => {
         let formulario = document.createElement('form')
         formulario.id = usuarioLista._id
@@ -95,16 +117,31 @@ function mostrarDivRol(){
         optionEntrenador.value = 'entrenador'
         optionEntrenador.innerText = 'Entrenador'
         document.getElementById(usuarioLista._id + '-select').appendChild(optionEntrenador)
+        
+        let pActual = document.createElement('p')
+        pActual.innerText = 'Rol actual: ' + usuarioLista.rol
+        document.getElementById(usuarioLista._id).appendChild(pActual)
 
         let botonCambio = document.createElement('button')
-        botonCambio.id = usuarioLista.id + '-boton'
+        botonCambio.id = usuarioLista._id + '-boton'
         botonCambio.innerText = 'Cambiar rol'
         document.getElementById(usuarioLista._id).appendChild(botonCambio)
 
         document.getElementById(usuarioLista._id).addEventListener('submit',(event) => cambioRol(event , usuarioLista._id, ))
     })
-}
 
+} 
+function borrado(contenedor){
+    if(contenedor.id === "establecer-roles"){
+         while (contenedor.firstChild) {
+            contenedor.removeChild(contenedor.firstChild)
+        }
+    }else if(contenedor.id === "entrenadores"){
+        while (contenedor.firstChild) {
+            contenedor.removeChild(contenedor.firstChild)
+        }
+    }
+}
 function cambioRol(event, usuario){
     event.preventDefault()
     let usuarioCambiar = store.user.getById(usuario)
@@ -118,4 +155,27 @@ function cambioRol(event, usuario){
     console.log('Cambiando rol de... ' + usuarioCambiar.name + '...Su nuevo rol es ' + usuarioModificado.rol )
 
     registrarUsuario()
+}
+function mostrarDivEntrenadores(){
+    //vamos a escodnder y mostrar los contenedores que vamos a usar
+    document.getElementById('inicio')?.classList.add('hidden')
+    document.getElementById('añadir-equipo')?.classList.add('hidden')
+    document.getElementById('establecer-roles')?.classList.add('hidden')
+    
+    let contenedirEntrenadores = document.getElementById('entrenadores')
+    contenedirEntrenadores?.classList.remove('hidden')
+    // leemos los usuarios por codigo
+    let arrayUsuarios = store.user.getAllByCodigo(JSON.parse(sessionStorage.getItem('club')).codigo)
+
+    borrado(contenedirEntrenadores)
+
+    let pInformando = document.createElement('p')
+    pInformando.innerHTML = 'Listado de los entrenadores registrados en su club.'
+    document.getElementById('entrenadores').appendChild(pInformando)
+    
+    arrayUsuarios.forEach((usuarioLista) => {
+        let parrafoUsuarios = document.createElement('p')
+        parrafoUsuarios.innerText = usuarioLista.name
+        document.getElementById('entrenadores').appendChild(parrafoUsuarios)
+    })
 }

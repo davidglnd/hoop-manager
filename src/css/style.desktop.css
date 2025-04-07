@@ -1,0 +1,73 @@
+/* stylelint-disable declaration-block-no-redundant-longhand-properties */
+
+/* Estilos para escritorio la web una vez hay un user
+ logueado y las ventanas a las que pueda acceder	 */
+
+
+ /* Tamaño de fuente */
+
+ /* TO DO */
+
+body{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    color: green;
+    background-color: black;
+
+    header{
+        border:1px solid red;
+        width: 80%;
+        min-height: 10vh;
+    }
+
+    nav{
+        border:1px solid green;
+        width: 80%;
+        min-height: 5vh;
+        display:flex;
+        align-items: center;
+        height: 100%;
+
+        &>ol{
+            width:100%;
+            display:flex;
+            justify-content: space-around;
+        }
+
+    }
+
+    main{
+        border:1px solid blue;
+        width: 80%;
+        min-height: 80vh;
+        display:grid;
+        grid-auto-columns: 1fr; 
+        grid-template-columns: 2.3fr 1fr 0.4fr; 
+        grid-template-rows: 0.5fr 2fr 0.5fr; 
+        grid-template-areas: 
+          "informacion-mostrar . ."
+          "informacion-mostrar mensajes-destacados ."
+          "informacion-mostrar . ."; 
+
+        .informacion-mostrar{
+            width: 60%;
+            grid-area: informacion-mostrar;
+        }
+
+        .mensajes-destacados{
+            background-color: darkgray;
+            color:black;
+            grid-area: mensajes-destacados;
+
+        }
+
+    }
+
+    footer{
+        border:1px solid yellow;
+        width: 80%;
+        min-height: 5vh;
+    }
+ }

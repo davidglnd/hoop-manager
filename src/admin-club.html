@@ -21,21 +21,20 @@
         <nav>            
             <ol>
                 <li><a href="">Inicio</a></li>
-                <li><a href="">Añadir equipo</a></li>
+                <li><button id="add-equipo">Añadir equipo</button></li>
                 <li ><button id="rol-usuarios">Establecer rol de usuarios</button></li>
-                <li><a href="">Añadir jugadores a un equipo</a></li>
-                <li><a href="">Entrenadores</a></li>                
+                <li><button id="listado-entrenadores">Entrenadores</button></li>                
             </ol>
         </nav>
     </aside>
     <main id="main-admin">
         <div id="inicio">
-            <!-- <p>Bienvenido a la pagina de administracion de tu club</p>
+            <p>Bienvenido a la pagina de administracion de tu club</p>
             <div id="instrucciones">
                 Aqui pondremos unas instrucciones/introduccion de lo que se puede hacer en el panel de admnistracion
-            </div> -->
+            </div>
         </div>
-        <div id="añadir-equipo">
+        <div id="añadir-equipo" class="hidden">
             <!--desarrollar formulario para añadir equipo-->
             <form id="form-crear-equipo">
                 <label for="categoria">Categoria</label>
@@ -53,15 +52,16 @@
             </form>
         </div>
         <div id="establecer-roles" class="hidden">
-            <p>Edite aqui los roles de los usarios registrados en su club</p>
             <!--desarrollar formulario para establecer roles de los usuarios-->
         </div>
-        <div id="entrenadores">
+        <div id="entrenadores" class="hidden">
             <!--desarrollar formulario para gestionar entrenadores-->
         </div>
     </main>
     <footer id="footer-admin">
-        <div id="botones"></div>
+        <div id="botones">
+            <button id="cerrar-sesion">Cerrar sesion</button>
+        </div>
         <div id="mensajes"></div>
     </footer>
 </body>
