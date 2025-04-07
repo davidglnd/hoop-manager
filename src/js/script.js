@@ -143,9 +143,10 @@ function datosLogInClub(event){
  * @param {string} apellidos - El apellidos del usuario
  * @param {string} telefono - El telefono del usuario
  * @param {string} codClub - El codigo del club
+ * 
  */
 function crearUsuario(name,email,apellidos,telefono,codClub){
-    let nuevoUsuario = new User(name, email,apellidos,telefono,codClub)
+    let nuevoUsuario = new User('', name, email,apellidos,telefono,codClub)
     if(store.user.getAll().findIndex((/** @type {{ email: string; }} */ user) => user.email === email) >= 0 || email === ''){
         console.log('error registro email')
         document.getElementById('error-registro1')?.classList.remove('hidden')//estilos
@@ -212,7 +213,7 @@ function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
  * and stores it in local storage under the key 'USER_DB'.
  * This allows the user database to be persisted across sessions.
  */
-function registrarUsuario(){
+export function registrarUsuario(){
     //localStorage.setItem('USER_DB', JSON.stringify(store.user.getAll()))
     let listaUsuarios = JSON.parse(localStorage.getItem('REDUX_DB') || '')
 
@@ -325,7 +326,7 @@ function logInClub(email){
  * their initialization. This ensures that the user and club data are
  * available in memory for further operations.
  */
-function leerUsuariosBD(){
+export function leerUsuariosBD(){
     /**
      * @type {User[]}
      */

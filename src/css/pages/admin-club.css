@@ -1,0 +1,68 @@
+/* Especifico para admin club */
+html{
+    background-color: #afafaf;
+}
+
+body{
+    display: grid; 
+    grid-auto-columns: 1fr; 
+    grid-template-columns: 10% 90%; 
+    grid-template-rows: 0.2fr 2.3fr 0.5fr; 
+    height: 100vh;
+
+    >#header-admin{
+        grid-area: 1 / 1 / 2 / 3;
+    }
+
+    >#aside-admin{
+        grid-area: 2 / 1 / 3 / 2;
+        
+    }
+
+    >#main-admin{
+        grid-area: 2 / 2 / 3 / 3; 
+    }
+
+    >#footer-admin{
+        grid-area: 3 / 1 / 4 / 3;
+    }
+}
+
+header{
+    background-color: #0D47A1;
+    color:white;
+    font-size: 18px;
+    min-height: 5vh;
+    display:flex;
+    justify-content: space-between;
+
+    p{
+        margin-top: 12px;
+    }
+
+    .deco1{
+        background-color: #F57C00;
+        min-width: 10%;
+    }
+}
+
+aside>nav{
+    height: 100%;
+
+    &>ol{
+        display:flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        height: 100%;
+    
+    }
+}
+
+footer{
+    border:2px red solid;
+}
+
+.hidden{
+    display:none;
+}

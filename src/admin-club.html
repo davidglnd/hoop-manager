@@ -6,25 +6,63 @@
     <title>Panel de administracion</title>
     <link rel="shortcut icon" href="img/ChatGPT Image 3 abr 2025, 09_55_17.png" type="image/x-icon">
     <link rel="stylesheet" href="css/reset.css">
-    <!-- <script type="module" src="js/utils.js" defer></script> -->
-    <script type="module" src="js/script.js" defer></script>
+    <link rel="stylesheet" href="css/pages/admin-club.css">
+    <script type="module" src="js/utils.js" defer></script>
+    <script type="module" src="js/checkSession.js" defer></script>
+    <script type="module" src="js/club-panel.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1 id="nombre-clubReg2"></h1>
+    <header id="header-admin">
+        <div class="deco1"></div>
+        <p id="club-info"></p> 
+        <p>Hoop Manager - gestion del club</p>
+    </header>
+    <aside id="aside-admin">
         <nav>            
             <ol>
-                <li>Inicio</li>
-                <li>Equipos</li>
-                <li>Entrenadores</li>
-                <li>Jugadores</li>
-                <li>Usuarios</li>
-                <li id="cerrar-sesion">Cerrar sesion</li>
+                <li><a href="">Inicio</a></li>
+                <li><a href="">Añadir equipo</a></li>
+                <li ><button id="rol-usuarios">Establecer rol de usuarios</button></li>
+                <li><a href="">Añadir jugadores a un equipo</a></li>
+                <li><a href="">Entrenadores</a></li>                
             </ol>
         </nav>
-    </header>
-    <main>
-
+    </aside>
+    <main id="main-admin">
+        <div id="inicio">
+            <!-- <p>Bienvenido a la pagina de administracion de tu club</p>
+            <div id="instrucciones">
+                Aqui pondremos unas instrucciones/introduccion de lo que se puede hacer en el panel de admnistracion
+            </div> -->
+        </div>
+        <div id="añadir-equipo">
+            <!--desarrollar formulario para añadir equipo-->
+            <form id="form-crear-equipo">
+                <label for="categoria">Categoria</label>
+                <select name="categoria" id="categoria">
+                    <option value="benajamin">Benjamin</option>
+                    <option value="alevin">Alevin</option>
+                    <option value="infantil">Infantil</option>
+                    <option value="cadete">Cadete</option>
+                    <option value="juvenil">Juvenil</option>
+                    <option value="senior">Senior</option>
+                </select>
+                <label for="patrocinador">Patrocinador</label>
+                <input type="text" id="patrocinador">
+                <button type="submit">Añadir equipo</button>
+            </form>
+        </div>
+        <div id="establecer-roles" class="hidden">
+            <p>Edite aqui los roles de los usarios registrados en su club</p>
+            <!--desarrollar formulario para establecer roles de los usuarios-->
+        </div>
+        <div id="entrenadores">
+            <!--desarrollar formulario para gestionar entrenadores-->
+        </div>
     </main>
+    <footer id="footer-admin">
+        <div id="botones"></div>
+        <div id="mensajes"></div>
+    </footer>
 </body>
 </html>

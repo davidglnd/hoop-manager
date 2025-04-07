@@ -1,14 +1,15 @@
 // @ts-check
 /** @import { User } from '../classes/User.js' */
 /** @import { Club } from '../classes/Club.js' */
+/** @import { Equipo } from '../classes/Equipo.js' */
 /**
  * @module redux/store
  */
-
 /**
  * @typedef {Object.<(string), any>} State
  * @property {Array [] | []} users
  * @property {Array [] | []} clubs
+ * @property {Array [] | []} equipos
  * @property {boolean} isLoading
  * @property {boolean} error
  */
@@ -18,6 +19,7 @@
 export const INITIAL_STATE = {
   users: [],
   clubs: [],
+  equipos: [],
   isLoading: false,// Podría usarse para controlar cuando estamos realizando un fetch
   error: false,// Podría usarse para controlar cuando sucede un error
 }
@@ -28,6 +30,9 @@ export const INITIAL_STATE = {
  * @typedef {Object} ActionTypeClub
  * @property {string} type
  * @property {Club} [club]
+ * @typedef {Object} ActionTypeEquipos
+ * @property {string} type
+ * @property {Equipo} [equipo]
  */
 
 const ACTION_TYPES = {
@@ -44,6 +49,12 @@ const ACTION_TYPES = {
   UPDATE_CLUB: 'UPDATE_CLUB',
   DELETE_CLUB: 'DELETE_CLUB',
   DELETE_ALL_CLUBS: 'DELETE_ALL_CLUBS',
+  //equipo
+  CREATE_EQUIPO: 'CREATE_EQUIPO',
+  READ_LIST_EQUIPOS: 'READ_LIST_EQUIPOS',
+  UPDATE_EQUIPO: 'UPDATE_EQUIPO',
+  DELETE_EQUIPO: 'DELETE_EQUIPO',
+  DELETE_ALL_EQUIPOS: 'DELETE_ALL_EQUIPOS',
 }
 
 /**
@@ -52,11 +63,13 @@ const ACTION_TYPES = {
  * @param {State} state - The current state
  * @param {ActionTypeUser} action - The action to reduce
  * @param {ActionTypeClub} action - The action to reduce
+ * @param {ActionTypeEquipos} action - The action to reduce
  * @returns {State} The new state
  */
 const appReducer = (state = INITIAL_STATE, action) => {
   const actionWithUser = /** @type {ActionTypeUser} */(action)
   const actionWithClub = /** @type {ActionTypeClub} */(action)
+  const actionWithEquipo = /** @type {ActionTypeEquipos} */(action)
   switch (action.type) {
     case ACTION_TYPES.CREATE_USER:
       return {
@@ -72,7 +85,7 @@ const appReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         users: state.users.map((/** @type {User} */user) => {
-          if (user.id === actionWithUser?.user?.id) {
+          if (user._id === actionWithUser?.user?._id) {
             return actionWithUser.user
           }
           return user
@@ -81,7 +94,7 @@ const appReducer = (state = INITIAL_STATE, action) => {
     case ACTION_TYPES.DELETE_USER:
       return {
         ...state,
-        users: state.users.filter((/** @type {User} */user) => user.id !== actionWithUser?.user?.id)
+        users: state.users.filter((/** @type {User} */user) => user._id !== actionWithUser?.user?._id)
       };
     case ACTION_TYPES.DELETE_ALL_USERS:
       return {
@@ -118,6 +131,36 @@ const appReducer = (state = INITIAL_STATE, action) => {
         ...state,
         clubs: []
       };
+    case ACTION_TYPES.CREATE_EQUIPO:
+      return {
+        ...state,
+        equipos: [
+          ...state.equipos,
+          actionWithEquipo.equipo
+        ]
+      };
+    case ACTION_TYPES.READ_LIST_EQUIPOS:
+      return {...state};
+    case ACTION_TYPES.UPDATE_EQUIPO:
+      return {
+        ...state,
+        equipos: state.equipos.map((/** @type {Equipo} */equipo) => {
+          if (equipo._id === actionWithEquipo?.equipo?._id) {
+            return actionWithEquipo.equipo
+          }
+          return equipo
+        })
+      };
+    case ACTION_TYPES.DELETE_EQUIPO:
+      return {
+        ...state,
+        equipos: state.equipos.filter((/** @type {Equipo} */equipo) => equipo._id !== actionWithEquipo?.equipo?._id)
+      };
+    case ACTION_TYPES.DELETE_ALL_EQUIPOS:
+      return {
+        ...state,
+        equipos: []
+      };
     default:
       return {...state};
   }
@@ -132,11 +175,13 @@ const appReducer = (state = INITIAL_STATE, action) => {
  * @property {function} getAll
  * @property {function} deleteAll
  * @property {function} [getByEmail]
+ * @property {function} [getAllByCodigo]
  */
 /**
  * @typedef {Object} Store
  * @property {PublicMethods} user
  * @property {PublicMethods} club
+ * @property {PublicMethods} equipo
  * @property {function} getState
  */
 /**
@@ -151,7 +196,7 @@ const createStore = (reducer) => {
   // Private methods
   /**
    *
-   * @param {ActionTypeUser | ActionTypeClub} action
+   * @param {ActionTypeUser | ActionTypeClub | ActionTypeEquipos} action
    * @param {function | undefined} [onEventDispatched]
    */
   const _dispatch = (action, onEventDispatched) => {
@@ -242,7 +287,7 @@ const createStore = (reducer) => {
    */
   const createClub = (club,  onEventDispatched) => _dispatch({ type: ACTION_TYPES.CREATE_CLUB, club }, onEventDispatched);
   /**
-   * Reads the list of articles
+   * Reads the list of equipos
    * @param {function | undefined} [onEventDispatched]
    * @returns void
    */
@@ -273,7 +318,7 @@ const createStore = (reducer) => {
    * @param {string} id
    * @returns {User | undefined}
    */
-  const getUSerById = (id) => { return currentState.users.find((/** @type {User} */user) => user.id === id) };
+  const getUserById = (id) => { return currentState.users.find((/** @type {User} */user) => user._id === id) };
   /**
    * Returns the article with the specified email
    * @param {string} email
@@ -285,24 +330,67 @@ const createStore = (reducer) => {
    * @returns {Array<User>}
    */
   const getAllUsers = () => { return currentState.users };
+
+  const getAllUserby = (/** @type {any} */ clubAsoc) => {return currentState.users.filter((/** @type {{ clubAsoc: any; }} */ user) => user.clubAsoc === clubAsoc)}
   // Getters Club
    /**
-   * Returns the article with the specified id
+   * Returns the clb with the specified id
    * @param {string} codigo
    * @returns {Club | undefined}
    */
   const getClubById = (codigo) => { return currentState.clubs.find((/** @type {Club} */club) => club.codigo === codigo) };
     /**
-   * Returns the article with the specified email
+   * Returns the club with the specified email
    * @param {string} email
    * @returns {Club | undefined}
    */
   const getClubByEmail = (email) => { return currentState.clubs.find((/** @type {Club} */club) => club.email === email) };
   /**
-   * Returns all the articles
+   * Returns all the clubs
    * @returns {Array<Club>}
    */
   const getAllClubs = () => { return currentState.clubs };
+  //Actions Equipo
+    /**
+   * Creates a new Equipo inside the store
+   * @param {Equipo} equipo
+   * @param {function | undefined} [onEventDispatched]
+   * @returns void
+   */
+  const createEquipo = (equipo,  onEventDispatched) => _dispatch({ type: ACTION_TYPES.CREATE_EQUIPO, equipo }, onEventDispatched);
+    /**
+   * Reads the list of equipos
+   * @param {function | undefined} [onEventDispatched]
+   * @returns void
+   */
+  const readListEquipos = (onEventDispatched) => _dispatch({ type: ACTION_TYPES.READ_LIST_EQUIPOS }, onEventDispatched);
+    /**
+   * Updates a club
+   * @param {Equipo} equipo - The club to update
+   * @param {function | undefined} [onEventDispatched] - A callback function that
+   *     will be called when the state changes are dispatched.
+   * @returns void
+   */
+  const updateEquipo = (equipo, onEventDispatched) => _dispatch({ type: ACTION_TYPES.UPDATE_USER, equipo }, onEventDispatched);
+      /**
+   * Deletes a equipo
+   * @param {Equipo} equipo 
+   * @param {function | undefined} [onEventDispatched]
+   * @returns 
+   */
+  const deleteEquipo = (equipo, onEventDispatched) => _dispatch({ type: ACTION_TYPES.DELETE_EQUIPO, equipo }, onEventDispatched);
+   /**
+   * Deletes all the clubs
+   * @param {function | undefined} [onEventDispatched]
+   */
+  const deleteAllEquipos = (onEventDispatched) => _dispatch({ type: ACTION_TYPES.DELETE_ALL_EQUIPOS}, onEventDispatched);
+  //Getters equipo
+  const getEquipoByCodAsoc = (/** @type {string} */ clubAsoc) => { return currentState.equipos.find((/** @type {Equipo} */equipo) => equipo.clubAsoc === clubAsoc) };
+    /**
+   * Returns all the clubs
+   * @returns {Array<Equipo>}
+   */
+  const getAllEquipo = () => {return currentState.equipos}
   // Public methods
   /**
    *
@@ -317,10 +405,11 @@ const createStore = (reducer) => {
     read: readListUser,
     update: updateUser,
     delete: deleteUser,
-    getById: getUSerById,
+    getById: getUserById,
     getByEmail: getUserByEmail,
     getAll: getAllUsers,
-    deleteAll: deleteAllUsers
+    deleteAll: deleteAllUsers,
+    getAllByCodigo: getAllUserby
   }
   const club = {
     create: createClub,
@@ -332,11 +421,20 @@ const createStore = (reducer) => {
     getAll: getAllClubs,
     deleteAll: deleteAllClubs
   }
-
+  const equipo = {
+    create: createEquipo,
+    read: readListEquipos,
+    update: updateEquipo,
+    delete: deleteEquipo,
+    getById: getEquipoByCodAsoc,
+    getAll: getAllEquipo,
+    deleteAll: deleteAllEquipos
+  }
   return {
     // Actions
     user,
     club,
+    equipo,
     // Public methods
     getState
   }

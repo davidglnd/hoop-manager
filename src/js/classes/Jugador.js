@@ -7,6 +7,7 @@ export class Jugador {
     direccion
     nombreTutor
     apellidoTutor
+    _id
 /**
  * @param {string} nombre - Nombre del jugador
  * @param {string} apellidos - Apellidos del jugador
@@ -15,9 +16,10 @@ export class Jugador {
  * @param {string} direccion - Dirección del jugador
  * @param {string} nombreTutor - Nombre del tutor del jugador
  * @param {string} apellidoTutor - Apellido del tutor del jugador
+ * @param {string} _id - Identificador del jugador
  */
 
-    constructor(nombre, apellidos, email, nTelefono, direccion, nombreTutor, apellidoTutor){
+    constructor(nombre, apellidos, email, nTelefono, direccion, nombreTutor, apellidoTutor,_id){
         this.nombre = nombre
         this.apellidos = apellidos
         this.email = email
@@ -25,22 +27,11 @@ export class Jugador {
         this.direccion = direccion
         this.nombreTutor = nombreTutor
         this.apellidoTutor = apellidoTutor
-    }
-}
-export class JugadorFed extends Jugador {
-    /**
-     * @param {string} nombre - Nombre del jugador federado
-     * @param {string} apellidos - Apellidos del jugador federado
-     * @param {string} email - Email del jugador federado
-     * @param {string} nTelefono - Número de teléfono del jugador federado
-     * @param {string} direccion - Dirección del jugador federado
-     * @param {string} nombreTutor - Nombre del tutor del jugador federado
-     * @param {string} apellidoTutor - Apellido del tutor del jugador federado
-     * @param {string} equipo - Equipo al que pertenece el jugador federado
-     */
-    constructor(nombre, apellidos, email, nTelefono, direccion, nombreTutor, apellidoTutor,equipo){
-        super(nombre, apellidos, email, nTelefono, direccion, nombreTutor, apellidoTutor)
-        this.equipo = equipo
-    
+        if (_id === ''){
+            const timestamp = new Date()
+            this._id = String(timestamp.getTime())
+        }else{
+            this._id = _id
+        }
     }
 }
