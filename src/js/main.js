@@ -1,17 +1,39 @@
 //@ts-check
 import { cerrarSesion } from "./gestion-usuarios-script.js";
 import { registrarUsuario } from "./gestion-usuarios-script.js";
-import { store } from './store/redux.js'
-
+import { INITIAL_STATE ,store } from './store/redux.js'
+import { Jugador } from "./classes/Jugador.js";
+//TO DO LOS FALLOS DE TS SON PORQUE FALTA VERIFICACIONES PARA VER QUE NO ES NULL EN ALGUN MOMENTO EN ADD JUGADOR ESTA ARREGLADO
+// TO DO, SEPARAR FUNCIONES DE ADDJUGADOR Y LA DE INCLUIR EN LOCALSTORAGE EL JUFGADOR
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
-
 function onDOMContentLoaded(){
-    let ususarioLogeado = JSON.parse(sessionStorage.getItem('user') ?? '')
-    let usuarioBD = store.user.getById(ususarioLogeado._id)
+    let usuarioLogeado = JSON.parse(sessionStorage.getItem('user') ?? '')
+    let usuarioBD = store.user.getById(usuarioLogeado._id)
 
+    let añadirJugadores = document.getElementById('añadir-jugador-form')
+
+    añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioBD) )
+    leerListaJugadores()
     mostrarInformacionUsuario(usuarioBD)
+    mostrarHerramientasGestion(usuarioBD)
 }
-
+/**
+ * Takes the data from the form and creates a new Jugador object with that data.
+ * It then adds that Jugador to the array of jugadores of the usuarioBD.
+ * @param {Event} event - the event that triggered this function.
+ * @param {Usuario} usuarioBD - the user that is adding the jugador.
+ */
+function datosJugador(event,usuarioBD){
+    event.preventDefault()
+    console.log(usuarioBD)
+    let inputNombre = /** @type {HTMLInputElement} */(document.getElementById('jugador-nombre')).value
+    let inputApellidos = /** @type {HTMLInputElement} */(document.getElementById('jugador-apellidos')).value
+    let inputFnac = /** @type {HTMLInputElement} */(document.getElementById('jugador-fnac')).value
+    let inputSexo = /** @type {HTMLInputElement} */(document.getElementById('jugador-sexo')).value
+    let inputDireccion = /** @type {HTMLInputElement} */(document.getElementById('jugador-direccion')).value
+    
+    addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD)
+}
 /**
  * Displays the user's profile information on the webpage.
  * This function creates and appends paragraphs containing the 
@@ -140,8 +162,49 @@ function guardarCambiosPerfil(event,usuario){
 
     
 }
-/*TO DO funciones exportables a utils.js*/
+/**
+ * Adds a new Jugador to the store and to local storage.
+ * @param {string} inputNombre - The name of the new Jugador.
+ * @param {string} inputApellidos - The surname of the new Jugador.
+ * @param {string} inputFnac - The date of birth of the new Jugador.
+ * @param {string} inputSexo - The gender of the new Jugador.
+ * @param {string} inputDireccion - The address of the new Jugador.
+ * @param {Object} usuarioBD - The user object that is adding the Jugador.
+ * @param {string} usuarioBD._id - The id of the user.
+ * @param {string} usuarioBD.clubAsoc - The club associated with the user.
+ */
+function addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD){
+    let nuevoJugador = new Jugador('',usuarioBD._id,inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD.clubAsoc)
 
+    store.jugador.create(nuevoJugador)
+
+    let listaJugadores = JSON.parse(localStorage.getItem('REDUX_DB') || '')
+
+    listaJugadores.jugadores = [...store.jugador.getAll()]
+
+    localStorage.setItem('REDUX_DB', JSON.stringify(listaJugadores))
+}
+
+/*TO DO funciones exportables a utils.js*/
+function leerListaJugadores(){
+    let listaJugadores = []
+
+    if(localStorage.getItem('REDUX_DB')){
+        let listaJugadoresBD = localStorage.getItem('REDUX_DB')
+
+        if(listaJugadoresBD === null){
+            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
+            listaJugadoresBD = ''
+        }
+        listaJugadores = JSON.parse(listaJugadoresBD).jugadores
+    }else{
+        localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
+    }
+    listaJugadores.forEach(( /** @type {Jugador} */newJugador) => {
+        store.jugador.create(newJugador)
+    })
+    console.log(store.jugador.getAll())
+}
 /**
  * Removes all child elements from the specified container element.
  *
@@ -164,4 +227,41 @@ function mayusculasInicial(text) {
     console.log(text)
     const PRIMERA_LETRA = text.charAt(0);
     return PRIMERA_LETRA.toUpperCase() + text.slice(1).toLowerCase();
-  }
+}
+/**
+ * If the user is an entrenador, this function adds a menu item to the navigation menu
+ * to allow them to create new entrenamientos.
+ * @param {Object} usuarioBD - The user object from the database.
+ * @param {string} usuarioBD.rol - The role of the user.
+ */
+function mostrarHerramientasGestion(usuarioBD){
+    console.log(usuarioBD.rol)
+    if (usuarioBD.rol === 'entrenador') {
+        const MENU_NAVEGACION = document.getElementById('menu-club');
+        
+        const LI_CERRAR_SESION = document.getElementById('cerrar-sesion');
+
+        let liCrearEntrenamientos = document.createElement('li')
+
+        MENU_NAVEGACION?.insertBefore(liCrearEntrenamientos, LI_CERRAR_SESION )
+
+        let aCrearEntrenamientos = document.createElement('a')
+        aCrearEntrenamientos.innerText = 'Crear entrenamientos'
+        aCrearEntrenamientos.href = 'crear-entrenamientos.html'
+        liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
+    }
+    if (usuarioBD.rol === 'familiar') {
+        const MENU_NAVEGACION = document.getElementById('menu-club');
+        
+        const LI_CERRAR_SESION = document.getElementById('cerrar-sesion');
+
+        let liCrearEntrenamientos = document.createElement('li')
+
+        MENU_NAVEGACION?.insertBefore(liCrearEntrenamientos, LI_CERRAR_SESION )
+
+        let aCrearEntrenamientos = document.createElement('a')
+        aCrearEntrenamientos.innerText = 'Añadir jugadores'
+        aCrearEntrenamientos.href = 'añadir-jugadores.html'
+        liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
+    }
+}

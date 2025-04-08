@@ -104,13 +104,13 @@ function mostrarDivRol(){
         document.getElementById(usuarioLista._id).appendChild(select)
 
         let optionBasico = document.createElement('option')
-        optionBasico.value = 'Basico'
+        optionBasico.value = 'basico'
         optionBasico.innerText = 'Basico'
         document.getElementById(usuarioLista._id + '-select').appendChild(optionBasico)
 
         let optionFamiliar = document.createElement('option')
-        optionFamiliar.value = 'famiiar'
-        optionFamiliar.innerText = 'Familar'
+        optionFamiliar.value = 'familiar'
+        optionFamiliar.innerText = 'Familiar'
         document.getElementById(usuarioLista._id + '-select').appendChild(optionFamiliar)
 
         let optionEntrenador = document.createElement('option')

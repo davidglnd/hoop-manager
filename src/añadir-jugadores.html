@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="shortcut icon" href="img/logo1b.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.desktop.css">
+    <script type="module" src="js/main.js" defer></script>
+    <script type="module" src="js/utils.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1 id="nombre-clubReg2"></h1>
+    </header>
+    <nav>            
+        <ol id="menu-club">
+            <li><a href="club.html">Inicio</a></li>
+            <li>Equipos</li>
+            <li>Entrenamientos</li>
+            <li><a href="perfil.html">Mi perfil</a></li>
+            <li id="cerrar-sesion">Cerrar sesion</li>
+        </ol>
+    </nav>
+    <main>
+        <form id="añadir-jugador-form">
+            <label for="jugador-nombre">Nombre: <input type="text" id="jugador-nombre"></label>
+            <label for="jugador-apellidos">Apellidos: <input type="text" id="jugador-apellidos"></label>
+            <label for="jugador-fnac">Fecha nacimiento: <input type="date" id="jugador-fnac"></label>
+            <label for="jugador-sexo">Genero:</label>
+            <select name="sexo" id="jugador-sexo">
+                <option value="hombre">Masculino</option>
+                <option value="mujer">Femenino</option>
+            </select>
+            <label for="jugador-direccion">Direccion: <input type="text" id="jugador-direccion"></label>
+            <button type="submit">Añadir jugador</button>
+        </form>
+    </main>
+    <footer>
+        aqi tamos
+    </footer>
+</body>
+</html>

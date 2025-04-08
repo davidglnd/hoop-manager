@@ -347,6 +347,7 @@ export function leerUsuariosBD(){
     usersAlmacenadosDB.forEach(( /** @type {User} */newUser) => {
         store.user.create(newUser)
     });
+    console.log(store.user.getAll())
 }
 /**
  * Reads the club database from local storage and populates the store
