@@ -1,6 +1,6 @@
 import { Equipo } from "./classes/Equipo.js";
-import { registrarUsuario } from "./script.js";
-import { cerrarSesion } from "./script.js"; // preguntar porque no la usamos porque no la necesitamos
+import { registrarUsuario } from "./gestion-usuarios-script.js";
+import { cerrarSesion } from "./gestion-usuarios-script.js"; // preguntar porque no la usamos porque no la necesitamos
 import { INITIAL_STATE, store } from './store/redux.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)

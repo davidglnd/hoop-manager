@@ -1,5 +1,5 @@
 import { store } from '../js/store/redux.js';
-import { leerClubsBD } from '../js/script.js'
+import { leerClubsBD } from './gestion-usuarios-script.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 //TO DO DISEÑAR EL HTML PARA PODER AÑADIR MAS COSAS

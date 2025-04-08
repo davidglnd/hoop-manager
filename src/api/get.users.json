@@ -1,0 +1,14 @@
+[
+  {
+    "_id": "1",
+    "name": "Alvaro",
+    "email": "u1@e.com",
+    "role": "admin"
+  },
+  {
+    "_id": "2",
+    "name": "Pedro",
+    "email": "u2@e.com",
+    "role": "user"
+  }
+]
