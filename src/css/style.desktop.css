@@ -42,6 +42,9 @@ body{
         border:1px solid blue;
         width: 80%;
         min-height: 80vh;
+    }
+
+    main#main-inicio{
         display:grid;
         grid-auto-columns: 1fr; 
         grid-template-columns: 2.3fr 1fr 0.4fr; 

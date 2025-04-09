@@ -34,21 +34,26 @@
             <div id="contenedor-log-in" class="hidden">
                 <p id="iniciar-sesion-usuario">Inicia sesion como usuario</p>
                 <p id="iniciar-sesion-club">Inicia sesion como club</p>
+                <!---LOG IN CLUB-->
                 <form id="log-in-club" class="hidden">
                     <label for="email">Email del club</label>
                     <input type="email" id="email-club-log-in">
-                    <!-- <label for="siglas">Siglas</label>
-                    <input type="siglas" id="siglas">Cambiar por password -->
+                    <label for="pass-club-log-in">Contraseña</label>
+                    <input type="password" id="pass-club-log-in">
                     <button type="submit">Iniciar sesion</button>
                     <p id="error-login-club" class="hidden">no hay ninguna cuenta asociada a ese email</p>
+                    <p id="error-login-pass-club" class="hidden">constraseña erronea</p>
+
                 </form>
+                <!---LOG IN USUARIO-->
                 <form id="log-in-usuario" class="hidden">
                     <label for="email">Email</label>
                     <input type="email" id="email-usuario">
-                    <!-- <label for="codigo">Codigo del club</label>
-                    <input type="number" id="codigo"> CAmbiar por password -->
+                    <label for="pass-usuario-log-in">Constraseña</label>
+                    <input type="password" id="pass-usuario-log-in">
                     <button type="submit">Iniciar sesion</button>
                     <p id="error-login" class="hidden">no hay ninguna cuenta asociada a ese email</p>
+                    <p id="error-login-pass-user" class="hidden">constraseña erronea</p>
                 </form>
             </div>
             <h2 id="boton-sign-in">Registrarse</h2>
@@ -61,6 +66,8 @@
                     <input type="text" id="apellidos">
                     <label for="email">Email</label>
                     <input type="email" id="email">
+                    <label for="password-usuario">Contraseña</label>
+                    <input type="password" id="password-usuario">
                     <label for="n-telefono">Numero telefono</label>
                     <input type="tel" id="n-telefono">
                     <label for="cod-club">Codigo del club</label>
@@ -76,14 +83,14 @@
                     <input type="text" name="nombre-club" id="nombre-club">
                     <label for="siglas-club">Siglas del club</label>
                     <input type="text" name="siglas-club" id="siglas-club">
-                    <label for="codigo-club">Codigo postal</label><!--Establecer instrucciones de como establecer un pin-->
+                    <label for="codigo-club">Codigo postal</label>
                     <input type="text" name="codigo" id="codigo-club">
                     <label for="tel-club">Telefono</label>
                     <input type="tel" name="telefono" id="tel-club">
-                    <!-- <label for="logo-club">Logo</label>
-                    <input type="file" name="logo" id="logo-club" accept="image/*"> -->
                     <label for="email-club">Email del club</label>
                     <input type="email" name="email" id="email-club">
+                    <label for="password-club">Contraseña</label>
+                    <input type="password" name="password" id="password-club">
                     <button type="submit">Registrar club</button>
                 </form>
                 <p id="error-registro-club" class="hidden">Ese email ya esta asociado a un club</p>

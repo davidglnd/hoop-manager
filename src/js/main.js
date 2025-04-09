@@ -1,27 +1,39 @@
 //@ts-check
-import { cerrarSesion } from "./gestion-usuarios-script.js";
 import { registrarUsuario } from "./gestion-usuarios-script.js";
 import { INITIAL_STATE ,store } from './store/redux.js'
 import { Jugador } from "./classes/Jugador.js";
+//import jugador from '../api/jugadores_CBA0.json' with { type: "json" }
 //TO DO LOS FALLOS DE TS SON PORQUE FALTA VERIFICACIONES PARA VER QUE NO ES NULL EN ALGUN MOMENTO EN ADD JUGADOR ESTA ARREGLADO
 // TO DO, SEPARAR FUNCIONES DE ADDJUGADOR Y LA DE INCLUIR EN LOCALSTORAGE EL JUFGADOR
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
+/**
+ * When the page has finished loading, it does the following:
+ * 1. Gets the logged in user from session storage.
+ * 2. Gets the user from the store with the id of the logged in user.
+ * 3. Adds an event listener to the form for adding a player to the user's team so that when the form is submitted, the datosJugador function is called with the event and the user.
+ * 4. Calls the leerListaJugadores, mostrarInformacionUsuario, and mostrarHerramientasGestion functions with the user as an argument.
+ * 5. Calls the importarJugadores function (but this is commented out for now).
+ */
 function onDOMContentLoaded(){
     let usuarioLogeado = JSON.parse(sessionStorage.getItem('user') ?? '')
-    let usuarioBD = store.user.getById(usuarioLogeado._id)
+    
+    let usuarioBD = store?.user?.getById?.(usuarioLogeado._id);
 
     let añadirJugadores = document.getElementById('añadir-jugador-form')
 
     añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioBD) )
+
     leerListaJugadores()
     mostrarInformacionUsuario(usuarioBD)
     mostrarHerramientasGestion(usuarioBD)
+    //importarJugadores()
 }
+
 /**
  * Takes the data from the form and creates a new Jugador object with that data.
  * It then adds that Jugador to the array of jugadores of the usuarioBD.
  * @param {Event} event - the event that triggered this function.
- * @param {Usuario} usuarioBD - the user that is adding the jugador.
+ * @param {{ _id: string; clubAsoc: string; }} usuarioBD - The user object that is adding the Jugador.
  */
 function datosJugador(event,usuarioBD){
     event.preventDefault()
@@ -47,6 +59,7 @@ function datosJugador(event,usuarioBD){
  * @param {string} usuario.apellidos - The user's surname.
  * @param {string} usuario.email - The user's email address.
  * @param {string} usuario.nTelefono - The user's phone number.
+ * @param {string} usuario.rol - The user's phone number.
  */
 
 function mostrarInformacionUsuario(usuario){
@@ -63,6 +76,10 @@ function mostrarInformacionUsuario(usuario){
     let telefono = document.createElement('p')
     telefono.innerText = 'Telefono: ' + usuario.nTelefono
     contenedorInformacion?.appendChild(telefono)
+
+    let rol = document.createElement('p')
+    rol.innerText = 'Rol: ' + usuario.rol
+    contenedorInformacion?.appendChild(rol)
 
     let editarPerfil = document.createElement('button')
     editarPerfil.innerText = 'Editar perfil'
@@ -140,7 +157,7 @@ function guardarCambiosPerfil(event,usuario){
     let email = /** @type {HTMLInputElement} */(document.getElementById('email'))?.value
     let telefono = /** @type {HTMLInputElement} */(document.getElementById('telefono'))?.value
 
-    let usuarioCambiar = store.user.getById(usuario)
+    let usuarioCambiar = store?.user?.getById?.(usuario)
     
     let usuarioModificado = {
         ...usuarioCambiar,
@@ -230,7 +247,7 @@ function mayusculasInicial(text) {
 }
 /**
  * If the user is an entrenador, this function adds a menu item to the navigation menu
- * to allow them to create new entrenamientos.
+ * to allow them to use others functions.
  * @param {Object} usuarioBD - The user object from the database.
  * @param {string} usuarioBD.rol - The role of the user.
  */
@@ -248,6 +265,7 @@ function mostrarHerramientasGestion(usuarioBD){
         let aCrearEntrenamientos = document.createElement('a')
         aCrearEntrenamientos.innerText = 'Crear entrenamientos'
         aCrearEntrenamientos.href = 'crear-entrenamientos.html'
+
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
     }
     if (usuarioBD.rol === 'familiar') {
@@ -265,3 +283,15 @@ function mostrarHerramientasGestion(usuarioBD){
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
     }
 }
+
+
+
+
+/* IMPORTACION JUGADORES DE PRUEBA */
+
+// function importarJugadores(){
+//  console.log(jugador)
+//  jugador.forEach(jugador => {
+//     addJugador(jugador.nombre,jugador.apellidos,jugador.fnac,jugador.sexo,jugador.direccion,jugador._id_familiar)
+//  });
+// }

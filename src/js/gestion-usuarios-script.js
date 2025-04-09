@@ -34,12 +34,10 @@ function onDOMContentLoaded() {
     let mostrarLogClub = document.getElementById('iniciar-sesion-club')
 
     let formularioBorrado = document.getElementById('borrar-usuario')
-    let formularioLogOut = document.getElementById('cerrar-sesion')
 
     formularioRegistro?.addEventListener('submit', datosSigIN)//La interrogacion vale para ver si existe el form 
     logInUsuario?.addEventListener('submit', datosLogIn)//si no no hace el eventListener
     formularioBorrado?.addEventListener('submit', borrarUsuario)
-    formularioLogOut?.addEventListener('click', cerrarSesion)
     
     formularioClub?.addEventListener('submit', datosSignClub)
     mostrarLogUsuario?.addEventListener('click', mostrarLogInUsuario)
@@ -50,6 +48,7 @@ function onDOMContentLoaded() {
     botonLogIn?.addEventListener('click', mostrarLogIn)
     botonSignIn?.addEventListener('click', mostrarSignIn)
 
+    console.log('CONTENIDO DE REDUX AL CARGAR LA PÁGINA', store.user.getAll())
     leerUsuariosBD()
     leerClubsBD()
     comprobarSession()
@@ -83,8 +82,8 @@ function datosSigIN(event) {
     let apellidos = /** @type {HTMLInputElement} */(document.getElementById('apellidos'))?.value
     let telefono = /** @type {HTMLInputElement} */(document.getElementById('n-telefono'))?.value
     let codClub = /** @type {HTMLInputElement} */(document.getElementById('cod-club'))?.value
-
-    crearUsuario(name,email,apellidos,telefono,codClub)
+    let password = /** @type {HTMLInputElement} */(document.getElementById('password-usuario'))?.value
+    crearUsuario(name,email,apellidos,telefono,password,codClub)
     
 }
 /**
@@ -102,8 +101,9 @@ function datosSignClub(event){
     let codigoPostal = /** @type {HTMLInputElement} */(document.getElementById('codigo-club'))?.value
     let telClub = /** @type {HTMLInputElement} */(document.getElementById('tel-club'))?.value
     let emailClub = /** @type {HTMLInputElement} */(document.getElementById('email-club'))?.value
+    let passwordClub = /** @type {HTMLInputElement} */(document.getElementById('password-club'))?.value
 
-    crearClub(nombre,siglas,codigoPostal,telClub,emailClub)
+    crearClub(nombre,siglas,codigoPostal,telClub,emailClub,passwordClub)
 }
 /**
  * Takes the data from the form and uses it to log in the user.
@@ -114,10 +114,13 @@ function datosLogIn(event){
     event.preventDefault()
 
     let emailInput = document.getElementById('email-usuario')
+    let passwordInput = document.getElementById('pass-usuario-log-in')
 
     let email = /** @type {HTMLInputElement} */(emailInput)?.value
+    let password = /** @type {HTMLInputElement} */(passwordInput)?.value
 
-    logIn(email)//ojo al orden en el qe enviamos los parametros 
+
+    logIn(email,password)//ojo al orden en el qe enviamos los parametros 
 }
 /**
  * Takes the data from the form and uses it to log in the club.
@@ -128,10 +131,12 @@ function datosLogInClub(event){
     event.preventDefault()
     console.log('log in club')
     let emailInput = document.getElementById('email-club-log-in')
+    let passwordInput = document.getElementById('pass-club-log-in')
 
     let email = /** @type {HTMLInputElement} */(emailInput)?.value
+    let passwordClub = /** @type {HTMLInputElement} */(passwordInput)?.value
 
-    logInClub(email)
+    logInClub(email,passwordClub)
 }
 /**
  * Creates a new User instance and adds it to the USER_DB array.
@@ -143,10 +148,10 @@ function datosLogInClub(event){
  * @param {string} apellidos - El apellidos del usuario
  * @param {string} telefono - El telefono del usuario
  * @param {string} codClub - El codigo del club
- * 
+ * @param {*} password - La contraseña
  */
-function crearUsuario(name,email,apellidos,telefono,codClub){
-    let nuevoUsuario = new User('', name, email,apellidos,telefono,codClub)
+function crearUsuario(name,email,apellidos,telefono,password,codClub){
+    let nuevoUsuario = new User('', name, email,apellidos,telefono,codClub,password)
     if(store.user.getAll().findIndex((/** @type {{ email: string; }} */ user) => user.email === email) >= 0 || email === ''){
         console.log('error registro email')
         document.getElementById('error-registro1')?.classList.remove('hidden')//estilos
@@ -184,10 +189,10 @@ function crearUsuario(name,email,apellidos,telefono,codClub){
  * @param {string} codigoPostal - Codigo del club
  * @param {string} telClub - Telefono del club
  * @param {string} emailClub - Email del club
- *
+ * @param {*} [password] - Contraseña
  */
-function crearClub(nombre,siglas,codigoPostal,telClub,emailClub){
-    let nuevoClub = new Club(nombre,siglas,codigoPostal,telClub,emailClub, siglas + store.club.getAll().length)
+function crearClub(nombre,siglas,codigoPostal,telClub,emailClub,password){
+    let nuevoClub = new Club(nombre,siglas,codigoPostal,telClub,emailClub, siglas + store.club.getAll().length,password)
     if(store.club.getAll().findIndex((/** @type {{ email: string; }} */ club) => club.email === emailClub) >= 0){
         document.getElementById('error-registro-club')?.classList.remove('hidden')
         setTimeout(() => {
@@ -263,29 +268,25 @@ function borrarUsuario(event){
 
 }
 /**
- * Handles the sign-out form submission, preventing the default form behavior.
- * If a user is logged in, it removes the user session data and redirects to the home page.
- * 
- * @param {Event} event - The event object associated with the form submission.
- */
-export function cerrarSesion(event){
-    event.preventDefault()
-
-    sessionStorage.removeItem('user')
-    sessionStorage.removeItem('club')
-    location.href = '/index.html'
-
-}
-/**
  * Checks if a user exists in the USER_DB array and logs in the user if they do.
  * If the user exists, it redirects to the club page. Otherwise, it shows an error message.
  * @param {string} email - The email address of the user attempting to log in.
+ * @param {string} password
  */
-function logIn(email){
+function logIn(email,password){
     if(store.user.getByEmail?.(email) !== undefined){
-        sessionStorage.setItem('user', JSON.stringify(store.user.getByEmail?.(email)))
-        location.href = '/club.html'
-        console.log('Login user.....')
+        if(store.user.getByEmail?.(email).password === password){
+            sessionStorage.setItem('user', JSON.stringify(store.user.getByEmail?.(email)))
+            location.href = '/club.html'
+            console.log('Login user.....')
+        }else{
+            console.log('no existe el usuario')
+            //estilos
+            document.getElementById('error-login-pass-user')?.classList.remove('hidden')
+            setTimeout(() => {
+                document.getElementById('error-login-pass-user')?.classList.add('hidden')
+            }, 2000)
+        }
     }else{
         console.log('no existe el usuario')
         //estilos
@@ -300,13 +301,21 @@ function logIn(email){
  * Checks if a club exists in the CLUB_DB array and logs in the club if they do.
  * If the club exists, it redirects to the club page. Otherwise, it shows an error message.
  * @param {string} email - The email address of the club attempting to log in.
+ * @param {string} passwordClub
  */
-function logInClub(email){
+function logInClub(email,passwordClub){
     console.log(email)
     if(store.club.getByEmail?.(email) !== undefined){
-        sessionStorage.setItem('club', JSON.stringify(store.club.getByEmail?.(email)))
-        console.log('Login club.....')
-        location.href = '/admin-club.html'
+        if(store.club.getByEmail?.(email).password === passwordClub){
+            sessionStorage.setItem('club', JSON.stringify(store.club.getByEmail?.(email)))
+            console.log('Login club.....')
+            location.href = '/admin-club.html'
+        }else{
+            document.getElementById('error-login-pass-club')?.classList.remove('hidden')
+            setTimeout(() => {
+                document.getElementById('error-login-pass-club')?.classList.add('hidden')
+            }, 2000)
+        }
     }else{
         console.log('no existe el club')
         //estilos

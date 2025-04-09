@@ -1,6 +1,5 @@
 import { Equipo } from "./classes/Equipo.js";
 import { registrarUsuario } from "./gestion-usuarios-script.js";
-import { cerrarSesion } from "./gestion-usuarios-script.js"; // preguntar porque no la usamos porque no la necesitamos
 import { INITIAL_STATE, store } from './store/redux.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
@@ -175,7 +174,9 @@ function mostrarDivEntrenadores(){
     
     arrayUsuarios.forEach((usuarioLista) => {
         let parrafoUsuarios = document.createElement('p')
-        parrafoUsuarios.innerText = usuarioLista.name
-        document.getElementById('entrenadores').appendChild(parrafoUsuarios)
+        if(usuarioLista.rol === 'entrenador'){
+            parrafoUsuarios.innerText = usuarioLista.name
+            document.getElementById('entrenadores').appendChild(parrafoUsuarios)
+        }
     })
 }
