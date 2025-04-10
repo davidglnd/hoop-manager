@@ -464,6 +464,11 @@ const createStore = (reducer) => {
    * @returns void
    */
   const deleteJugador = (jugador, onEventDispatched) => _dispatch({ type: ACTION_TYPES.DELETE_JUGADOR, jugador }, onEventDispatched);
+     /**
+   * Deletes all the clubs
+   * @param {function | undefined} [onEventDispatched]
+   */
+    const deleteAllJugadores = (onEventDispatched) => _dispatch({ type: ACTION_TYPES.DELETE_ALL_JUGADORES}, onEventDispatched);
   //getter jugador
   const getAllJugadores = () => {return currentState.jugadores}
   // Public methods
@@ -511,6 +516,7 @@ const createStore = (reducer) => {
     update: updateJugador,
     delete: deleteJugador,
     getAll: getAllJugadores,
+    deleteAll: deleteAllJugadores
   }
   return {
     // Actions

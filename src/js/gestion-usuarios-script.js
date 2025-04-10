@@ -4,6 +4,9 @@ import { Club } from './classes/Club.js'
 import { SingletonDB } from './classes/SingletonDB.js'
 import { INITIAL_STATE, store } from './store/redux.js'
 import { comprobarSession } from './checkSession.js'
+
+//import club from '../api/clubes.json' with { type: "json" }
+
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 //TO DO DISEÑAR EL HTML PARA PODER AÑADIR MAS COSAS
 // TO DO desacernos por completo del ClubDB e implementarlo a traves de redux y el store (solo falta en borrar usuario que hace
@@ -47,10 +50,10 @@ function onDOMContentLoaded() {
 
     botonLogIn?.addEventListener('click', mostrarLogIn)
     botonSignIn?.addEventListener('click', mostrarSignIn)
-
-    console.log('CONTENIDO DE REDUX AL CARGAR LA PÁGINA', store.user.getAll())
+    
     leerUsuariosBD()
     leerClubsBD()
+    // es una fncion de prueba importarClubes()
     comprobarSession()
 }
 function mostrarLogIn(){
@@ -349,6 +352,7 @@ export function leerUsuariosBD(){
             usersDB = ''
         }
         usersAlmacenadosDB = JSON.parse(usersDB).users
+        console.log(usersAlmacenadosDB)
     }else{
         localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
     }
@@ -356,7 +360,7 @@ export function leerUsuariosBD(){
     usersAlmacenadosDB.forEach(( /** @type {User} */newUser) => {
         store.user.create(newUser)
     });
-    console.log(store.user.getAll())
+    
 }
 /**
  * Reads the club database from local storage and populates the store
@@ -393,3 +397,14 @@ export function leerClubsBD(){
 
 
 
+/*Funcion de prueba para añadir clubes*/
+// function importarClubes(){
+//  console.log(club)
+// //  store.club.deleteAll()
+// //  registrarClub()
+//  club.forEach(club => {
+//     let nuevoClub = new Club(club.nombre,club.siglas,club.codigoPostal,club.telefono,club.email,club.codigo,club.password)  
+//     store.club.create(nuevoClub)
+//     registrarClub()
+//  });
+// }

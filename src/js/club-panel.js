@@ -30,16 +30,18 @@ function datosEquipo(event){
     event.preventDefault()
 
     let selectCategoria = document.getElementById('categoria')
+    let inputNombre = document.getElementById('nombre-equipo')
     let inputPatrocinador = document.getElementById('patrocinador')
 
     let categoria = selectCategoria.value
     let patrocinador = inputPatrocinador.value
+    let nombre = inputNombre.value
     let clubAsoc = JSON.parse(sessionStorage.getItem('club')).codigo
 
-    añadirEquipoStore(categoria, patrocinador,clubAsoc)
+    añadirEquipoStore(categoria, nombre, patrocinador,clubAsoc)
 }
-function añadirEquipoStore(categoria,patrocinador,clubAsoc){
-    let nuevoEquipo = new Equipo('',categoria, patrocinador, {}, clubAsoc)
+function añadirEquipoStore(categoria,nombre,patrocinador,clubAsoc){
+    let nuevoEquipo = new Equipo('', nombre,categoria, patrocinador, {}, clubAsoc)
 
     store.equipo.create(nuevoEquipo)
     añadirEquipo()

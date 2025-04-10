@@ -1,10 +1,18 @@
-//@ts-check
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck // TO DO NOS VAMOS A COMER VOY A SUBIR EL SELEC DEL AREA DE TRABAJO AHORA SEGUIMOS DEFINIENDO TIPOS Y ETC
 import { registrarUsuario } from "./gestion-usuarios-script.js";
 import { INITIAL_STATE ,store } from './store/redux.js'
 import { Jugador } from "./classes/Jugador.js";
+
+
+
+
 //import jugador from '../api/jugadores_CBA0.json' with { type: "json" }
-//TO DO LOS FALLOS DE TS SON PORQUE FALTA VERIFICACIONES PARA VER QUE NO ES NULL EN ALGUN MOMENTO EN ADD JUGADOR ESTA ARREGLADO
+
+
+
 // TO DO, SEPARAR FUNCIONES DE ADDJUGADOR Y LA DE INCLUIR EN LOCALSTORAGE EL JUFGADOR
+
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 /**
  * When the page has finished loading, it does the following:
@@ -24,11 +32,12 @@ function onDOMContentLoaded(){
     añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioBD) )
 
     leerListaJugadores()
+    leerEquipos()
     mostrarInformacionUsuario(usuarioBD)
     mostrarHerramientasGestion(usuarioBD)
+    mostrarEquipos(usuarioBD)
     //importarJugadores()
 }
-
 /**
  * Takes the data from the form and creates a new Jugador object with that data.
  * It then adds that Jugador to the array of jugadores of the usuarioBD.
@@ -37,14 +46,16 @@ function onDOMContentLoaded(){
  */
 function datosJugador(event,usuarioBD){
     event.preventDefault()
-    console.log(usuarioBD)
+
     let inputNombre = /** @type {HTMLInputElement} */(document.getElementById('jugador-nombre')).value
     let inputApellidos = /** @type {HTMLInputElement} */(document.getElementById('jugador-apellidos')).value
     let inputFnac = /** @type {HTMLInputElement} */(document.getElementById('jugador-fnac')).value
     let inputSexo = /** @type {HTMLInputElement} */(document.getElementById('jugador-sexo')).value
     let inputDireccion = /** @type {HTMLInputElement} */(document.getElementById('jugador-direccion')).value
     
-    addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD)
+    let categoriaCalculada = calculoCategoria(inputFnac)
+
+    addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD,categoriaCalculada)
 }
 /**
  * Displays the user's profile information on the webpage.
@@ -189,9 +200,10 @@ function guardarCambiosPerfil(event,usuario){
  * @param {Object} usuarioBD - The user object that is adding the Jugador.
  * @param {string} usuarioBD._id - The id of the user.
  * @param {string} usuarioBD.clubAsoc - The club associated with the user.
+ * @param {string} categoriaCalculada - The category of the new Jugador.
  */
-function addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD){
-    let nuevoJugador = new Jugador('',usuarioBD._id,inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD.clubAsoc)
+function addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD,categoriaCalculada){
+    let nuevoJugador = new Jugador('',usuarioBD._id,inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD.clubAsoc,'',categoriaCalculada)
 
     store.jugador.create(nuevoJugador)
 
@@ -214,13 +226,44 @@ function leerListaJugadores(){
             listaJugadoresBD = ''
         }
         listaJugadores = JSON.parse(listaJugadoresBD).jugadores
+        if(listaJugadores){
+            listaJugadores.forEach(( /** @type {Jugador} */newJugador) => {
+                store.jugador.create(newJugador)
+            })
+        }
     }else{
         localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
     }
-    listaJugadores.forEach(( /** @type {Jugador} */newJugador) => {
-        store.jugador.create(newJugador)
-    })
-    console.log(store.jugador.getAll())
+
+}
+/**
+ * Reads the list of Equipos from local storage and updates the store
+ * array with the read data.
+ *
+ * If no data is found in local storage, the global store is left unchanged.
+ *
+ * @returns {void}
+ * @import { Equipo } from "./classes/Equipo.js"; 
+ */
+function leerEquipos(){
+    let listaEquipos = []
+
+    if(localStorage.getItem('REDUX_DB')){
+        let listaEquiposBD = localStorage.getItem('REDUX_DB')
+
+        if(listaEquiposBD === null){
+            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
+            listaEquiposBD = ''
+        }
+        listaEquipos = JSON.parse(listaEquiposBD).equipos
+        if(listaEquipos){
+            listaEquipos.forEach(( /** @type {Equipo} */newEquipo) => {
+                store.equipo.create(newEquipo)
+            })
+        }
+    }else{
+        localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
+    }
 }
 /**
  * Removes all child elements from the specified container element.
@@ -241,7 +284,7 @@ function borradoContenedoresPerfil(contenedor){
  * @returns {string} The formatted string.
  */
 function mayusculasInicial(text) {
-    console.log(text)
+
     const PRIMERA_LETRA = text.charAt(0);
     return PRIMERA_LETRA.toUpperCase() + text.slice(1).toLowerCase();
 }
@@ -252,8 +295,9 @@ function mayusculasInicial(text) {
  * @param {string} usuarioBD.rol - The role of the user.
  */
 function mostrarHerramientasGestion(usuarioBD){
-    console.log(usuarioBD.rol)
+
     if (usuarioBD.rol === 'entrenador') {
+        /*CREA ENTRENAMIENTOS*/
         const MENU_NAVEGACION = document.getElementById('menu-club');
         
         const LI_CERRAR_SESION = document.getElementById('cerrar-sesion');
@@ -267,6 +311,7 @@ function mostrarHerramientasGestion(usuarioBD){
         aCrearEntrenamientos.href = 'crear-entrenamientos.html'
 
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
+
     }
     if (usuarioBD.rol === 'familiar') {
         const MENU_NAVEGACION = document.getElementById('menu-club');
@@ -284,14 +329,89 @@ function mostrarHerramientasGestion(usuarioBD){
     }
 }
 
+/**
+ * Calculate the category of a player based on their date of birth.
+ * @param {string} fnac - The date of birth of the player in the format "yyyy-mm-dd"
+ * @returns {string} The category of the player.
+ */
+function calculoCategoria(fnac){
+    const TEMPORADA_ACTUAL = new Date().getFullYear()
+    let stringSpliced = parseInt(fnac.slice(0,4))
+    let edadTemporada = TEMPORADA_ACTUAL - stringSpliced
+    if(edadTemporada === 7 || edadTemporada === 8 || edadTemporada === 9) return "BENJAMIN"
+    if(edadTemporada === 10 || edadTemporada === 11) return "Alevin"
+    if(edadTemporada === 12 || edadTemporada === 13) return "Infantil"
+    if(edadTemporada === 14 || edadTemporada === 15) return "Cadete"
+    if(edadTemporada === 16 || edadTemporada === 17) return "Juvenil"
+    if(edadTemporada >= 18) return "Senior"
+    return "Desconocido"
+}
+function mostrarEquipos(usuarioBD){
+    const MAIN_ENTRENADOR = document.getElementById('main-entrenador') // declaramos como constante el main en el que vamos a trabajar
+    let listaEquipos = store.equipo.getAll()
+    console.log(listaEquipos)
+    if(usuarioBD.rol === 'entrenador'){ // si el usuario es entrenador le lanzamos un area para trabajar
+        borradoContenedoresPerfil(MAIN_ENTRENADOR)// le pasamos la constante a la funcion de borrado para dejar limpio el main
+
+        //Creamos la estructura del area de trabajo
+        let h1 = document.createElement('h1') 
+        h1.innerText = 'Gestion de equipos' 
+        MAIN_ENTRENADOR?.appendChild(h1) 
+
+        let h3 = document.createElement('h3')
+        h3.innerText = 'Selecciona un equipo:'
+        MAIN_ENTRENADOR?.appendChild(h3)
+
+        let select = document.createElement('select')
+        select.id = 'select-equipo-gestionar'
+        MAIN_ENTRENADOR?.appendChild(select)
+
+        listaEquipos.forEach((/** @type {Equipo} */ equipo) => {
+            let option = document.createElement('option')
+            option.value = equipo.nombre
+            option.innerText = equipo.nombre
+            select.appendChild(option)
+        });
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 /* IMPORTACION JUGADORES DE PRUEBA */
 
 // function importarJugadores(){
-//  console.log(jugador)
-//  jugador.forEach(jugador => {
-//     addJugador(jugador.nombre,jugador.apellidos,jugador.fnac,jugador.sexo,jugador.direccion,jugador._id_familiar)
+
+//     // let listaJugadores = JSON.parse(localStorage.getItem('REDUX_DB') || '')
+
+//     // listaJugadores.jugadores = store.jugador.deleteAll()
+
+//     // localStorage.setItem('REDUX_DB', JSON.stringify(listaJugadores))
+
+//     // localStorage.setItem('REDUX_DB', JSON.stringify(listaJugadores))
+//     jugador.forEach(jugador => {
+//         let k = calculoCategoria(jugador.fnac)
+//         console.log(k)
+//     addJugador(jugador.nombre,jugador.apellidos,jugador.fnac,jugador.sexo,jugador.direccion,jugador._id_familiar,k)
 //  });
 // }

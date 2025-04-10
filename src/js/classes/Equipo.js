@@ -1,6 +1,7 @@
 //@ts-check
 export class Equipo {
     _id
+    nombre
     categoria
     patrocinador    
     jugadores
@@ -12,13 +13,16 @@ export class Equipo {
      * @param {string} patrocinador - Patrocinador del equipo
      * @param {Object} jugadores - Objetos de tipo Jugador que forman parte del equipo
      * @param {string} clubAsoc - The club associated with the user, default is undefined.
+     * @param {string} nombre
      */
-    constructor(_id, categoria, patrocinador = "", jugadores = {}, clubAsoc) {
+    constructor(_id, nombre, categoria, patrocinador = "", jugadores = {}, clubAsoc) {
+        const timestamp = new Date()
         if (_id === ''){
-            this._id = clubAsoc + '.' + categoria
+            this._id = String(timestamp.getTime())
         }else{
             this._id = _id
         }
+        this.nombre = nombre
         this.categoria = categoria
         this.patrocinador = patrocinador
         this.jugadores = jugadores
