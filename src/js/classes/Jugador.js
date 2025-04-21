@@ -27,7 +27,7 @@ export class Jugador {
      * @param {string} direccion - Direccion del jugador
      * @param {string} club
      */
-    constructor(_id,_id_familiar,nombre,apellidos,fnac,sexo,direccion,club,posicion = 'por definir',categoria = '',email = '',nTelefono = ''){
+    constructor(_id,_id_familiar='',nombre,apellidos,fnac,sexo,direccion,club,posicion = 'por definir',categoria = '',email = '',nTelefono = ''){
         const timestamp = new Date()
         if(_id === ''){
             this._id = String(timestamp.getTime())

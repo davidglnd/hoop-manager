@@ -42,6 +42,15 @@ http.createServer(function server_onRequest (request, response) {
     let pathname = url.parse(request.url).pathname;
     let direccion = new URL(`http://${process.env.IP ?? 'localhost'}:${process.env.PORT}${request.url}`)
     let responseJSON = {}
+    const menuNavegacion = `
+    <menu>
+      <li><a href="/">HOME</a></li>
+      <li><a href="/login">LOGIN</a></li>
+      <li><a href="/signup">SIGN UP</a></li>
+      <li><a href="/api/get/users">LEER USUARIOS</a></li>
+      <li><a href="/api/get/articles">LEER ARTICULOS</a></li>
+    </menu>
+    `
 
     // Router
     switch (pathname) {
@@ -50,25 +59,13 @@ http.createServer(function server_onRequest (request, response) {
       case '/index.html':
         console.log(`HOME solicitado`);
         response.writeHead(200, {'Content-Type': 'text/html'});
-        response.write(`
-          <h1>Home</h1>
-          <nav>
-          <li><a href="/login">Login</a></li>
-          <li><a href="/signup">Signin</a></li>
-          <li><a href="/api/get/users">Usuarios</a></li>
-          `);
+        response.write(`<h1>HOME</h1>${menuNavegacion}`);
         break
       case '/login':
       case '/login.html':
         console.log(`LOGIN solicitado`);
         response.writeHead(200, {'Content-Type': 'text/html'});
-        response.write(`
-          <h1>LOG IN</h1>
-          <form action="/api/create/user">
-            <input type="text" name="name" placeholder="Nombre de usuario" required>
-            <button type="submit">Sign Up</button>
-          </form>
-          `);
+        response.write(`<h1>LOGIN</h1>${menuNavegacion}`);
         break;
       case '/signup':
       case '/signup.html':
@@ -76,6 +73,7 @@ http.createServer(function server_onRequest (request, response) {
         response.writeHead(200, {'Content-Type': 'text/html'});
         response.write(`
           <h1>SIGN UP</h1>
+          ${menuNavegacion}
           <form action="/api/create/user">
             <input type="text" name="name" placeholder="Nombre de usuario" required>
             <button type="submit">Sign Up</button>

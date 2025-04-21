@@ -7,7 +7,6 @@ import { Jugador } from "./classes/Jugador.js";
 
 
 
-//import jugador from '../api/jugadores_CBA0.json' with { type: "json" }
 
 
 
@@ -36,7 +35,6 @@ function onDOMContentLoaded(){
     mostrarInformacionUsuario(usuarioBD)
     mostrarHerramientasGestion(usuarioBD)
     mostrarEquipos(usuarioBD)
-    //importarJugadores()
 }
 /**
  * Takes the data from the form and creates a new Jugador object with that data.
@@ -334,7 +332,7 @@ function mostrarHerramientasGestion(usuarioBD){
  * @param {string} fnac - The date of birth of the player in the format "yyyy-mm-dd"
  * @returns {string} The category of the player.
  */
-function calculoCategoria(fnac){
+export function calculoCategoria(fnac){
     const TEMPORADA_ACTUAL = new Date().getFullYear()
     let stringSpliced = parseInt(fnac.slice(0,4))
     let edadTemporada = TEMPORADA_ACTUAL - stringSpliced
@@ -349,8 +347,8 @@ function calculoCategoria(fnac){
 function mostrarEquipos(usuarioBD){
     const MAIN_ENTRENADOR = document.getElementById('main-entrenador') // declaramos como constante el main en el que vamos a trabajar
     let listaEquipos = store.equipo.getAll()
-    console.log(listaEquipos)
-    if(usuarioBD.rol === 'entrenador'){ // si el usuario es entrenador le lanzamos un area para trabajar
+    console.log(usuarioBD.clubAsoc)
+    if(usuarioBD.rol === 'entrenador' && location.pathname ==='/equipos.html'){ // si el usuario es entrenador le lanzamos un area para trabajar
         borradoContenedoresPerfil(MAIN_ENTRENADOR)// le pasamos la constante a la funcion de borrado para dejar limpio el main
 
         //Creamos la estructura del area de trabajo
@@ -367,12 +365,64 @@ function mostrarEquipos(usuarioBD){
         MAIN_ENTRENADOR?.appendChild(select)
 
         listaEquipos.forEach((/** @type {Equipo} */ equipo) => {
-            let option = document.createElement('option')
-            option.value = equipo.nombre
-            option.innerText = equipo.nombre
-            select.appendChild(option)
+            if(equipo.clubAsoc === usuarioBD.clubAsoc){
+                let option = document.createElement('option')
+                option.value = equipo._id
+                option.innerText = equipo.nombre
+                select.appendChild(option)
+            }
+
         });
+
+        let sectionEquipoSeleccionado = document.createElement('section')
+        sectionEquipoSeleccionado.id = 'equipo-seleccionado'
+        MAIN_ENTRENADOR?.appendChild(sectionEquipoSeleccionado)
+        
+        select.addEventListener('change', (event) => {
+            let valorSelect = event.target.value
+            borradoContenedoresPerfil(sectionEquipoSeleccionado)
+            gestionarEquipo(sectionEquipoSeleccionado,valorSelect)
+        })
+        
     }
+}
+function gestionarEquipo(sectionEquipoSeleccionado,nombreSelect){
+    let equipoSeleccionado = store.equipo.getById(nombreSelect)
+    
+    let form = document.createElement('form')
+    form.id = 'form-añadir-jugadores'
+    sectionEquipoSeleccionado.appendChild(form)
+
+    let h2 = document.createElement('h2')
+    h2.innerText = equipoSeleccionado.nombre + ' - ' + equipoSeleccionado.categoria
+    document.getElementById('form-añadir-jugadores').appendChild(h2)
+
+    let jugadoresClubCategoria = filtrarJugadores(equipoSeleccionado)
+    if(jugadoresClubCategoria.length > 0){
+        jugadoresClubCategoria.forEach((jugador) => {
+            let p = document.createElement('p')
+            p.innerText = jugador.nombre + ' ' + jugador.apellidos
+            document.getElementById('form-añadir-jugadores').appendChild(p)
+    })
+    }else{
+        let p = document.createElement('p')
+        p.innerText = 'No hay jugadores de esta edad seleccionables para este equipo'
+        sectionEquipoSeleccionado.appendChild(p)
+    }
+    //DOING ESTA FUNCION SOLO ES PARA MOSTRAR EQUIPOS DE UN CLUB Y SUS JUGADORES en esa categoria SIN AÑADIR, PARA PODER AÑADIRLOS LUEGO TENDREMOS QUE TENER OTRA QUE MUESTRE LOS YA AÑADIDOS
+}
+
+function filtrarJugadores(equipo){
+    let listaJugadores = JSON.parse(localStorage.getItem('REDUX_DB')).jugadores
+
+
+    let jugadoresClub = listaJugadores.filter(jugador => jugador.club === equipo.clubAsoc)
+
+    let jugadoresCategoria = jugadoresClub.filter(jugador => jugador.categoria.toLowerCase() === equipo.categoria.toLowerCase())
+
+    return jugadoresCategoria
+
+    
 }
 
 
@@ -395,23 +445,3 @@ function mostrarEquipos(usuarioBD){
 
 
 
-
-
-
-/* IMPORTACION JUGADORES DE PRUEBA */
-
-// function importarJugadores(){
-
-//     // let listaJugadores = JSON.parse(localStorage.getItem('REDUX_DB') || '')
-
-//     // listaJugadores.jugadores = store.jugador.deleteAll()
-
-//     // localStorage.setItem('REDUX_DB', JSON.stringify(listaJugadores))
-
-//     // localStorage.setItem('REDUX_DB', JSON.stringify(listaJugadores))
-//     jugador.forEach(jugador => {
-//         let k = calculoCategoria(jugador.fnac)
-//         console.log(k)
-//     addJugador(jugador.nombre,jugador.apellidos,jugador.fnac,jugador.sexo,jugador.direccion,jugador._id_familiar,k)
-//  });
-// }

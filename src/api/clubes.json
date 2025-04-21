@@ -1,6 +1,6 @@
 [
     {
-      "id": "1712652340000",
+      "_id": "1712652340000",
       "nombre": "Club Baloncesto Almuñecar",
       "siglas": "CBA",
       "codigoPostal": "18690",
@@ -10,7 +10,7 @@
       "password": "Paramo13"
     },
     {
-      "id": "1712652340001",
+      "_id": "1712652340001",
       "nombre": "Club Deportivo Granada Basket",
       "siglas": "CGB",
       "codigoPostal": "18014",
@@ -20,7 +20,7 @@
       "password": "granada123"
     },
     {
-      "id": "1712652340002",
+      "_id": "1712652340002",
       "nombre": "Basket Costa Tropical",
       "siglas": "BCT",
       "codigoPostal": "18730",
@@ -30,7 +30,7 @@
       "password": "tropical123"
     },
     {
-      "id": "1712652340003",
+      "_id": "1712652340003",
       "nombre": "Escuela Baloncesto Motril",
       "siglas": "EBM",
       "codigoPostal": "18600",

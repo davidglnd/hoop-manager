@@ -53,8 +53,8 @@ function onDOMContentLoaded() {
     
     leerUsuariosBD()
     leerClubsBD()
-    // es una fncion de prueba importarClubes()
     comprobarSession()
+    console.log('Todo cargado')
 }
 function mostrarLogIn(){
     document.getElementById('contenedor-log-in')?.classList.remove('hidden')
@@ -195,7 +195,7 @@ function crearUsuario(name,email,apellidos,telefono,password,codClub){
  * @param {*} [password] - Contraseña
  */
 function crearClub(nombre,siglas,codigoPostal,telClub,emailClub,password){
-    let nuevoClub = new Club(nombre,siglas,codigoPostal,telClub,emailClub, siglas + store.club.getAll().length,password)
+    let nuevoClub = new Club('',nombre,siglas,codigoPostal,telClub,emailClub, siglas + store.club.getAll().length,password)
     if(store.club.getAll().findIndex((/** @type {{ email: string; }} */ club) => club.email === emailClub) >= 0){
         document.getElementById('error-registro-club')?.classList.remove('hidden')
         setTimeout(() => {
@@ -352,7 +352,6 @@ export function leerUsuariosBD(){
             usersDB = ''
         }
         usersAlmacenadosDB = JSON.parse(usersDB).users
-        console.log(usersAlmacenadosDB)
     }else{
         localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
     }

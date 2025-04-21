@@ -16,6 +16,7 @@ function onDOMContentLoaded(){
     botonEquipos?.addEventListener('click', mostrarDivEquipos)
 
     leerEquipoBD()
+    
 }
 function mostrarDivEquipos(){
     //vamos a escodnder el resto de contenedores
@@ -182,3 +183,6 @@ function mostrarDivEntrenadores(){
         }
     })
 }
+
+
+

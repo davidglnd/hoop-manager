@@ -428,7 +428,7 @@ const createStore = (reducer) => {
    */
   const deleteAllEquipos = (onEventDispatched) => _dispatch({ type: ACTION_TYPES.DELETE_ALL_EQUIPOS}, onEventDispatched);
   //Getters equipo
-  const getEquipoByCodAsoc = (/** @type {string} */ clubAsoc) => { return currentState.equipos.find((/** @type {Equipo} */equipo) => equipo.clubAsoc === clubAsoc) };
+  const getEquipoById = (/** @type {string} */ id) => { return currentState.equipos.find((/** @type {Equipo} */equipo) => equipo._id === id) };
   /**
    * Returns all the clubs
    * @returns {Array<Equipo>}
@@ -506,7 +506,7 @@ const createStore = (reducer) => {
     read: readListEquipos,
     update: updateEquipo,
     delete: deleteEquipo,
-    getById: getEquipoByCodAsoc,
+    getById: getEquipoById,
     getAll: getAllEquipo,
     deleteAll: deleteAllEquipos
   }
