@@ -129,7 +129,7 @@ const appReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         clubs: state.clubs.map((/** @type {Club} */club) => {
-          if (club.id === actionWithClub?.club?.id) {
+          if (club._id === actionWithClub?.club?._id) {
             return actionWithClub.club
           }
           return club
@@ -138,7 +138,7 @@ const appReducer = (state = INITIAL_STATE, action) => {
     case ACTION_TYPES.DELETE_CLUB:
       return {
         ...state,
-        clubs: state.clubs.filter((/** @type {Club} */club) => club.id !== actionWithClub?.club?.id)
+        clubs: state.clubs.filter((/** @type {Club} */club) => club._id !== actionWithClub?.club?._id)
       };
     case ACTION_TYPES.DELETE_ALL_CLUBS:
       return {

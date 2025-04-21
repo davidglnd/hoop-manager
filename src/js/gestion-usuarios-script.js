@@ -4,14 +4,21 @@ import { Club } from './classes/Club.js'
 import { SingletonDB } from './classes/SingletonDB.js'
 import { INITIAL_STATE, store } from './store/redux.js'
 import { comprobarSession } from './checkSession.js'
+import { HttpError } from './classes/HttpError.js'
+import { simpleFetch } from './lib/simpleFetch.js'
 
 //import club from '../api/clubes.json' with { type: "json" }
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
-//TO DO DISEÑAR EL HTML PARA PODER AÑADIR MAS COSAS
 // TO DO desacernos por completo del ClubDB e implementarlo a traves de redux y el store (solo falta en borrar usuario que hace
 // falta implementarlo primero en el html )
 const USER_DB = new SingletonDB()
+
+const API_PORT = location.port ? `:${1337}` : ''
+const TIMEOUT = 10000
+
+
+
 /**
  * Evento que se lanza cuando el contenido de la pagina ha sido cargado en memoria
  * y se puede acceder a el.
@@ -153,7 +160,7 @@ function datosLogInClub(event){
  * @param {string} codClub - El codigo del club
  * @param {*} password - La contraseña
  */
-function crearUsuario(name,email,apellidos,telefono,password,codClub){
+async function crearUsuario(name,email,apellidos,telefono,password,codClub){
     let nuevoUsuario = new User('', name, email,apellidos,telefono,codClub,password)
     if(store.user.getAll().findIndex((/** @type {{ email: string; }} */ user) => user.email === email) >= 0 || email === ''){
         console.log('error registro email')
@@ -173,16 +180,24 @@ function crearUsuario(name,email,apellidos,telefono,password,codClub){
         }, 5000)
         return
     }
+    // ESTAMOS AQUI EXPLORANDO METER EXPRESS Y ESCRIBIR EL USUARIO EN EL JSON LO HACE YA EL EXPRESS 
+    //store.user.create(nuevoUsuario)
     
-    store.user.create(nuevoUsuario)
+    const payload = JSON.stringify(nuevoUsuario)
+
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/users`, 'POST', payload)
+    if (!apiData) {
+        //estilos
+        document.getElementById('registrado')?.classList.remove('hidden')
+        setTimeout(() => {
+            document.getElementById('registrado')?.classList.add('hidden')
+            location.href = '/index.html'
+        }, 2000)
+    }
+    console.log('Respuesta del servidor de APIs', apiData)
 
     registrarUsuario()
-    //estilos
-    document.getElementById('registrado')?.classList.remove('hidden')
-    setTimeout(() => {
-        document.getElementById('registrado')?.classList.add('hidden')
-        location.href = '/index.html'
-    }, 2000)
+
 }
 /**
  * Crea un nuevo club con los datos proporcionados y lo almacena en
@@ -396,14 +411,73 @@ export function leerClubsBD(){
 
 
 
-/*Funcion de prueba para añadir clubes*/
-// function importarClubes(){
-//  console.log(club)
-// //  store.club.deleteAll()
-// //  registrarClub()
-//  club.forEach(club => {
-//     let nuevoClub = new Club(club.nombre,club.siglas,club.codigoPostal,club.telefono,club.email,club.codigo,club.password)  
-//     store.club.create(nuevoClub)
-//     registrarClub()
-//  });
-// }
+
+
+/**
+ * Retrieves the shopping list data from session storage.
+ *
+ * @returns {import('./store/redux.js').State} Saved state.
+ * If no data is found, returns an empty State object.
+ */
+function getDataFromSessionStorage() {
+    const defaultValue = JSON.stringify(INITIAL_STATE)
+    return JSON.parse(sessionStorage.getItem('REDUX_DB') || defaultValue)
+  }
+/**
+ * Get data from API
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {any} [data]
+ * @returns {Promise<Array<User>>}
+ */
+export async function getAPIData(apiURL, method = 'GET', data) {
+    let apiData
+  
+    try {
+      let headers = new Headers()
+      headers.append('Content-Type', 'application/json')
+      headers.append('Access-Control-Allow-Origin', '*')
+      if (data) {
+        headers.append('Content-Length', String(JSON.stringify(data).length))
+      }
+      // Añadimos la cabecera Authorization si el usuario esta logueado
+      if (isUserLoggedIn()) {
+        const userData = getDataFromSessionStorage()
+        headers.append('Authorization', `Bearer ${userData?.user?.token}`)
+      }
+      apiData = await simpleFetch(apiURL, {
+        // Si la petición tarda demasiado, la abortamos
+        signal: AbortSignal.timeout(TIMEOUT),
+        method: method,
+        body: data ?? undefined,
+        headers: headers
+      });
+    } catch (/** @type {any | HttpError} */err) {
+      // En caso de error, controlamos según el tipo de error
+      if (err.name === 'AbortError') {
+        console.error('Fetch abortado');
+      }
+      if (err instanceof HttpError) {
+        if (err.response.status === 404) {
+          console.error('Not found');
+        }
+        if (err.response.status === 500) {
+          console.error('Internal server error');
+        }
+      }
+    }
+  
+    return apiData
+  }
+/**
+ * Checks if there is a user logged in by verifying the presence of a token
+ * in the local storage.
+ *
+ * @returns {boolean} True if the user is logged in, false otherwise.
+ */
+function isUserLoggedIn() {
+    const userData = getDataFromSessionStorage()
+    return userData?.user?.token
+  }
+
+

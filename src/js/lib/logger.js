@@ -1,0 +1,1 @@
+console.log('libreria importada con éxito')
