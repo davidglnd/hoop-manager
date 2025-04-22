@@ -1,4 +1,4 @@
-//@ts-check
+
 import { User } from './classes/User.js'
 import { Club } from './classes/Club.js'
 import { SingletonDB } from './classes/SingletonDB.js'
@@ -129,8 +129,9 @@ function datosLogIn(event){
     let email = /** @type {HTMLInputElement} */(emailInput)?.value
     let password = /** @type {HTMLInputElement} */(passwordInput)?.value
 
-
-    logIn(email,password)//ojo al orden en el qe enviamos los parametros 
+    let loginUser =new User('', '', email,'','','',password)
+    
+    logIn(loginUser)//ojo al orden en el qe enviamos los parametros 
 }
 /**
  * Takes the data from the form and uses it to log in the club.
@@ -146,7 +147,9 @@ function datosLogInClub(event){
     let email = /** @type {HTMLInputElement} */(emailInput)?.value
     let passwordClub = /** @type {HTMLInputElement} */(passwordInput)?.value
 
-    logInClub(email,passwordClub)
+    let loginClub = new Club('','','','','',email,'',passwordClub)
+
+    logInClub(loginClub)
 }
 /**
  * Creates a new User instance and adds it to the USER_DB array.
@@ -182,7 +185,7 @@ async function crearUsuario(name,email,apellidos,telefono,password,codClub){
     }
     // ESTAMOS AQUI EXPLORANDO METER EXPRESS Y ESCRIBIR EL USUARIO EN EL JSON LO HACE YA EL EXPRESS 
     //store.user.create(nuevoUsuario)
-    
+    // EL CODIGO QUE SIGUE DEBERIA IR EN ACTUALIZARLOCALSTORAGE PORQUE ESTAMOS ESCRIBIENDO EN LA "NUEVA BD" Y LA PARTE DE ARRIBA HABRIA QUE COMPROBAR SI LOS DATOS ESTAN EN ESE JSON ANTES DE ESCRIBIR NADA
     const payload = JSON.stringify(nuevoUsuario)
 
     const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/users`, 'POST', payload)
@@ -196,7 +199,7 @@ async function crearUsuario(name,email,apellidos,telefono,password,codClub){
     }
     console.log('Respuesta del servidor de APIs', apiData)
 
-    registrarUsuario()
+    actualizarLocalStorageUsuarios()
 
 }
 /**
@@ -222,7 +225,7 @@ function crearClub(nombre,siglas,codigoPostal,telClub,emailClub,password){
     
     store.club.create(nuevoClub)
 
-    registrarClub()    
+    actualizarLocalStorageClubs()    
     
     setTimeout(() => {
         document.getElementById('registrado-club')?.classList.add('hidden')
@@ -236,7 +239,7 @@ function crearClub(nombre,siglas,codigoPostal,telClub,emailClub,password){
  * and stores it in local storage under the key 'USER_DB'.
  * This allows the user database to be persisted across sessions.
  */
-export function registrarUsuario(){
+export function actualizarLocalStorageUsuarios(){
     //localStorage.setItem('USER_DB', JSON.stringify(store.user.getAll()))
     let listaUsuarios = JSON.parse(localStorage.getItem('REDUX_DB') || '')
 
@@ -253,7 +256,7 @@ export function registrarUsuario(){
  * and stores it in local storage under the key 'CLUB_DB'.
  * This allows the club database to be persisted across sessions.
  */
-function registrarClub(){
+function actualizarLocalStorageClubs(){
     //localStorage.setItem('CLUB_DB',JSON.stringify(store.club.getAll()))
     let listaClubs = JSON.parse(localStorage.getItem('REDUX_DB') || '')
 
@@ -279,68 +282,52 @@ function borrarUsuario(event){
             usuarioLogeado = ''
         }
         USER_DB.borrarUsuario(JSON.parse(usuarioLogeado).email)
-        registrarUsuario()//cambiar nombre de la function
+        actualizarLocalStorageUsuarios()
         sessionStorage.removeItem('user')
         location.href = '/index.html'
     }
 
 }
+
 /**
- * Checks if a user exists in the USER_DB array and logs in the user if they do.
- * If the user exists, it redirects to the club page. Otherwise, it shows an error message.
- * @param {string} email - The email address of the user attempting to log in.
- * @param {string} password
+ * Handles the user login process upon form submission, preventing the default form behavior.
+ * If the user is not logged in and the login data is correct, it logs in the user, saves the user session data, and redirects to the club page.
+ * If the login data is incorrect, it shows an error message to the user.
+ *
+ * @param {User} loginUser - The user object containing the user data to be logged in.
  */
-function logIn(email,password){
-    if(store.user.getByEmail?.(email) !== undefined){
-        if(store.user.getByEmail?.(email).password === password){
-            sessionStorage.setItem('user', JSON.stringify(store.user.getByEmail?.(email)))
-            location.href = '/club.html'
-            console.log('Login user.....')
-        }else{
-            console.log('no existe el usuario')
-            //estilos
-            document.getElementById('error-login-pass-user')?.classList.remove('hidden')
-            setTimeout(() => {
-                document.getElementById('error-login-pass-user')?.classList.add('hidden')
-            }, 2000)
-        }
+async function logIn(loginUser){
+    const payload = JSON.stringify(loginUser)
+
+    const apiData = JSON.parse(await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/login`, 'POST', payload))
+    
+    if(apiData.length >= 0){
+        console.log('Usuario logeado : ' + apiData[0].name)
+        sessionStorage.setItem('HOOP MANAGER', apiData[0]._id)
+        location.href = '/club.html'
     }else{
-        console.log('no existe el usuario')
-        //estilos
+        //gestion de error para el usuario
         document.getElementById('error-login')?.classList.remove('hidden')
         setTimeout(() => {
             document.getElementById('error-login')?.classList.add('hidden')
         }, 2000)
-        
-    }
-}
-/**
- * Checks if a club exists in the CLUB_DB array and logs in the club if they do.
- * If the club exists, it redirects to the club page. Otherwise, it shows an error message.
- * @param {string} email - The email address of the club attempting to log in.
- * @param {string} passwordClub
- */
-function logInClub(email,passwordClub){
-    console.log(email)
-    if(store.club.getByEmail?.(email) !== undefined){
-        if(store.club.getByEmail?.(email).password === passwordClub){
-            sessionStorage.setItem('club', JSON.stringify(store.club.getByEmail?.(email)))
-            console.log('Login club.....')
-            location.href = '/admin-club.html'
-        }else{
-            document.getElementById('error-login-pass-club')?.classList.remove('hidden')
-            setTimeout(() => {
-                document.getElementById('error-login-pass-club')?.classList.add('hidden')
-            }, 2000)
+
+        if (/** @type {any} */(apiData)?.error === true) {
+            console.error(/** @type {any} */(apiData)?.message)
+            return
         }
-    }else{
-        console.log('no existe el club')
-        //estilos
-        document.getElementById('error-login-club')?.classList.remove('hidden')
-        setTimeout(() => {
-            document.getElementById('error-login-club')?.classList.add('hidden')
-        }, 2000)
+    }
+
+}
+
+async function logInClub(loginClub){
+    const payload = JSON.stringify(loginClub)
+
+    const apiData = JSON.parse(await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/loginClub`, 'POST', payload))
+
+    if(apiData.length >=0){
+        console.log('Club logeado : ' + apiData[0].nombre)
+        sessionStorage.setItem('HOOP MANAGER CLUB', apiData[0]._id)
     }
 }
 /**
@@ -478,6 +465,5 @@ export async function getAPIData(apiURL, method = 'GET', data) {
 function isUserLoggedIn() {
     const userData = getDataFromSessionStorage()
     return userData?.user?.token
-  }
-
+}
 

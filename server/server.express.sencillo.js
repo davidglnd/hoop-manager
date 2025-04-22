@@ -35,6 +35,20 @@ app.get('/read/clubs', (req, res) => {
   });
 })
 
+app.post('/login', (req, res) => {
+  crud.login(USERS_URL, req.body, (foundUserData) => {
+    console.log('server login', foundUserData)
+    res.send(JSON.stringify(foundUserData));
+  });
+})
+
+app.post('/loginClub', (req, res) => {
+  crud.login(CLUBS_URL, req.body, (foundClubData) => {
+    console.log('server login Club', foundClubData)
+    res.send(JSON.stringify(foundClubData));
+  });
+})
+
 app.post('/create/users', (req, res) => {
   crud.create(USERS_URL, req.body, (data) => {
     console.log(`server create user ${data.name} creado`, data)

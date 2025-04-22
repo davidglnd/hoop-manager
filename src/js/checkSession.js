@@ -1,5 +1,5 @@
 export function comprobarSession(){
-    if(sessionStorage.getItem('user') !== null){
+    if(sessionStorage.getItem('HOOP MANAGER') !== null){
         console.log('estas login')
     }else if(sessionStorage.getItem('club') !== null && location.pathname === '/admin-club.html'){
         console.log('estas en el admin')

@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck // TO DO NOS VAMOS A COMER VOY A SUBIR EL SELEC DEL AREA DE TRABAJO AHORA SEGUIMOS DEFINIENDO TIPOS Y ETC
-import { registrarUsuario } from "./gestion-usuarios-script.js";
+import { actualizarLocalStorageUsuarios } from "./gestion-usuarios-script.js";
 import { INITIAL_STATE ,store } from './store/redux.js'
 import { Jugador } from "./classes/Jugador.js";
 
@@ -182,7 +182,7 @@ function guardarCambiosPerfil(event,usuario){
     if (INFORMACION_USUARIO) {
         borradoContenedoresPerfil(INFORMACION_USUARIO);
     }
-    registrarUsuario()
+    actualizarLocalStorageUsuarios()
 
     onDOMContentLoaded()
 
