@@ -54,8 +54,8 @@ function onDOMContentLoaded() {
  function cerrarSesion(event){
     event.preventDefault()
 
-    sessionStorage.removeItem('user')
-    sessionStorage.removeItem('club')
+    sessionStorage.removeItem('HOOP_MANAGER')
+    sessionStorage.removeItem('HOOP_MANAGER_CLUB')
     location.href = '/index.html'
 
 }

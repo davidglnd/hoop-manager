@@ -49,6 +49,17 @@ app.post('/loginClub', (req, res) => {
   });
 })
 
+app.post('/checkUsers', (req,res) => {
+  crud.checkUsers(USERS_URL, req.body, (foundUserData) => {
+    res.send(JSON.stringify(foundUserData))
+  })
+})
+app.post('/checkClubsCod', (req,res) => {
+  crud.checkClubCod(CLUBS_URL, req.body, (foundUserData) => {
+    res.send(JSON.stringify(foundUserData))
+  })
+})
+
 app.post('/create/users', (req, res) => {
   crud.create(USERS_URL, req.body, (data) => {
     console.log(`server create user ${data.name} creado`, data)

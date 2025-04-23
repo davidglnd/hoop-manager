@@ -6,6 +6,8 @@ import { deleteById } from './crud/delete.js';
 import { filter } from './crud/filter.js';
 import { login } from './crud/login.js';
 import { loginClub } from './crud/loginClub.js'
+import { checkUsers } from './crud/checkUsers.js'
+import { checkClubCod } from './crud/checkClubCod.js'
 
 export const crud = {
   create: (file, data, callback) => create(file, data, callback),
@@ -16,4 +18,6 @@ export const crud = {
   filter: (file, filterParams, callback) => filter(file, filterParams, callback),
   login: (file, filterParams, callback) => login(file, filterParams, callback),
   loginClub: (file, filterParams, callback) => loginClub(file, filterParams, callback),
+  checkUsers: (file, filterParams, callback) => checkUsers(file, filterParams, callback),
+  checkClubCod: (file, filterParams, callback) => checkClubCod(file, filterParams, callback),
 }

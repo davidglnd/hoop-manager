@@ -1,7 +1,6 @@
 
 import { User } from './classes/User.js'
 import { Club } from './classes/Club.js'
-import { SingletonDB } from './classes/SingletonDB.js'
 import { INITIAL_STATE, store } from './store/redux.js'
 import { comprobarSession } from './checkSession.js'
 import { HttpError } from './classes/HttpError.js'
@@ -10,9 +9,7 @@ import { simpleFetch } from './lib/simpleFetch.js'
 //import club from '../api/clubes.json' with { type: "json" }
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
-// TO DO desacernos por completo del ClubDB e implementarlo a traves de redux y el store (solo falta en borrar usuario que hace
-// falta implementarlo primero en el html )
-const USER_DB = new SingletonDB()
+
 
 const API_PORT = location.port ? `:${1337}` : ''
 const TIMEOUT = 10000
@@ -43,11 +40,9 @@ function onDOMContentLoaded() {
     let mostrarLogUsuario = document.getElementById('iniciar-sesion-usuario')
     let mostrarLogClub = document.getElementById('iniciar-sesion-club')
 
-    let formularioBorrado = document.getElementById('borrar-usuario')
 
     formularioRegistro?.addEventListener('submit', datosSigIN)//La interrogacion vale para ver si existe el form 
     logInUsuario?.addEventListener('submit', datosLogIn)//si no no hace el eventListener
-    formularioBorrado?.addEventListener('submit', borrarUsuario)
     
     formularioClub?.addEventListener('submit', datosSignClub)
     mostrarLogUsuario?.addEventListener('click', mostrarLogInUsuario)
@@ -131,7 +126,7 @@ function datosLogIn(event){
 
     let loginUser =new User('', '', email,'','','',password)
     
-    logIn(loginUser)//ojo al orden en el qe enviamos los parametros 
+    logIn(loginUser)
 }
 /**
  * Takes the data from the form and uses it to log in the club.
@@ -164,43 +159,33 @@ function datosLogInClub(event){
  * @param {*} password - La contraseña
  */
 async function crearUsuario(name,email,apellidos,telefono,password,codClub){
-    let nuevoUsuario = new User('', name, email,apellidos,telefono,codClub,password)
-    if(store.user.getAll().findIndex((/** @type {{ email: string; }} */ user) => user.email === email) >= 0 || email === ''){
-        console.log('error registro email')
+    let checkUserExist = {email} 
+    const payload = JSON.stringify(checkUserExist)
+    const apiData = JSON.parse(await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/checkUsers`, 'POST', payload))
+    if(apiData.error){
+        console.log('El correo ya esta asociado a una cuenta')
         document.getElementById('error-registro1')?.classList.remove('hidden')//estilos
         setTimeout(() => {
             document.getElementById('error-registro1')?.classList.add('hidden')
-        }, 5000)
+        }, 2000)
         return
+    }else{
+        let nuevoUsuario = new User('', name, email,apellidos,telefono,codClub,password)
 
-    }
+        const payload = JSON.stringify(nuevoUsuario)
+        
+        const apiDataCrear = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/users`, 'POST', payload)
 
-    if(store.club.getAll().findIndex((/** @type {{ codigo: string; }} */ club) => club.codigo === codClub) < 0){
-        console.log('error registro codigo')
-        document.getElementById('error-registro2')?.classList.remove('hidden')//estilos
-        setTimeout(() => {
-            document.getElementById('error-registro2')?.classList.add('hidden')
-        }, 5000)
-        return
-    }
-    // ESTAMOS AQUI EXPLORANDO METER EXPRESS Y ESCRIBIR EL USUARIO EN EL JSON LO HACE YA EL EXPRESS 
-    //store.user.create(nuevoUsuario)
-    // EL CODIGO QUE SIGUE DEBERIA IR EN ACTUALIZARLOCALSTORAGE PORQUE ESTAMOS ESCRIBIENDO EN LA "NUEVA BD" Y LA PARTE DE ARRIBA HABRIA QUE COMPROBAR SI LOS DATOS ESTAN EN ESE JSON ANTES DE ESCRIBIR NADA
-    const payload = JSON.stringify(nuevoUsuario)
-
-    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/users`, 'POST', payload)
-    if (!apiData) {
         //estilos
         document.getElementById('registrado')?.classList.remove('hidden')
         setTimeout(() => {
             document.getElementById('registrado')?.classList.add('hidden')
             location.href = '/index.html'
         }, 2000)
+
+    console.log('Respuesta del servidor de APIs', apiDataCrear)
+
     }
-    console.log('Respuesta del servidor de APIs', apiData)
-
-    actualizarLocalStorageUsuarios()
-
 }
 /**
  * Crea un nuevo club con los datos proporcionados y lo almacena en
@@ -265,31 +250,6 @@ function actualizarLocalStorageClubs(){
     localStorage.setItem('REDUX_DB', JSON.stringify(listaClubs))
 }
 /**
- * Handles the user deletion process upon form submission, preventing the default form behavior.
- * If a user is logged in and confirms the deletion, it removes the user from the USER_DB,
- * updates the local storage, deletes the user session data, and redirects to the home page.
- *
- * @param {Event} event - The event object associated with the form submission.
- */
-function borrarUsuario(event){
-    event.preventDefault()
-
-    if(sessionStorage.getItem('user') && confirm('¿Estas seguro de borrar tu usuario?')){
-        let usuarioLogeado = sessionStorage.getItem('user')
-        // Si no existe la clave 'user' en la sesión, localStoredUser es null
-        if(usuarioLogeado === null){
-            // Asignamos una cadena de texto vacía porque JSON.parse() se rompe con un null
-            usuarioLogeado = ''
-        }
-        USER_DB.borrarUsuario(JSON.parse(usuarioLogeado).email)
-        actualizarLocalStorageUsuarios()
-        sessionStorage.removeItem('user')
-        location.href = '/index.html'
-    }
-
-}
-
-/**
  * Handles the user login process upon form submission, preventing the default form behavior.
  * If the user is not logged in and the login data is correct, it logs in the user, saves the user session data, and redirects to the club page.
  * If the login data is incorrect, it shows an error message to the user.
@@ -303,7 +263,7 @@ async function logIn(loginUser){
     
     if(apiData.length >= 0){
         console.log('Usuario logeado : ' + apiData[0].name)
-        sessionStorage.setItem('HOOP MANAGER', apiData[0]._id)
+        sessionStorage.setItem('HOOP_MANAGER', apiData[0]._id)
         location.href = '/club.html'
     }else{
         //gestion de error para el usuario
@@ -320,6 +280,15 @@ async function logIn(loginUser){
 
 }
 
+/**
+ * Handles the club login process by sending the club data to the server.
+ * If the login is successful, it logs the club in, saves the club session data,
+ * and redirects to the admin club page. If the login fails, it displays an 
+ * error message to the user.
+ *
+ * @param {Club} loginClub - The club object containing the club data to be logged in.
+ */
+
 async function logInClub(loginClub){
     const payload = JSON.stringify(loginClub)
 
@@ -327,7 +296,19 @@ async function logInClub(loginClub){
 
     if(apiData.length >=0){
         console.log('Club logeado : ' + apiData[0].nombre)
-        sessionStorage.setItem('HOOP MANAGER CLUB', apiData[0]._id)
+        sessionStorage.setItem('HOOP_MANAGER_CLUB', apiData[0]._id)
+        location.href = '/admin-club.html'
+    }else{
+        //gestion de error para el usuario
+        document.getElementById('error-login-club')?.classList.remove('hidden')
+        setTimeout(() => {
+            document.getElementById('error-login-club')?.classList.add('hidden')
+        }, 2000)
+
+        if (/** @type {any} */(apiData)?.error === true) {
+            console.error(/** @type {any} */(apiData)?.message)
+            return
+        }
     }
 }
 /**
