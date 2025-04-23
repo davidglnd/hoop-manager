@@ -49,23 +49,59 @@ app.post('/loginClub', (req, res) => {
   });
 })
 
-app.post('/checkUsers', (req,res) => {
-  crud.checkUsers(USERS_URL, req.body, (foundUserData) => {
-    res.send(JSON.stringify(foundUserData))
-  })
-})
-app.post('/checkClubsCod', (req,res) => {
-  crud.checkClubCod(CLUBS_URL, req.body, (foundUserData) => {
-    res.send(JSON.stringify(foundUserData))
-  })
-})
-
 app.post('/create/users', (req, res) => {
-  crud.create(USERS_URL, req.body, (data) => {
-    console.log(`server create user ${data.name} creado`, data)
-    res.send(JSON.stringify(data));
+  crud.read(USERS_URL, (users) => {
+    const newUser = req.body
+    
+    const existsEmail = users.filter((user) => user.email === newUser.email)
+
+    if(existsEmail.length === 0){
+      crud.read(CLUBS_URL, (clubs) => {
+
+        const codigoClub = clubs.filter((club) => club.codigo === newUser.clubAsoc)
+
+        if(codigoClub.length === 1){
+          crud.create(USERS_URL, req.body, (data) => {
+          console.log(`server create user ${data.name} creado`, data)
+          res.send(JSON.stringify(data));
+          })
+        }else{
+          console.log('Codigo de club no encontrado')
+          res.send({error: 'Codigo de club no encontrado'})
+        }
+      })
+    }else{
+      console.log('Email ya usado')
+      res.send({error: 'Email registrado'})
+    }
+
   });
+
 });
+
+app.post('/create/clubs', (req, res) => {
+  crud.read(CLUBS_URL, (clubs) => {
+    const newClub = req.body
+
+    const existsEmail = clubs.filter((club) => club.email === newClub.email)
+
+    if(existsEmail.length === 0){
+      crud.createClub(CLUBS_URL, req.body, (data) => {
+        console.log(`server create club ${data.nombre} creado`, data)
+        res.send(JSON.stringify(data));
+      })
+    }else{
+      console.log('Email club ya usado')
+      res.send({error: 'Email registrado'})
+    }
+  })
+
+});
+
+// app.put('/api/update/articles/:id',  (req, res) => {
+//   crud.update(USERS_URL, req.params.id, req.body, (data) => )
+  
+// })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

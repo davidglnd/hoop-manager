@@ -21,12 +21,7 @@ export class User {
    * @param {string} password - The password of the user.
    */
   constructor(_id,name, email, apellidos, nTelefono, clubAsoc, password, rol = 'basico') {
-    const timestamp = new Date()
-    if (_id === ''){
-      this._id = String(timestamp.getTime())
-    }else{
-      this._id = _id
-    }
+    this._id = _id
     this.name = name
     this.email = email
     this.apellidos = apellidos

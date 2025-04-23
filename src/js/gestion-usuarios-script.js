@@ -3,8 +3,7 @@ import { User } from './classes/User.js'
 import { Club } from './classes/Club.js'
 import { INITIAL_STATE, store } from './store/redux.js'
 import { comprobarSession } from './checkSession.js'
-import { HttpError } from './classes/HttpError.js'
-import { simpleFetch } from './lib/simpleFetch.js'
+import { getAPIData } from './utils.js'
 
 //import club from '../api/clubes.json' with { type: "json" }
 
@@ -12,7 +11,7 @@ window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
 
 const API_PORT = location.port ? `:${1337}` : ''
-const TIMEOUT = 10000
+
 
 
 
@@ -158,33 +157,27 @@ function datosLogInClub(event){
  * @param {string} codClub - El codigo del club
  * @param {*} password - La contraseña
  */
-async function crearUsuario(name,email,apellidos,telefono,password,codClub){
-    let checkUserExist = {email} 
+async function crearUsuario(name,email,apellidos,telefono,password,codigo){
+    let checkUserExist =new User('', name, email,apellidos,telefono,codigo,password)
     const payload = JSON.stringify(checkUserExist)
-    const apiData = JSON.parse(await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/checkUsers`, 'POST', payload))
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/users`, 'POST', payload)
+
     if(apiData.error){
         console.log('El correo ya esta asociado a una cuenta')
-        document.getElementById('error-registro1')?.classList.remove('hidden')//estilos
+        document.getElementById('error-registro')?.classList.remove('hidden')
+        document.getElementById('error-registro').innerText = apiData.error
         setTimeout(() => {
-            document.getElementById('error-registro1')?.classList.add('hidden')
+        document.getElementById('error-registro')?.classList.add('hidden')
         }, 2000)
         return
     }else{
-        let nuevoUsuario = new User('', name, email,apellidos,telefono,codClub,password)
-
-        const payload = JSON.stringify(nuevoUsuario)
-        
-        const apiDataCrear = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/users`, 'POST', payload)
-
-        //estilos
         document.getElementById('registrado')?.classList.remove('hidden')
         setTimeout(() => {
             document.getElementById('registrado')?.classList.add('hidden')
             location.href = '/index.html'
         }, 2000)
 
-    console.log('Respuesta del servidor de APIs', apiDataCrear)
-
+        console.log('Respuesta del servidor de APIs', apiData)
     }
 }
 /**
@@ -197,25 +190,27 @@ async function crearUsuario(name,email,apellidos,telefono,password,codClub){
  * @param {string} emailClub - Email del club
  * @param {*} [password] - Contraseña
  */
-function crearClub(nombre,siglas,codigoPostal,telClub,emailClub,password){
-    let nuevoClub = new Club('',nombre,siglas,codigoPostal,telClub,emailClub, siglas + store.club.getAll().length,password)
-    if(store.club.getAll().findIndex((/** @type {{ email: string; }} */ club) => club.email === emailClub) >= 0){
+async function crearClub(nombre,siglas,codigoPostal,telClub,email,password){
+    let checkClubExist =new Club('',nombre,siglas,codigoPostal,telClub,email,'',password)
+    const payload = JSON.stringify(checkClubExist)
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/clubs`, 'POST', payload)
+
+    if(apiData.error){
+        console.log('El correo ya esta asociado a un Club')
         document.getElementById('error-registro-club')?.classList.remove('hidden')
         setTimeout(() => {
-            document.getElementById('error-registro-club')?.classList.add('hidden')
-        }, 1000)
+        document.getElementById('error-registro')?.classList.add('hidden')
+        }, 2000)
         return
-    }
-    document.getElementById('registrado-club')?.classList.remove('hidden')
-    
-    store.club.create(nuevoClub)
+    }else{
+        document.getElementById('registrado')?.classList.remove('hidden')
+        setTimeout(() => {
+            document.getElementById('registrado')?.classList.add('hidden')
+            location.href = '/index.html'
+        }, 2000)
 
-    actualizarLocalStorageClubs()    
-    
-    setTimeout(() => {
-        document.getElementById('registrado-club')?.classList.add('hidden')
-        location.href = '/index.html'
-    }, 2000)
+        console.log('Respuesta del servidor de APIs', apiData)
+    }
 }
 /**
  * Saves the current state of the USER_DB array to local storage.
@@ -235,21 +230,6 @@ export function actualizarLocalStorageUsuarios(){
     
 }
 /**
- * Saves the current state of the CLUB_DB array to local storage.
- * 
- * This function serializes the CLUB_DB array into a JSON string
- * and stores it in local storage under the key 'CLUB_DB'.
- * This allows the club database to be persisted across sessions.
- */
-function actualizarLocalStorageClubs(){
-    //localStorage.setItem('CLUB_DB',JSON.stringify(store.club.getAll()))
-    let listaClubs = JSON.parse(localStorage.getItem('REDUX_DB') || '')
-
-    listaClubs.clubs = [...store.club.getAll()]
-
-    localStorage.setItem('REDUX_DB', JSON.stringify(listaClubs))
-}
-/**
  * Handles the user login process upon form submission, preventing the default form behavior.
  * If the user is not logged in and the login data is correct, it logs in the user, saves the user session data, and redirects to the club page.
  * If the login data is incorrect, it shows an error message to the user.
@@ -263,7 +243,7 @@ async function logIn(loginUser){
     
     if(apiData.length >= 0){
         console.log('Usuario logeado : ' + apiData[0].name)
-        sessionStorage.setItem('HOOP_MANAGER', apiData[0]._id)
+        sessionStorage.setItem('HOOP_MANAGER', JSON.stringify(apiData))
         location.href = '/club.html'
     }else{
         //gestion de error para el usuario
@@ -380,71 +360,4 @@ export function leerClubsBD(){
 
 
 
-
-/**
- * Retrieves the shopping list data from session storage.
- *
- * @returns {import('./store/redux.js').State} Saved state.
- * If no data is found, returns an empty State object.
- */
-function getDataFromSessionStorage() {
-    const defaultValue = JSON.stringify(INITIAL_STATE)
-    return JSON.parse(sessionStorage.getItem('REDUX_DB') || defaultValue)
-  }
-/**
- * Get data from API
- * @param {string} apiURL
- * @param {string} method
- * @param {any} [data]
- * @returns {Promise<Array<User>>}
- */
-export async function getAPIData(apiURL, method = 'GET', data) {
-    let apiData
-  
-    try {
-      let headers = new Headers()
-      headers.append('Content-Type', 'application/json')
-      headers.append('Access-Control-Allow-Origin', '*')
-      if (data) {
-        headers.append('Content-Length', String(JSON.stringify(data).length))
-      }
-      // Añadimos la cabecera Authorization si el usuario esta logueado
-      if (isUserLoggedIn()) {
-        const userData = getDataFromSessionStorage()
-        headers.append('Authorization', `Bearer ${userData?.user?.token}`)
-      }
-      apiData = await simpleFetch(apiURL, {
-        // Si la petición tarda demasiado, la abortamos
-        signal: AbortSignal.timeout(TIMEOUT),
-        method: method,
-        body: data ?? undefined,
-        headers: headers
-      });
-    } catch (/** @type {any | HttpError} */err) {
-      // En caso de error, controlamos según el tipo de error
-      if (err.name === 'AbortError') {
-        console.error('Fetch abortado');
-      }
-      if (err instanceof HttpError) {
-        if (err.response.status === 404) {
-          console.error('Not found');
-        }
-        if (err.response.status === 500) {
-          console.error('Internal server error');
-        }
-      }
-    }
-  
-    return apiData
-  }
-/**
- * Checks if there is a user logged in by verifying the presence of a token
- * in the local storage.
- *
- * @returns {boolean} True if the user is logged in, false otherwise.
- */
-function isUserLoggedIn() {
-    const userData = getDataFromSessionStorage()
-    return userData?.user?.token
-}
 

@@ -17,7 +17,7 @@ console.log('login', userData);
         const parsedData = JSON.parse(fileData.toString());
         // Filter by filterParams
         clubFound = parsedData.filter((club) => {
-            return club.codigo === userData.clubAsoc
+            return club.codigo === userData.codigo
         });
         if (clubFound.length === 0) {
           console.log(clubNotFoundError);

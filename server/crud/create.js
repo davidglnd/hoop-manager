@@ -35,3 +35,40 @@ async function insertData(file, data, callback) {
   });
   return data;
 }
+
+export async function createClub(file,data,callback){
+  if (!fs.existsSync(file)) {
+    fs.appendFile(file, '[]', function (err) {
+      if (err) {
+        console.log('create', err);
+        return err;
+      }
+    })
+  }
+  return await insertDataClub(file, data, callback);
+}
+async function insertDataClub(file, data, callback) {
+  let parsedData = []
+  await read(file, (readData) => {
+    parsedData = [...readData];
+    if (!data._id || data._id === '') {
+      const timestamp = new Date()
+      data._id = String(timestamp.getTime())
+    }
+    if(!data.codigo || data.codigo === ''){
+      data.codigo = data.siglas + Math.floor(Math.random() * 999)
+    }
+    parsedData.push(data);
+
+    fs.writeFile(file, JSON.stringify(parsedData), function (err) {
+      if (err) {
+        console.log('insertData', err);
+        return err;
+      }
+      if (callback) {
+        return callback(data);
+      }
+    })
+  });
+  return data;
+}

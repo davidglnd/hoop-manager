@@ -19,17 +19,13 @@ export class Club {
   * @param {string} password - password del club
   */
   constructor(_id,nombre, siglas, codigoPostal, telefono, email, codigo, password) {
-    const timestamp = new Date()
-    if (_id === ''){
-      this._id = String(timestamp.getTime())
-    }else{
-      this._id = _id
-    }
+    this._id = _id
     this.nombre = nombre
     this.siglas = siglas
     this.codigoPostal = codigoPostal
     this.telefono = telefono
     this.email = email
+    // this.codigo = siglas + Math.floor(Math.random() * 999)
     this.codigo = codigo
     this.password = password
   }

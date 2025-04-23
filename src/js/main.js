@@ -1,16 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck // TO DO NOS VAMOS A COMER VOY A SUBIR EL SELEC DEL AREA DE TRABAJO AHORA SEGUIMOS DEFINIENDO TIPOS Y ETC
+//@ts-expect-error //TO DO arreglar y trabajar en el main
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { actualizarLocalStorageUsuarios } from "./gestion-usuarios-script.js";
 import { INITIAL_STATE ,store } from './store/redux.js'
 import { Jugador } from "./classes/Jugador.js";
-
-
-
-
-
-
-
-// TO DO, SEPARAR FUNCIONES DE ADDJUGADOR Y LA DE INCLUIR EN LOCALSTORAGE EL JUFGADOR
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 /**
@@ -22,8 +14,8 @@ window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
  * 5. Calls the importarJugadores function (but this is commented out for now).
  */
 function onDOMContentLoaded(){
-    let usuarioLogeado = JSON.parse(sessionStorage.getItem('user') ?? '')
-    
+    let usuarioLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') ?? '')
+
     let usuarioBD = store?.user?.getById?.(usuarioLogeado._id);
 
     let añadirJugadores = document.getElementById('añadir-jugador-form')
@@ -32,9 +24,9 @@ function onDOMContentLoaded(){
 
     leerListaJugadores()
     leerEquipos()
-    mostrarInformacionUsuario(usuarioBD)
-    mostrarHerramientasGestion(usuarioBD)
-    mostrarEquipos(usuarioBD)
+    mostrarInformacionUsuario(usuarioLogeado[0])
+    mostrarHerramientasGestion(usuarioLogeado[0])
+    mostrarEquipos(usuarioLogeado[0])
 }
 /**
  * Takes the data from the form and creates a new Jugador object with that data.
@@ -72,6 +64,7 @@ function datosJugador(event,usuarioBD){
  */
 
 function mostrarInformacionUsuario(usuario){
+
     let contenedorInformacion = document.getElementById('informacion-usuario')
 
     let nombreApellidos = document.createElement('p')
@@ -111,6 +104,7 @@ function mostrarInformacionUsuario(usuario){
  * @param {string} usuario.nTelefono - The user's phone number.
  */
 function modificarPerfil(usuario){
+
     const INFORMACION_USUARIO = document.getElementById('informacion-usuario');
     if (INFORMACION_USUARIO) {
         borradoContenedoresPerfil(INFORMACION_USUARIO);
@@ -147,44 +141,49 @@ function modificarPerfil(usuario){
     let guardarCambios = document.createElement('button')
     guardarCambios.innerText = 'Guardar cambios'
     formulario.appendChild(guardarCambios)
-    formulario.addEventListener('submit',(event) => guardarCambiosPerfil(event,usuario._id))
+    formulario.addEventListener('submit',(event) => guardarCambiosPerfil(event,usuario))
 }
+
 /**
- * This function takes the new user information from the form and
- * updates the user object in the store. It then calls the
- * registrarUsuario function to save the updated user to local
- * storage, and the onDOMContentLoaded function to update the
- * user profile information on the page.
- * @param {Event} event - The event that triggered this function.
- * @param {string} usuario - The id of the user to be updated.
+ * Modifies the user's profile information in the store and local storage.
+ * It takes the data from the form and creates a new User object with that data.
+ * It then updates the User object in the store with the new data.
+ * @param {Event} event - the event that triggered this function.
+ * @param {Object} usuario - The user object containing user information.
+ * @param {string} usuario._id - The user's id.
+ * @param {string} usuario.name - The user's first name.
+ * @param {string} usuario.apellidos - The user's surname.
+ * @param {string} usuario.email - The user's email address.
+ * @param {string} usuario.nTelefono - The user's phone number.
  */
 function guardarCambiosPerfil(event,usuario){
     event.preventDefault()
-    
+    console.log(usuario)
     let name = /** @type {HTMLInputElement} */(document.getElementById('name'))?.value
     let apellidos = /** @type {HTMLInputElement} */(document.getElementById('apellidos'))?.value
     let email = /** @type {HTMLInputElement} */(document.getElementById('email'))?.value
     let telefono = /** @type {HTMLInputElement} */(document.getElementById('telefono'))?.value
 
-    let usuarioCambiar = store?.user?.getById?.(usuario)
+    //let usuarioCambiar = store?.user?.getById?.(usuario)
     
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let usuarioModificado = {
-        ...usuarioCambiar,
+        ...usuario,
         name: name,
         apellidos:apellidos,
         email: email,
         nTelefono: telefono
     }
 
-    store.user.update(usuarioModificado)   
+    //store.user.update(usuarioModificado)   
    
-    const INFORMACION_USUARIO = document.getElementById('informacion-usuario');
-    if (INFORMACION_USUARIO) {
-        borradoContenedoresPerfil(INFORMACION_USUARIO);
-    }
-    actualizarLocalStorageUsuarios()
+    // const INFORMACION_USUARIO = document.getElementById('informacion-usuario');
+    // if (INFORMACION_USUARIO) {
+    //     borradoContenedoresPerfil(INFORMACION_USUARIO);
+    // }
+    //actualizarLocalStorageUsuarios()
 
-    onDOMContentLoaded()
+    //onDOMContentLoaded()
 
     
 }
@@ -332,7 +331,7 @@ function mostrarHerramientasGestion(usuarioBD){
  * @param {string} fnac - The date of birth of the player in the format "yyyy-mm-dd"
  * @returns {string} The category of the player.
  */
-export function calculoCategoria(fnac){
+export function calculoCategoria(fnac){ // TO DO LLevar a utils.js
     const TEMPORADA_ACTUAL = new Date().getFullYear()
     let stringSpliced = parseInt(fnac.slice(0,4))
     let edadTemporada = TEMPORADA_ACTUAL - stringSpliced

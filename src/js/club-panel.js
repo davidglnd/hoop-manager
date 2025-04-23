@@ -1,5 +1,4 @@
 import { Equipo } from "./classes/Equipo.js";
-import { registrarUsuario } from "./gestion-usuarios-script.js";
 import { INITIAL_STATE, store } from './store/redux.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
@@ -156,7 +155,7 @@ function cambioRol(event, usuario){
     store.user.update(usuarioModificado)
     console.log('Cambiando rol de... ' + usuarioCambiar.name + '...Su nuevo rol es ' + usuarioModificado.rol )
 
-    registrarUsuario()
+    //registrarUsuario()
 }
 function mostrarDivEntrenadores(){
     //vamos a escodnder y mostrar los contenedores que vamos a usar
