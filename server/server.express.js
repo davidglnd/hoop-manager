@@ -1,7 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { db } from "./server.mongodb.js";
-import { gooogleOauth2 } from './server.oauth.js';
+
+
+import { crearCodigoClub } from "./controller/creacionCodigoClub.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -13,77 +15,80 @@ app.use(bodyParser.json())
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.get('/api/check/:nombre', async (req, res) => {
-  const usuarios = await db.users.count()
-  res.send(`Hola ${req.params.nombre}, hay ${usuarios} usuarios`)
-})
-// CRUD
-app.post('/api/create/articles', requireAuth, async (req, res) => {
-  res.json(await db.articles.create(req.body))
-})
-app.get('/api/read/articles', async (req, res) => {
-  // res.json(await db.articles.get({}, { _id: 0, qty: 1 }))
-  res.json(await db.articles.get())
-})
-app.get('/api/filter/articles/:name', async (req, res) => {
-  res.json(await db.articles.get({ $text: { $search: req.params.name } }))
-})
-app.put('/api/update/articles/:id', requireAuth, async (req, res) => {
-  res.json(await db.articles.update(req.params.id, req.body))
-})
-app.delete('/api/delete/articles/:id', requireAuth, async (req, res) => {
-  res.json(await db.articles.delete(req.params.id))
-})
-app.delete('/api/delete/all/articles/', requireAuth, async (req, res) => {
-  res.json(await db.articles.deleteAll())
-})
-app.get('/api/read/users', async (req, res) => {
-  res.json(await db.users.get())
-})
-app.get('/api/filter/users/:name', async (req, res) => {
-  // TODO: ver parámetros de búsqueda
-  // https://www.mongodb.com/docs/manual/reference/operator/query/
-  res.json(await db.articles.get({ $text: { $search: req.params.name } }))
-})
-app.post('/api/login', async (req, res) => {
-  // TODO: update token on DB
-  const user = await db.users.logIn(req.body)
-  if (user) {
-    // TODO: use OAuth2
-    // ...
-    // Simulation of authentication (OAuth2)
-    user.token = gooogleOauth2()
-    // Remove password
-    // delete user.password
-    res.json(user)
-  } else {
-    // Unauthorized
-    res.status(401).send('Unauthorized')
-  }
-})
-app.get('/api/logout/:id', async (req, res) => {
-  const response = await db.users.logOut(req.params.id)
-  console.log('logOut', response)
-  res.status(200).send('Logout')
+// METODOS GET 
+app.get('/api/check/', async (req, res) => {
+  const numeroUsuarios = await db.users.count()
+  const numeroClubs = await db.clubs.count()
+  res.send(`Hay ${numeroUsuarios} cuentas de usuarios y  ${numeroClubs} cuentas de clubs`)
 })
 
-// Use a regexp that matches all 'diary', 'menus', 'stats' routes
-app.get('/diary', (req, res) => res.redirect('/'))
-app.get('/menus', (req, res) => res.redirect('/'))
-app.get('/stats', (req, res) => res.redirect('/'))
+app.get('/api/read/users', async (req, res) => {
+    res.json(await db.users.get())
+})
+
+app.get('/api/filter/users/:email', async (req, res) => {
+    console.log(req.params.email)
+    res.json(await db.users.get({ email: req.params.email }))
+})
+
+app.get('/api/read/clubs', async (req, res) => {
+    res.json(await db.clubs.get())
+})
+
+app.get('/api/read/equipos', async (req, res) => {
+    res.json(await db.equipos.get())
+})
+
+app.get('/api/read/jugadores', async (req, res) => {
+    res.json(await db.jugadores.get())
+})
+
+// METODOS POST
+app.post('/api/create/users', async (req, res) => {
+    const existeClubAsociado = await db.clubs.get({codigo : req.body.clubAsoc})
+    const existeUsuario = await db.users.get({email : req.body.email})
+
+    if(existeClubAsociado.length === 0 ){
+        res.send({error: `El club al que intentas registrarte no existe (CODIGO DE CLUB: ${req.body.clubAsoc})`})
+    }else if(existeUsuario > 0){
+        res.send({error: 'Email registrado'})
+    }else if(req.body.email === ''){
+        res.send({error: 'Introduce un email'})
+    }else{
+        res.json(await db.users.create(req.body))
+    }
+})
+
+app.post('/api/create/clubs', async (req, res) => {
+    const existeClub = await db.clubs.get({email: req.body.email})
+
+    if(existeClub.length > 0){
+        res.send({error: 'Email registrado'})
+    }else if(req.body.email === ''){
+        res.send({error: 'Introduce un email'})
+    }else{
+        crearCodigoClub(req.body)
+        res.json(await db.clubs.create(req.body))
+    }
+
+
+})
+
+app.post('/api/login', async (req, res) => {
+    console.log(req.body)
+    const userLogIn = await db.users.logIn({email: req.body.email, password: req.body.password})
+    console.log(userLogIn)
+
+    if(userLogIn === null){
+        res.send({error: true, message:'Error en el login'})
+    }else{
+        res.json(userLogIn)
+    }
+})
+
 
 app.listen(port, async () => {
-  const articles = await db.articles.count()
   const usuarios = await db.users.count()
-  console.log(`Shopping List listening on port ${port}: ${articles} articles, ${usuarios} users`);
+  const clubs = await db.clubs.count()
+  console.log(`Hoop Manager listening on port ${port}:  ${usuarios} users, ${clubs} clubs`);
 })
-
-function requireAuth(req, res, next) {
-  // Simulation of authentication (OAuth2)
-  if (req.headers.authorization === 'Bearer 123456') {
-    next()
-  } else {
-    // Unauthorized
-    res.status(401).send('Unauthorized')
-  }
-}

@@ -1,10 +1,12 @@
 //@ts-expect-error //TO DO arreglar y trabajar en el main
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { actualizarLocalStorageUsuarios } from "./gestion-usuarios-script.js";
+ 
 import { INITIAL_STATE ,store } from './store/redux.js'
 import { Jugador } from "./classes/Jugador.js";
+//import { getAPIData } from './utils.js';
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
+
+//const API_PORT = location.port ? `:${1337}` : ''
 /**
  * When the page has finished loading, it does the following:
  * 1. Gets the logged in user from session storage.
@@ -156,7 +158,7 @@ function modificarPerfil(usuario){
  * @param {string} usuario.email - The user's email address.
  * @param {string} usuario.nTelefono - The user's phone number.
  */
-function guardarCambiosPerfil(event,usuario){
+async function guardarCambiosPerfil(event,usuario){
     event.preventDefault()
     console.log(usuario)
     let name = /** @type {HTMLInputElement} */(document.getElementById('name'))?.value
@@ -175,6 +177,9 @@ function guardarCambiosPerfil(event,usuario){
         nTelefono: telefono
     }
 
+    //const payload = usuarioModificado
+
+    //const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/update/user/${usuario._id}`, 'PUT', payload)
     //store.user.update(usuarioModificado)   
    
     // const INFORMACION_USUARIO = document.getElementById('informacion-usuario');

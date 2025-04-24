@@ -1,6 +1,5 @@
 //@ts-check
 export class User {
-  _id
   name
   email
   apellidos
@@ -17,11 +16,9 @@ export class User {
    * @param {string} nTelefono - The phone number of the user.
    * @param {string} [rol] - The role of the user, default is 'basico'.
    * @param {string} clubAsoc - The club associated with the user, default is undefined.
-   * @param {string} _id - The ID of the user, default is a timestamp.
    * @param {string} password - The password of the user.
    */
-  constructor(_id,name, email, apellidos, nTelefono, clubAsoc, password, rol = 'basico') {
-    this._id = _id
+  constructor(name, email, apellidos, nTelefono, clubAsoc, password, rol = 'basico') {
     this.name = name
     this.email = email
     this.apellidos = apellidos

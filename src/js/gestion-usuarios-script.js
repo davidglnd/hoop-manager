@@ -123,7 +123,7 @@ function datosLogIn(event){
     let email = /** @type {HTMLInputElement} */(emailInput)?.value
     let password = /** @type {HTMLInputElement} */(passwordInput)?.value
 
-    let loginUser =new User('', '', email,'','','',password)
+    let loginUser ={email: email, password: password}
     
     logIn(loginUser)
 }
@@ -158,9 +158,9 @@ function datosLogInClub(event){
  * @param {*} password - La contraseña
  */
 async function crearUsuario(name,email,apellidos,telefono,password,codigo){
-    let checkUserExist =new User('', name, email,apellidos,telefono,codigo,password)
+    let checkUserExist =new User(name, email,apellidos,telefono,codigo,password)
     const payload = JSON.stringify(checkUserExist)
-    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/users`, 'POST', payload)
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, 'POST', payload)
 
     if(apiData.error){
         console.log('El correo ya esta asociado a una cuenta')
@@ -174,7 +174,7 @@ async function crearUsuario(name,email,apellidos,telefono,password,codigo){
         document.getElementById('registrado')?.classList.remove('hidden')
         setTimeout(() => {
             document.getElementById('registrado')?.classList.add('hidden')
-            location.href = '/index.html'
+            //location.href = '/index.html'
         }, 2000)
 
         console.log('Respuesta del servidor de APIs', apiData)
@@ -191,21 +191,21 @@ async function crearUsuario(name,email,apellidos,telefono,password,codigo){
  * @param {*} [password] - Contraseña
  */
 async function crearClub(nombre,siglas,codigoPostal,telClub,email,password){
-    let checkClubExist =new Club('',nombre,siglas,codigoPostal,telClub,email,'',password)
+    let checkClubExist =new Club(nombre,siglas,codigoPostal,telClub,email,'',password)
     const payload = JSON.stringify(checkClubExist)
-    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/create/clubs`, 'POST', payload)
-
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/clubs`, 'POST', payload)
+    console.log(apiData.error)
     if(apiData.error){
-        console.log('El correo ya esta asociado a un Club')
+        document.getElementById('error-registro-club').innerText = apiData.error
         document.getElementById('error-registro-club')?.classList.remove('hidden')
         setTimeout(() => {
         document.getElementById('error-registro')?.classList.add('hidden')
         }, 2000)
         return
     }else{
-        document.getElementById('registrado')?.classList.remove('hidden')
+        document.getElementById('registrado-club')?.classList.remove('hidden')
         setTimeout(() => {
-            document.getElementById('registrado')?.classList.add('hidden')
+            document.getElementById('registrado-club')?.classList.add('hidden')
             location.href = '/index.html'
         }, 2000)
 
@@ -238,11 +238,10 @@ export function actualizarLocalStorageUsuarios(){
  */
 async function logIn(loginUser){
     const payload = JSON.stringify(loginUser)
-
-    const apiData = JSON.parse(await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/login`, 'POST', payload))
-    
-    if(apiData.length >= 0){
-        console.log('Usuario logeado : ' + apiData[0].name)
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/login`, 'POST', payload)
+    console.log(apiData.message)
+    if(!apiData.error){
+        console.log('Usuario logeado : ' + apiData.name)
         sessionStorage.setItem('HOOP_MANAGER', JSON.stringify(apiData))
         location.href = '/club.html'
     }else{

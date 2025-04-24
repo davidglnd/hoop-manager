@@ -98,10 +98,12 @@ app.post('/create/clubs', (req, res) => {
 
 });
 
-// app.put('/api/update/articles/:id',  (req, res) => {
-//   crud.update(USERS_URL, req.params.id, req.body, (data) => )
-  
-// })
+app.put('/update/user/:id',  (req, res) => {
+  crud.update(USERS_URL, req.params.id, req.body, (data) => {
+    console.log('Server: Updateando user',data)
+    res.send(JSON.stringify(data))
+  })
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

@@ -1,6 +1,5 @@
 // @ts-check
 export class Club {
-  _id
   nombre
   siglas
   codigoPostal
@@ -9,7 +8,6 @@ export class Club {
   codigo
   password
   /**
-  * @param {string} _id - id del club
   * @param {string} nombre - nombre del club
   * @param {string} siglas - siglas del club
   * @param {string} codigoPostal - pin del club
@@ -18,8 +16,7 @@ export class Club {
   * @param {string} codigo - codigo del club
   * @param {string} password - password del club
   */
-  constructor(_id,nombre, siglas, codigoPostal, telefono, email, codigo, password) {
-    this._id = _id
+  constructor(nombre, siglas, codigoPostal, telefono, email, codigo, password) {
     this.nombre = nombre
     this.siglas = siglas
     this.codigoPostal = codigoPostal
