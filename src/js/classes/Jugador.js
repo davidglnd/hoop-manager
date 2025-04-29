@@ -1,6 +1,5 @@
 //@ts-check
 export class Jugador {
-    _id
     _id_familiar
     nombre
     apellidos
@@ -14,7 +13,6 @@ export class Jugador {
 
     /**
      * Constructor de la clase Jugador
-     * @param {string} _id - Identificador unico del jugador
      * @param {string} _id_familiar - Identificador unico del familiar
      * @param {string} nombre - Nombre del jugador
      * @param {string} apellidos - Apellidos del jugador
@@ -27,13 +25,7 @@ export class Jugador {
      * @param {string} direccion - Direccion del jugador
      * @param {string} club
      */
-    constructor(_id,_id_familiar='',nombre,apellidos,fnac,sexo,direccion,club,posicion = 'por definir',categoria = '',email = '',nTelefono = ''){
-        const timestamp = new Date()
-        if(_id === ''){
-            this._id = String(timestamp.getTime())
-        }else{
-            this._id = _id
-        }
+    constructor(_id_familiar='',nombre,apellidos,fnac,sexo,direccion,club,posicion = 'por definir',categoria = '',email = '',nTelefono = ''){
         this._id_familiar = _id_familiar
         this.nombre = nombre
         this.apellidos = apellidos

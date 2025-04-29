@@ -35,14 +35,32 @@ app.get('/api/read/clubs', async (req, res) => {
     res.json(await db.clubs.get())
 })
 
-app.get('/api/read/equipos', async (req, res) => {
-    res.json(await db.equipos.get())
+app.get('/api/filter/equipos/:club', async (req, res) => {
+    res.json(await db.equipos.get({clubAsoc: req.params.club}))
 })
 
-app.get('/api/read/jugadores', async (req, res) => {
-    res.json(await db.jugadores.get())
+app.get('/api/filter/jugadores/:categoria', async (req, res) => {
+    res.json(await db.jugadores.get({categoria: req.params.categoria}))
 })
 
+app.get('/api/filter/equipo/:id', async (req, res) => {
+    res.json(await db.equipos.getById(req.params.id))
+})
+app.get('/api/read/equipos/jugadores/:idEquipo', async (req, res) => {
+    const EQUIPO_SELECCIONADO = await db.equipos.getById(req.params.idEquipo)
+    const JUGADORES_EQUIPO = []
+
+    for(const ID of EQUIPO_SELECCIONADO.jugadores){
+        const JUGADOR = await db.jugadores.getById(ID)
+        JUGADORES_EQUIPO.push(JUGADOR)
+    }
+    
+    res.json({EQUIPO_SELECCIONADO,JUGADORES_EQUIPO})
+})
+// METODOS PUT
+app.put('/api/update/user/:id', async (req, res) => {
+    res.json(await db.users.update(req.params.id, req.body))
+})
 // METODOS POST
 app.post('/api/create/users', async (req, res) => {
     const existeClubAsociado = await db.clubs.get({codigo : req.body.clubAsoc})
@@ -75,7 +93,7 @@ app.post('/api/create/clubs', async (req, res) => {
 })
 
 app.post('/api/login', async (req, res) => {
-    console.log(req.body)
+    console.log(req)
     const userLogIn = await db.users.logIn({email: req.body.email, password: req.body.password})
     console.log(userLogIn)
 
@@ -84,6 +102,17 @@ app.post('/api/login', async (req, res) => {
     }else{
         res.json(userLogIn)
     }
+})
+
+app.post('/api/update/equipo/jugadores', async (req, res) => {
+    const JUGADORES_SELECCIONADOS = req.body
+    const EQUIPO = await db.equipos.getById(req.body.equipo)
+
+    JUGADORES_SELECCIONADOS.jugadores.forEach(async id => {
+        await db.equipos.updateJugadores(req.body.equipo,id)
+        await db.jugadores.updateEquipo(id,req.body.equipo)
+    });
+    res.json(EQUIPO.nombre + ' ha sido actualizado')
 })
 
 

@@ -1,6 +1,5 @@
 //@ts-check
-import { INITIAL_STATE,store } from '../js/store/redux.js';
-import { leerClubsBD } from './gestion-usuarios-script.js'
+import { INITIAL_STATE } from '../js/store/redux.js';
 import { HttpError } from './classes/HttpError.js'
 import { simpleFetch } from './lib/simpleFetch.js'
 
@@ -19,33 +18,33 @@ function onDOMContentLoaded() {
     let formularioLogOut = document.getElementById('cerrar-sesion')
     formularioLogOut?.addEventListener('click', cerrarSesion)
 
-    if (sessionStorage.getItem('user') !== null){
-        const USER_STORAGE = sessionStorage.getItem('user')
-        if(USER_STORAGE){
-            let numeroAsoc = JSON.parse(USER_STORAGE).clubAsoc//obtengo el club asociado al usario logeado
-            leerClubsBD()// leo los clubs de la base de datos a traves de redux.js
+    // if (sessionStorage.getItem('user') !== null){
+    //     const USER_STORAGE = sessionStorage.getItem('user')
+    //     if(USER_STORAGE){
+    //         let numeroAsoc = JSON.parse(USER_STORAGE).clubAsoc//obtengo el club asociado al usario logeado
+    //         //leerClubsBD()// leo los clubs de la base de datos a traves de redux.js
     
-            let listaClubsBD =store.club.getAll()//Creo un array con los clubs de la base de datos
+    //         let listaClubsBD =store.club.getAll()//Creo un array con los clubs de la base de datos
     
-            // Buscamos el club asociado al usuario logeado
-            let clubAsociado = listaClubsBD.find((/** @type {{ codigo: any; }} */ club) => club.codigo === numeroAsoc)
-            // Pintamos el club logeado
-            let cabezeraH1 = document.getElementById("nombre-clubReg2")
+    //         // Buscamos el club asociado al usuario logeado
+    //         let clubAsociado = listaClubsBD.find((/** @type {{ codigo: any; }} */ club) => club.codigo === numeroAsoc)
+    //         // Pintamos el club logeado
+    //         let cabezeraH1 = document.getElementById("nombre-clubReg2")
             
-            if(cabezeraH1 ){
-            cabezeraH1.innerText =  clubAsociado.nombre
-            }
-        }  
-    }else if(sessionStorage.getItem('club') !== null){
-        const NOMBBRE_CLUB = sessionStorage.getItem('club')
-        if(NOMBBRE_CLUB){
-            let nombreClub = JSON.parse(NOMBBRE_CLUB).nombre //obtengo el el nombre del club
-            let pInfoClub = document.getElementById('club-info')
-            if(pInfoClub){
-                pInfoClub.innerText = nombreClub
-            }
-        }
-    }
+    //         if(cabezeraH1 ){
+    //         cabezeraH1.innerText =  clubAsociado.nombre
+    //         }
+    //     }  
+    // }else if(sessionStorage.getItem('club') !== null){
+    //     const NOMBBRE_CLUB = sessionStorage.getItem('club')
+    //     if(NOMBBRE_CLUB){
+    //         let nombreClub = JSON.parse(NOMBBRE_CLUB).nombre //obtengo el el nombre del club
+    //         let pInfoClub = document.getElementById('club-info')
+    //         if(pInfoClub){
+    //             pInfoClub.innerText = nombreClub
+    //         }
+    //     }
+    // }
 
 }
 /**

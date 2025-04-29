@@ -1,12 +1,11 @@
 //@ts-expect-error //TO DO arreglar y trabajar en el main
  
-import { INITIAL_STATE ,store } from './store/redux.js'
 import { Jugador } from "./classes/Jugador.js";
-//import { getAPIData } from './utils.js';
+import { getAPIData } from './utils.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
-//const API_PORT = location.port ? `:${1337}` : ''
+const API_PORT = location.port ? `:${1337}` : ''
 /**
  * When the page has finished loading, it does the following:
  * 1. Gets the logged in user from session storage.
@@ -17,18 +16,14 @@ window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
  */
 function onDOMContentLoaded(){
     let usuarioLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') ?? '')
-
-    let usuarioBD = store?.user?.getById?.(usuarioLogeado._id);
-
+    
     let añadirJugadores = document.getElementById('añadir-jugador-form')
 
-    añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioBD) )
+    añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioLogeado) )
 
-    leerListaJugadores()
-    leerEquipos()
-    mostrarInformacionUsuario(usuarioLogeado[0])
-    mostrarHerramientasGestion(usuarioLogeado[0])
-    mostrarEquipos(usuarioLogeado[0])
+    leerEquipos(usuarioLogeado)
+    mostrarPerfil(usuarioLogeado)
+    mostrarHerramientasGestion(usuarioLogeado)
 }
 /**
  * Takes the data from the form and creates a new Jugador object with that data.
@@ -36,7 +31,7 @@ function onDOMContentLoaded(){
  * @param {Event} event - the event that triggered this function.
  * @param {{ _id: string; clubAsoc: string; }} usuarioBD - The user object that is adding the Jugador.
  */
-function datosJugador(event,usuarioBD){
+function datosJugador(event,usuarioLogeado){
     event.preventDefault()
 
     let inputNombre = /** @type {HTMLInputElement} */(document.getElementById('jugador-nombre')).value
@@ -47,7 +42,7 @@ function datosJugador(event,usuarioBD){
     
     let categoriaCalculada = calculoCategoria(inputFnac)
 
-    addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD,categoriaCalculada)
+    addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioLogeado,categoriaCalculada)
 }
 /**
  * Displays the user's profile information on the webpage.
@@ -65,7 +60,7 @@ function datosJugador(event,usuarioBD){
  * @param {string} usuario.rol - The user's phone number.
  */
 
-function mostrarInformacionUsuario(usuario){
+function mostrarPerfil(usuario){
 
     let contenedorInformacion = document.getElementById('informacion-usuario')
 
@@ -160,36 +155,26 @@ function modificarPerfil(usuario){
  */
 async function guardarCambiosPerfil(event,usuario){
     event.preventDefault()
-    console.log(usuario)
     let name = /** @type {HTMLInputElement} */(document.getElementById('name'))?.value
     let apellidos = /** @type {HTMLInputElement} */(document.getElementById('apellidos'))?.value
     let email = /** @type {HTMLInputElement} */(document.getElementById('email'))?.value
     let telefono = /** @type {HTMLInputElement} */(document.getElementById('telefono'))?.value
 
-    //let usuarioCambiar = store?.user?.getById?.(usuario)
-    
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let usuarioModificado = {
-        ...usuario,
         name: name,
         apellidos:apellidos,
         email: email,
         nTelefono: telefono
     }
-
-    //const payload = usuarioModificado
-
-    //const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/update/user/${usuario._id}`, 'PUT', payload)
-    //store.user.update(usuarioModificado)   
-   
-    // const INFORMACION_USUARIO = document.getElementById('informacion-usuario');
-    // if (INFORMACION_USUARIO) {
-    //     borradoContenedoresPerfil(INFORMACION_USUARIO);
-    // }
-    //actualizarLocalStorageUsuarios()
-
-    //onDOMContentLoaded()
-
+    
+    if(usuario.name === name && usuario.apellidos === apellidos && usuario.email === email && usuario.nTelefono === telefono){
+        console.log('No hay cambios')
+        borradoContenedoresPerfil(document.getElementById('informacion-usuario'))
+        mostrarPerfil(usuario)
+    }else{
+        await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/user/${usuario._id}`, 'PUT', JSON.stringify(usuarioModificado))
+    }
+    
     
 }
 /**
@@ -206,37 +191,8 @@ async function guardarCambiosPerfil(event,usuario){
  */
 function addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD,categoriaCalculada){
     let nuevoJugador = new Jugador('',usuarioBD._id,inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD.clubAsoc,'',categoriaCalculada)
-
-    store.jugador.create(nuevoJugador)
-
-    let listaJugadores = JSON.parse(localStorage.getItem('REDUX_DB') || '')
-
-    listaJugadores.jugadores = [...store.jugador.getAll()]
-
-    localStorage.setItem('REDUX_DB', JSON.stringify(listaJugadores))
-}
-
-/*TO DO funciones exportables a utils.js*/
-function leerListaJugadores(){
-    let listaJugadores = []
-
-    if(localStorage.getItem('REDUX_DB')){
-        let listaJugadoresBD = localStorage.getItem('REDUX_DB')
-
-        if(listaJugadoresBD === null){
-            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
-            listaJugadoresBD = ''
-        }
-        listaJugadores = JSON.parse(listaJugadoresBD).jugadores
-        if(listaJugadores){
-            listaJugadores.forEach(( /** @type {Jugador} */newJugador) => {
-                store.jugador.create(newJugador)
-            })
-        }
-    }else{
-        localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
-    }
-
+    console.log(nuevoJugador)
+    // TO DO VAMOS POR AQUI AÑADIENDO EL JUGADOR A LA BBDD
 }
 /**
  * Reads the list of Equipos from local storage and updates the store
@@ -247,25 +203,10 @@ function leerListaJugadores(){
  * @returns {void}
  * @import { Equipo } from "./classes/Equipo.js"; 
  */
-function leerEquipos(){
-    let listaEquipos = []
+async function leerEquipos(userLogeado){
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/equipos/${userLogeado.clubAsoc}`, 'GET')
 
-    if(localStorage.getItem('REDUX_DB')){
-        let listaEquiposBD = localStorage.getItem('REDUX_DB')
-
-        if(listaEquiposBD === null){
-            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
-            listaEquiposBD = ''
-        }
-        listaEquipos = JSON.parse(listaEquiposBD).equipos
-        if(listaEquipos){
-            listaEquipos.forEach(( /** @type {Equipo} */newEquipo) => {
-                store.equipo.create(newEquipo)
-            })
-        }
-    }else{
-        localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
-    }
+    mostrarEquipos(apiData)
 }
 /**
  * Removes all child elements from the specified container element.
@@ -348,11 +289,11 @@ export function calculoCategoria(fnac){ // TO DO LLevar a utils.js
     if(edadTemporada >= 18) return "Senior"
     return "Desconocido"
 }
-function mostrarEquipos(usuarioBD){
+function mostrarEquipos(equiposBD){
     const MAIN_ENTRENADOR = document.getElementById('main-entrenador') // declaramos como constante el main en el que vamos a trabajar
-    let listaEquipos = store.equipo.getAll()
-    console.log(usuarioBD.clubAsoc)
-    if(usuarioBD.rol === 'entrenador' && location.pathname ==='/equipos.html'){ // si el usuario es entrenador le lanzamos un area para trabajar
+    const userLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER'))
+
+    if(userLogeado.rol === 'entrenador' && location.pathname ==='/equipos.html'){ // si el usuario es entrenador le lanzamos un area para trabajar
         borradoContenedoresPerfil(MAIN_ENTRENADOR)// le pasamos la constante a la funcion de borrado para dejar limpio el main
 
         //Creamos la estructura del area de trabajo
@@ -368,13 +309,11 @@ function mostrarEquipos(usuarioBD){
         select.id = 'select-equipo-gestionar'
         MAIN_ENTRENADOR?.appendChild(select)
 
-        listaEquipos.forEach((/** @type {Equipo} */ equipo) => {
-            if(equipo.clubAsoc === usuarioBD.clubAsoc){
+        equiposBD.forEach((/** @type {Equipo} */ equipo) => {
                 let option = document.createElement('option')
                 option.value = equipo._id
                 option.innerText = equipo.nombre
                 select.appendChild(option)
-            }
 
         });
 
@@ -385,14 +324,25 @@ function mostrarEquipos(usuarioBD){
         select.addEventListener('change', (event) => {
             let valorSelect = event.target.value
             borradoContenedoresPerfil(sectionEquipoSeleccionado)
-            gestionarEquipo(sectionEquipoSeleccionado,valorSelect)
+            
+            let botonGestionJugadores = document.createElement('button')
+            botonGestionJugadores.innerText = 'Gestionar equipo'
+            botonGestionJugadores.addEventListener('click', () => gestionarEquipo(sectionEquipoSeleccionado,valorSelect))
+            
+            let botonVerEquipo = document.createElement('button')
+            botonVerEquipo.innerText = 'Ver equipo'
+            botonVerEquipo.addEventListener('click', () => verEquipo(sectionEquipoSeleccionado,valorSelect))
+
+            sectionEquipoSeleccionado.appendChild(botonGestionJugadores)
+            sectionEquipoSeleccionado.appendChild(botonVerEquipo)
         })
         
     }
 }
-function gestionarEquipo(sectionEquipoSeleccionado,nombreSelect){
-    let equipoSeleccionado = store.equipo.getById(nombreSelect)
-    
+async function gestionarEquipo(sectionEquipoSeleccionado,valorSelect){
+    borradoContenedoresPerfil(sectionEquipoSeleccionado)
+    let equipoSeleccionado =  await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/equipo/${valorSelect}`, 'GET')
+    console.log(equipoSeleccionado)
     let form = document.createElement('form')
     form.id = 'form-añadir-jugadores'
     sectionEquipoSeleccionado.appendChild(form)
@@ -401,37 +351,98 @@ function gestionarEquipo(sectionEquipoSeleccionado,nombreSelect){
     h2.innerText = equipoSeleccionado.nombre + ' - ' + equipoSeleccionado.categoria
     document.getElementById('form-añadir-jugadores').appendChild(h2)
 
-    let jugadoresClubCategoria = filtrarJugadores(equipoSeleccionado)
-    if(jugadoresClubCategoria.length > 0){
-        jugadoresClubCategoria.forEach((jugador) => {
-            let p = document.createElement('p')
-            p.innerText = jugador.nombre + ' ' + jugador.apellidos
-            document.getElementById('form-añadir-jugadores').appendChild(p)
-    })
+    let listadoJugadoresSinEquipo = await filtrarJugadores(equipoSeleccionado)
+
+    if(listadoJugadoresSinEquipo.length > 0){
+        listadoJugadoresSinEquipo.forEach((jugador) => {
+            let label = document.createElement('label')
+            label.innerText = jugador.nombre + ' ' + jugador.apellidos + '-' + jugador.fnac
+            let check = document.createElement('input')
+            check.type = 'checkbox'
+            check.name = 'jugador'
+            check.value = jugador._id
+            document.getElementById('form-añadir-jugadores').appendChild(label)
+            document.getElementById('form-añadir-jugadores').appendChild(check)
+            
+        })
+        let addJugadores = document.createElement('button')
+        addJugadores.type = 'submit'
+        addJugadores.id = 'boton-añadir-jugadores'
+        addJugadores.innerText = 'Añadir jugadores seleccionados'
+        document.getElementById('form-añadir-jugadores').appendChild(addJugadores)
+        form.addEventListener('submit',(event) => enviarJugadores(event,equipoSeleccionado))
     }else{
         let p = document.createElement('p')
-        p.innerText = 'No hay jugadores de esta edad seleccionables para este equipo'
+        p.innerText = 'No hay jugadores seleccionables para este equipo'
         sectionEquipoSeleccionado.appendChild(p)
     }
     //DOING ESTA FUNCION SOLO ES PARA MOSTRAR EQUIPOS DE UN CLUB Y SUS JUGADORES en esa categoria SIN AÑADIR, PARA PODER AÑADIRLOS LUEGO TENDREMOS QUE TENER OTRA QUE MUESTRE LOS YA AÑADIDOS
 }
 
-function filtrarJugadores(equipo){
-    let listaJugadores = JSON.parse(localStorage.getItem('REDUX_DB')).jugadores
-
-
-    let jugadoresClub = listaJugadores.filter(jugador => jugador.club === equipo.clubAsoc)
-
-    let jugadoresCategoria = jugadoresClub.filter(jugador => jugador.categoria.toLowerCase() === equipo.categoria.toLowerCase())
-
-    return jugadoresCategoria
-
-    
+async function filtrarJugadores(equipo){
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/jugadores/${equipo.categoria}`, 'GET')
+    return apiData
 }
 
+async function enviarJugadores(event,idEquipo){
+    event.preventDefault()
+    let checkboxes = event.target.querySelectorAll('input[type="checkbox"][name="jugador"]')
+    const JUGADORES_SELECCIONADOS ={}
+    JUGADORES_SELECCIONADOS.equipo = idEquipo
+    JUGADORES_SELECCIONADOS.jugadores = []
 
+    checkboxes.forEach((checkbox) => {
+        if(checkbox.checked){
+            JUGADORES_SELECCIONADOS.jugadores.push(checkbox.value)
+        }
+    })
+    console.log(JUGADORES_SELECCIONADOS)
+    const payload = JSON.stringify(JUGADORES_SELECCIONADOS)
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/equipo/jugadores`, 'POST', payload)
+    console.log(apiData)
+}
+async function verEquipo(sectionEquipoSeleccionado,valorSelect){
+    borradoContenedoresPerfil(sectionEquipoSeleccionado)
+    let equipoSeleccionado =  await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/equipos/jugadores/${valorSelect}`, 'GET')
+    console.log(equipoSeleccionado)
 
+    let nombreEquipo = document.createElement('p')
+    nombreEquipo.innerText = 'Nombre del equipo: ' + equipoSeleccionado.EQUIPO_SELECCIONADO.nombre
+    sectionEquipoSeleccionado.appendChild(nombreEquipo)
 
+    let categoriaEquipo = document.createElement('p')
+    categoriaEquipo.innerText = 'Categoria del equipo: ' + mayusculasInicial(equipoSeleccionado.EQUIPO_SELECCIONADO.categoria)
+    sectionEquipoSeleccionado.appendChild(categoriaEquipo)
+
+    if(equipoSeleccionado.JUGADORES_EQUIPO.length === 0 ){
+        let errorJugadores = document.createElement('p')
+        errorJugadores.innerText = 'Este equipo no tiene jugadores asignados'
+        sectionEquipoSeleccionado.appendChild(errorJugadores)
+    }else{
+        equipoSeleccionado.JUGADORES_EQUIPO.forEach(jugador => {
+            let divJugador = document.createElement('div')
+            sectionEquipoSeleccionado.appendChild(divJugador)
+
+            let nombreJugador = document.createElement('p')
+            nombreJugador.innerText =jugador.nombre + ' ' + jugador.apellidos
+            divJugador.appendChild(nombreJugador)
+
+            let fnacJugador = document.createElement('p')
+            let [dia, mes, anio] = jugador.fnac.split('-')
+            fnacJugador.innerText = 'Fecha de nacimiento: ' + dia + '/' + mes + '/' + anio
+            divJugador.appendChild(fnacJugador)
+
+            if(jugador.categoria === 'alevin' || jugador.categoria === 'benjamin'){
+                let sexoJugador = document.createElement('p')
+                sexoJugador.innerText = 'Sexo: ' + jugador.sexo
+                divJugador.appendChild(sexoJugador)
+            }
+
+            //TO DO un select para cambiar la posicion del jugador y un boton para actualizarla
+            //TO DO un boton para eliminar el jugador del equipo
+        })
+    }
+}   
 
 
 

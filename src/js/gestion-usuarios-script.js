@@ -1,7 +1,6 @@
 
 import { User } from './classes/User.js'
 import { Club } from './classes/Club.js'
-import { INITIAL_STATE, store } from './store/redux.js'
 import { comprobarSession } from './checkSession.js'
 import { getAPIData } from './utils.js'
 
@@ -51,9 +50,7 @@ function onDOMContentLoaded() {
 
     botonLogIn?.addEventListener('click', mostrarLogIn)
     botonSignIn?.addEventListener('click', mostrarSignIn)
-    
-    leerUsuariosBD()
-    leerClubsBD()
+
     comprobarSession()
     console.log('Todo cargado')
 }
@@ -213,23 +210,6 @@ async function crearClub(nombre,siglas,codigoPostal,telClub,email,password){
     }
 }
 /**
- * Saves the current state of the USER_DB array to local storage.
- * 
- * This function serializes the USER_DB array into a JSON string
- * and stores it in local storage under the key 'USER_DB'.
- * This allows the user database to be persisted across sessions.
- */
-export function actualizarLocalStorageUsuarios(){
-    //localStorage.setItem('USER_DB', JSON.stringify(store.user.getAll()))
-    let listaUsuarios = JSON.parse(localStorage.getItem('REDUX_DB') || '')
-
-    listaUsuarios.users = [...store.user.getAll()]
-
-    localStorage.setItem('REDUX_DB', JSON.stringify(listaUsuarios))
-
-    
-}
-/**
  * Handles the user login process upon form submission, preventing the default form behavior.
  * If the user is not logged in and the login data is correct, it logs in the user, saves the user session data, and redirects to the club page.
  * If the login data is incorrect, it shows an error message to the user.
@@ -268,7 +248,7 @@ async function logIn(loginUser){
  * @param {Club} loginClub - The club object containing the club data to be logged in.
  */
 
-async function logInClub(loginClub){
+async function logInClub(loginClub){ // TO DO CARGARME ESTO FUSIONANDO MODELO DE DATOS USERS Y CLUBS
     const payload = JSON.stringify(loginClub)
 
     const apiData = JSON.parse(await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/loginClub`, 'POST', payload))
@@ -289,71 +269,6 @@ async function logInClub(loginClub){
             return
         }
     }
-}
-/**
- * Reads the user and club databases from local storage and populates
- * the corresponding SingletonDB instances with the data.
- *
- * This function checks local storage for 'USER_DB' and 'CLUB_DB' keys.
- * If they exist, it parses the JSON strings into User and Club objects,
- * respectively, and adds them to the SingletonDB instances USER_DB and CLUB_DB.
- * If the databases are not already initialized, it logs a message indicating
- * their initialization. This ensures that the user and club data are
- * available in memory for further operations.
- */
-export function leerUsuariosBD(){
-    /**
-     * @type {User[]}
-     */
-    let usersAlmacenadosDB = []
-    if(localStorage.getItem('REDUX_DB')){
-        let usersDB = localStorage.getItem('REDUX_DB')
-
-        if(usersDB === null){
-            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
-            usersDB = ''
-        }
-        usersAlmacenadosDB = JSON.parse(usersDB).users
-    }else{
-        localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
-    }
-
-    usersAlmacenadosDB.forEach(( /** @type {User} */newUser) => {
-        store.user.create(newUser)
-    });
-    
-}
-/**
- * Reads the club database from local storage and populates the store
- * with the data.
- *
- * This function checks local storage for the 'REDUX_DB' key. If it exists,
- * it parses the JSON string to extract the array of Club objects and adds them
- * to the store. If the key does not exist, it initializes it with the default
- * state. This ensures that the club data is available in memory for further
- * operations.
- */
-export function leerClubsBD(){
-    /**
-     * @type {Club[]}
-     */
-    let clubsAlmacenadosDB = []
-    if(localStorage.getItem('REDUX_DB')){
-        let clubsDB = localStorage.getItem('REDUX_DB')
-        if(clubsDB === null){
-            // Asignamos una cadena de texto vacía, para no romper JSON.parse()
-            clubsDB = ''
-        }
-        clubsAlmacenadosDB = JSON.parse(clubsDB).clubs
-    }else{
-        localStorage.setItem('REDUX_DB', JSON.stringify(INITIAL_STATE))
-
-    }
-
-    clubsAlmacenadosDB.forEach(( /** @type {Club} */newClub) => {
-        store.club.create(newClub)
-    });
-
 }
 
 
