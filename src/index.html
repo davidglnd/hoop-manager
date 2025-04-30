@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hoop Manager</title>
     <link rel="shortcut icon" href="img/logo1b.png" type="image/x-icon">
-    <script type="module" src="js/gestion-usuarios-script.js" defer></script>
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.index.css">
     <link rel="stylesheet" href="css/style.desktop.index.css">
+    <script type="module" src="./js/components/bundle.js" defer></script>
+    <script type="module" src="js/gestion-usuarios-script.js" defer></script>
+    
 </head>
 <body>
     <header>
@@ -26,11 +28,31 @@
         
     </header>
     <main>
-        <article>
-            <h2>Vendemos la pagina</h2>
-        </article>
+        <section>
+            <h2>---¿Qué es Hoop Manager?</h2>
+            <p>
+              Hoop Manager es una herramienta digital diseñada para facilitar la gestión diaria de los clubes de baloncesto amateur. 
+              Desde la organización de equipos hasta el seguimiento de partidos, todo está en un solo lugar.
+            </p>
+            <h2>---Funcionalidades</h2>
+            <ul>
+              <li>Gestión de jugadores y equipos</li>
+              <li>Calendario de partidos</li>
+              <li>Convocatorias automáticas</li>
+              <li>Registro de resultados y estadísticas</li>
+              <li>Accesos diferenciados para clubes y usuarios</li>
+            </ul>
+            <h2>---¿A quién va dirigido?</h2>
+            <p>
+              Hoop Manager es ideal para clubes, entrenadores y jugadores que buscan profesionalizar su organización y mantenerse conectados.
+            </p>
+        </section>
         <aside>
-            <h2 id="boton-log-in">Iniciar sesion</h2>
+            <h2>Empieza ahora</h2>
+            <p>
+                Crea tu cuenta como club y empieza a gestionar tu equipo hoy mismo.
+            </p>
+            <h3 id="boton-log-in">Iniciar sesion</h3>
             <div id="contenedor-log-in" class="hidden">
                 <p id="iniciar-sesion-usuario">Inicia sesion como usuario</p>
                 <p id="iniciar-sesion-club">Inicia sesion como club</p>
@@ -54,49 +76,15 @@
                     <p id="error-login" class="hidden">Inicio de sesion incorrecto</p>
                 </form>
             </div>
-            <h2 id="boton-sign-in">Registrarse</h2>
+            <h3 id="boton-sign-in">Registrarse</h3>
             <div id="contenedor-sign-in" class="hidden">
-                <form id="sig-in">
-                    <h5>Registro</h5>
-                    <label for="usuario">Nombre de usuario</label>
-                    <input type="text" id="usuario">
-                    <label for="apellidos">Apellidos</label>
-                    <input type="text" id="apellidos">
-                    <label for="email">Email</label>
-                    <input type="email" id="email">
-                    <label for="password-usuario">Contraseña</label>
-                    <input type="password" id="password-usuario">
-                    <label for="n-telefono">Numero telefono</label>
-                    <input type="tel" id="n-telefono">
-                    <label for="cod-club">Codigo del club</label>
-                    <input type="text" id="cod-club">
-                    <button type="submit">Registrarse</button>
-                    <p id="registrado" class="hidden">Se ha registrado correctamente</p>
-                    <p id="error-registro" class="hidden"></p>
-                </form>
-                <form id="registro-club">
-                    <h5>Datos del club</h5>
-                    <label for="nombre-club">Nombre del club</label>
-                    <input type="text" name="nombre-club" id="nombre-club">
-                    <label for="siglas-club">Siglas del club</label>
-                    <input type="text" name="siglas-club" id="siglas-club">
-                    <label for="codigo-club">Codigo postal</label>
-                    <input type="text" name="codigo" id="codigo-club">
-                    <label for="tel-club">Telefono</label>
-                    <input type="tel" name="telefono" id="tel-club">
-                    <label for="email-club">Email del club</label>
-                    <input type="email" name="email" id="email-club">
-                    <label for="password-club">Contraseña</label>
-                    <input type="password" name="password" id="password-club">
-                    <button type="submit">Registrar club</button>
-                </form>
-                <p id="error-registro-club" class="hidden">Ese email ya esta asociado a un club</p>
-                <p id="registrado-club" class="hidden">Se ha registrado correctamente se te redirigira a la pagina de inicio</p>
+                <signin-form></signin-form>
+                <sign-in-form-club></sign-in-form-club>
             </div>
         </aside>
     </main>
     <footer>
-        <p>Este es el footer</p>
+        © 2025 Hoop Manager. Todos los derechos reservados.
     </footer>
 </body>
 </html>

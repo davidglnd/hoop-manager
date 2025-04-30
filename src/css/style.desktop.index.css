@@ -3,11 +3,37 @@
 
 */
 html{
-    font-size: 18px;
+    font-size: 16px;
 }
 
-h1{
-    font-size: 45px;
+h1 {
+    font-size: 2.5rem;   /* ~40px */
+    line-height: 1.2;
+    font-weight: 700;
+  }
+  
+h2 {
+font-size: 2rem;     /* ~32px */
+line-height: 1.3;
+font-weight: 600;
+}
+  
+h3 {
+font-size: 1.5rem;   /* ~24px */
+line-height: 1.4;
+font-weight: 600;
+}
+  
+h4 {
+font-size: 1.25rem;  /* ~20px */
+line-height: 1.5;
+font-weight: 500;
+}
+  
+p, li {
+font-size: 1rem;     /* 16px */
+line-height: 1.6;
+font-weight: 400;
 }
 
 a{
@@ -46,7 +72,10 @@ body{
                 align-items: center;
                 width:100%;
                 height: 123px;
-                font-size: 30px;
+
+                li{
+                    font-size: 2rem;
+                }
             }
 
 
@@ -63,23 +92,45 @@ body{
         width:75%;
         min-height: 70vh;
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
         align-items: center;
 
-        article{
-            width:40%;
-            min-height: 70vh;
+        section{
+            min-height: 50vh;
         }
 
         aside{
-            width:40%;
-            height:calc(70vh - 150px);
+            width:100%;
+            height:150px;
             display:flex;
-            flex-direction: row;
+            flex-flow: row wrap;
             justify-content: space-around;
+            
+            h2{
+                width: 100%;;
+            }
+            
+            p{
+                width: 100%;
+            }
+
 
             #contenedor-log-in>p{
                 font-size: 20px;
+            }
+
+            #boton-sign-in{
+                height: 25%;
+                width:35%;
+                padding-top: 15px;
+                text-align: center;
+            }
+
+            #boton-log-in{
+                height: 25%;
+                width:35%;
+                padding-top: 15px;
+                text-align: center;
             }
         }
 

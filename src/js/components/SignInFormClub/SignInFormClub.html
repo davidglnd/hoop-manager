@@ -1,0 +1,20 @@
+<template id="signInFormClubTemplate">
+<form id="registro-club">
+    <h5>Datos del club</h5>
+    <label for="nombre-club">Nombre del club</label>
+    <input type="text" name="nombre-club" id="nombre-club">
+    <label for="siglas-club">Siglas del club</label>
+    <input type="text" name="siglas-club" id="siglas-club">
+    <label for="codigo-club">Codigo postal</label>
+    <input type="text" name="codigo" id="codigo-club">
+    <label for="tel-club">Telefono</label>
+    <input type="tel" name="telefono" id="tel-club">
+    <label for="email-club">Email del club</label>
+    <input type="email" name="email" id="email-club">
+    <label for="password-club">Contraseña</label>
+    <input type="password" name="password" id="password-club">
+    <button type="submit">Registrar club</button>
+    <p id="error-registro-club" class="hidden">Ese email ya esta asociado a un club</p>
+    <p id="registrado-club" class="hidden">Se ha registrado correctamente se te redirigira a la pagina de inicio</p>
+</form>
+</template>

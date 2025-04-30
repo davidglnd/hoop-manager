@@ -20,7 +20,18 @@ body{
         aside{
             background-color: #F5F5F5;
             color:#212121;
-            border:red 2px solid;
+            
+            #boton-sign-in{
+                background-color: #F57C00;
+                color: #FFF;
+                
+            }
+
+            #boton-log-in{
+                background-color: #F57C00;
+                color: #FFF;
+                
+            }
         }
     }
     
