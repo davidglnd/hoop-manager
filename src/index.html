@@ -52,34 +52,17 @@
             <p>
                 Crea tu cuenta como club y empieza a gestionar tu equipo hoy mismo.
             </p>
-            <h3 id="boton-log-in">Iniciar sesion</h3>
-            <div id="contenedor-log-in" class="hidden">
-                <p id="iniciar-sesion-usuario">Inicia sesion como usuario</p>
-                <p id="iniciar-sesion-club">Inicia sesion como club</p>
-                <!---LOG IN CLUB-->
-                <form id="log-in-club" class="hidden">
-                    <label for="email">Email del club</label>
-                    <input type="email" id="email-club-log-in">
-                    <label for="pass-club-log-in">Contraseña</label>
-                    <input type="password" id="pass-club-log-in">
-                    <button type="submit">Iniciar sesion</button>
-                    <p id="error-login-club" class="hidden">no hay ninguna cuenta asociada a ese email</p>
-
-                </form>
-                <!---LOG IN USUARIO-->
-                <form id="log-in-usuario" class="hidden">
-                    <label for="email">Email</label>
-                    <input type="email" id="email-usuario">
-                    <label for="pass-usuario-log-in">Constraseña</label>
-                    <input type="password" id="pass-usuario-log-in">
-                    <button type="submit">Iniciar sesion</button>
-                    <p id="error-login" class="hidden">Inicio de sesion incorrecto</p>
-                </form>
-            </div>
-            <h3 id="boton-sign-in">Registrarse</h3>
+            <!-- BOTONES  -->
+            <nav id="botones">
+                <h3 id="boton-log-in">Iniciar sesion</h3>
+                <h3 id="boton-sign-in">Registrarse</h3>
+            </nav>
+            <log-in-usuario id="comp-log-in" class="hidden" ></log-in-usuario>
             <div id="contenedor-sign-in" class="hidden">
-                <signin-form></signin-form>
-                <sign-in-form-club></sign-in-form-club>
+                <p id="registrarse-usuario">Registrarte como usuario</p>
+                <p id="registrarse-club">Registrarte como club</p>
+                <signin-form id="comp-sign-in" class="hidden"></signin-form>
+                <sign-in-form-club id="comp-sign-in-club" class="hidden"></sign-in-form-club>
             </div>
         </aside>
     </main>

@@ -1,3 +1,5 @@
-form{
-    background-color: rgb(151 151 151);
+form{    
+    .hidden{
+        display: none;
+    }
 }

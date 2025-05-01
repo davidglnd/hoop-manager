@@ -39,12 +39,11 @@ export class Usuario extends User {
    * @param {string} email
    * @param {string} telefono
    * @param {string} password
-   * @param {string} rol - ENTRENADOR, FAMILIAR, ESTANDAR o FAMILIAR_ESPECIAL
    * @param {string} apellidos
    * @param {string} clubAsoc - Código o nombre del club asociado
    */
-  constructor(nombre, email, telefono, password, rol, apellidos, clubAsoc) {
-    super(nombre, email, telefono, password, rol)
+  constructor(nombre, email, telefono, password, apellidos, clubAsoc) {
+    super(nombre, email, telefono, password, 'ESTANDAR')
     this.apellidos = apellidos
     this.clubAsoc = clubAsoc
   }

@@ -1,4 +1,10 @@
 import { importTemplate } from '../../lib/importTemplate.js';
+import { getAPIData} from '../../utils.js';
+import { API_PORT  } from '../../gestion-usuarios-script.js';
+import { Club } from '../../classes/UserClasses.js';
+import ResetCSS from '../../../css/reset.css' with { type: 'css' };
+import AppCSS from '../../../css/style.index.css' with { type: 'css' };
+import SignInFormCSS from './SignInFormClub.css' with { type: 'css' };
 
 const TEMPLATE = {
   id: 'signInFormClubTemplate',
@@ -38,8 +44,10 @@ export class SignInFormClub extends HTMLElement {
     console.log("2. constructor: Custom element added to page.");
     // Necesitamos activar el shadow DOM para poder añadir la plantilla html
     this.attachShadow({ mode: "open" });
-    // this.shadowRoot.adoptedStyleSheets.push(ResetCSS, AppCSS, SignInFormCSS);
+    this.shadowRoot.adoptedStyleSheets.push(ResetCSS, AppCSS, SignInFormCSS);
     this._setUpContent();
+    const signInForm = this.shadowRoot.getElementById("registro-club");
+    signInForm.addEventListener("submit", this.__submitSignIninClub.bind(this));
   }
 
   // ======================= Private Methods ======================= //
@@ -59,6 +67,38 @@ export class SignInFormClub extends HTMLElement {
      this.shadowRoot.appendChild(this.template.content.cloneNode(true));
    }
  }
-}
+async __submitSignIninClub(e){
+  e.preventDefault()
+  const name = this.shadowRoot.getElementById('nombre-club').value
+  const email = this.shadowRoot.getElementById('email-club').value
+  const password = this.shadowRoot.getElementById('password-club').value
+  const telefono = this.shadowRoot.getElementById('tel-club').value
+  const siglas = this.shadowRoot.getElementById('siglas-club').value
+  const codigoPostal = this.shadowRoot.getElementById('codigo-club').value
 
+  const clubLogIng = new Club(name, email,telefono,password, siglas, codigoPostal, '')
+
+  const payload = JSON.stringify(clubLogIng)
+
+  const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/clubs`, 'POST', payload)
+
+    if(apiData.error){
+        this.shadowRoot.getElementById('error-registro-club')?.classList.remove('hidden')
+        this.shadowRoot.getElementById('error-registro-club').innerText = apiData.error
+        setTimeout(() => {
+          this.shadowRoot.getElementById('error-registro-club')?.classList.add('hidden')
+        }, 2000)
+        return
+    }else{
+      this.shadowRoot.getElementById('registrado-club')?.classList.remove('hidden')
+        setTimeout(() => {
+          this.shadowRoot.getElementById('registrado-club')?.classList.add('hidden')
+            //location.href = '/index.html'
+        }, 2000)
+
+        console.log('Respuesta del servidor de APIs', apiData)
+    }
+
+  }
+}
 customElements.define('sign-in-form-club', SignInFormClub);

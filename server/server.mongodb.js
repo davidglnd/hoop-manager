@@ -3,12 +3,6 @@ import { MongoClient, ObjectId } from "mongodb";
 const URI = process.env.MONGO_URI;
 
 export const db = {
-  clubs: {
-    count: countClubs,
-    get: getClubs,
-    create: createClub,
-
-  },
   users: {
     count: countUsers,
     get: getUsers,
@@ -40,25 +34,12 @@ async function countUsers() {
   return await usersCollection.countDocuments()
 }
 
-async function countClubs() {
-    const client = new MongoClient(URI);
-    const hoopManagerDB = client.db('Hoop-Manager');
-    const clubsCollection = hoopManagerDB.collection('clubs');
-    return await clubsCollection.countDocuments()
-  }
 // GETTERS
 async function getUsers(filter){
   const client = new MongoClient(URI);
   const hoopManagerDB = client.db('Hoop-Manager');
   const usersCollection = hoopManagerDB.collection('users');
   return await usersCollection.find(filter).toArray()
-}
-
-async function getClubs(filter){
-    const client = new MongoClient(URI);
-    const hoopManagerDB = client.db('Hoop-Manager');
-    const clubsCollection = hoopManagerDB.collection('clubs');
-    return await clubsCollection.find(filter).toArray()
 }
 
 async function getEquipos(filter){
@@ -81,14 +62,6 @@ async function createUser(user){
     const usersCollection = hoopManagerDB.collection('users');
     console.log('Usuario a crear: ',JSON.stringify(user))
     return  await usersCollection.insertOne(user);
-}
-
-async function createClub(club){
-    const client = new MongoClient(URI);
-    const hoopManagerDB = client.db('Hoop-Manager');
-    const clubsCollection = hoopManagerDB.collection('clubs');
-    console.log('Club a crear: ',JSON.stringify(club))
-    return  await clubsCollection.insertOne(club);
 }
 // LOG IN
 async function loginUser({email,password}) {

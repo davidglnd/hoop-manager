@@ -1,5 +1,3 @@
-
-import { User } from './classes/User.js'
 import { Club } from './classes/Club.js'
 import { comprobarSession } from './checkSession.js'
 import { getAPIData } from './utils.js'
@@ -9,7 +7,7 @@ import { getAPIData } from './utils.js'
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
 
-const API_PORT = location.port ? `:${1337}` : ''
+export const API_PORT = location.port ? `:${1337}` : ''
 
 
 
@@ -27,7 +25,6 @@ const API_PORT = location.port ? `:${1337}` : ''
  * @returns {void}
  */
 function onDOMContentLoaded() {
-    let formularioRegistro = document.getElementById('sig-in')
     let formularioClub = document.getElementById('registro-club')
 
     let logInUsuario = document.getElementById('log-in-usuario')
@@ -35,18 +32,20 @@ function onDOMContentLoaded() {
 
     let botonSignIn = document.getElementById('boton-sign-in')
     let botonLogIn = document.getElementById('boton-log-in')
-    let mostrarLogUsuario = document.getElementById('iniciar-sesion-usuario')
-    let mostrarLogClub = document.getElementById('iniciar-sesion-club')
 
+    let mostrarSignUsuario = document.getElementById('registrarse-usuario')
+    let mostrarSignClub = document.getElementById('registrarse-club')
 
-    formularioRegistro?.addEventListener('submit', datosSigIN)//La interrogacion vale para ver si existe el form 
+    //La interrogacion vale para ver si existe el form 
     logInUsuario?.addEventListener('submit', datosLogIn)//si no no hace el eventListener
     
     formularioClub?.addEventListener('submit', datosSignClub)
-    mostrarLogUsuario?.addEventListener('click', mostrarLogInUsuario)
 
-    mostrarLogClub?.addEventListener('click', mostrarLogInClub)
+
     logInClub?.addEventListener('submit', datosLogInClub)
+
+    mostrarSignUsuario?.addEventListener('click', mostrarSignInUsuario)
+    mostrarSignClub?.addEventListener('click', mostrarSignInClub)
 
     botonLogIn?.addEventListener('click', mostrarLogIn)
     botonSignIn?.addEventListener('click', mostrarSignIn)
@@ -55,37 +54,24 @@ function onDOMContentLoaded() {
     console.log('Todo cargado')
 }
 function mostrarLogIn(){
-    document.getElementById('contenedor-log-in')?.classList.remove('hidden')
+    document.getElementById('comp-log-in')?.classList.remove('hidden')
     document.getElementById('contenedor-sign-in')?.classList.add('hidden')
+    document.getElementById('boton-log-in')?.classList.add('hidden')
+    document.getElementById('boton-sign-in')?.classList.add('hidden')
 }
 function mostrarSignIn(){
     document.getElementById('contenedor-sign-in')?.classList.remove('hidden')
     document.getElementById('contenedor-log-in')?.classList.add('hidden')
+    document.getElementById('boton-log-in')?.classList.add('hidden')
+    document.getElementById('boton-sign-in')?.classList.add('hidden')
 }
-function mostrarLogInClub(){
-    document.getElementById('log-in-club')?.classList.remove('hidden')
-    document.getElementById('log-in-usuario')?.classList.add('hidden')
+function mostrarSignInClub(){
+    document.getElementById('comp-sign-in-club')?.classList.remove('hidden')
+    document.getElementById('comp-sign-in')?.classList.add('hidden')
 }
-function mostrarLogInUsuario(){
-    document.getElementById('log-in-usuario')?.classList.remove('hidden')
-    document.getElementById('log-in-club')?.classList.add('hidden')
-}
-/**
- * Takes the data from the form and creates a new User object with that data.
- * It then adds that User to the USER_DB array and calls the registrarUsuario function to save the USER_DB array to local storage.
- * @param {Event} event - the event that triggered this function.
- */
-function datosSigIN(event) {
-    event.preventDefault()
-
-    let name = /** @type {HTMLInputElement} */(document.getElementById('usuario'))?.value
-    let email = /** @type {HTMLInputElement} */(document.getElementById('email'))?.value
-    let apellidos = /** @type {HTMLInputElement} */(document.getElementById('apellidos'))?.value
-    let telefono = /** @type {HTMLInputElement} */(document.getElementById('n-telefono'))?.value
-    let codClub = /** @type {HTMLInputElement} */(document.getElementById('cod-club'))?.value
-    let password = /** @type {HTMLInputElement} */(document.getElementById('password-usuario'))?.value
-    crearUsuario(name,email,apellidos,telefono,password,codClub)
-    
+function mostrarSignInUsuario(){
+    document.getElementById('comp-sign-in')?.classList.remove('hidden')
+    document.getElementById('comp-sign-in-club')?.classList.add('hidden')
 }
 /**
  * Event handler for the club registration form. Prevents the default form
@@ -141,41 +127,6 @@ function datosLogInClub(event){
     let loginClub = new Club('','','','','',email,'',passwordClub)
 
     logInClub(loginClub)
-}
-/**
- * Creates a new User instance and adds it to the USER_DB array.
- * This function takes a user's name and email, constructs a User
- * object, and stores it in the user database. It then calls the
- * registrarUsuario function to save the updated database to local storage.
- * @param {string} name - The name of the user.
- * @param {string} email - The email address of the user.
- * @param {string} apellidos - El apellidos del usuario
- * @param {string} telefono - El telefono del usuario
- * @param {string} codClub - El codigo del club
- * @param {*} password - La contraseña
- */
-async function crearUsuario(name,email,apellidos,telefono,password,codigo){
-    let checkUserExist =new User(name, email,apellidos,telefono,codigo,password)
-    const payload = JSON.stringify(checkUserExist)
-    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, 'POST', payload)
-
-    if(apiData.error){
-        console.log('El correo ya esta asociado a una cuenta')
-        document.getElementById('error-registro')?.classList.remove('hidden')
-        document.getElementById('error-registro').innerText = apiData.error
-        setTimeout(() => {
-        document.getElementById('error-registro')?.classList.add('hidden')
-        }, 2000)
-        return
-    }else{
-        document.getElementById('registrado')?.classList.remove('hidden')
-        setTimeout(() => {
-            document.getElementById('registrado')?.classList.add('hidden')
-            //location.href = '/index.html'
-        }, 2000)
-
-        console.log('Respuesta del servidor de APIs', apiData)
-    }
 }
 /**
  * Crea un nuevo club con los datos proporcionados y lo almacena en

@@ -1,4 +1,10 @@
 import { importTemplate } from '../../lib/importTemplate.js';
+import { getAPIData} from '../../utils.js';
+import { API_PORT  } from '../../gestion-usuarios-script.js';
+import { Usuario } from '../../classes/UserClasses.js';
+import ResetCSS from '../../../css/reset.css' with { type: 'css' };
+import AppCSS from '../../../css/style.index.css' with { type: 'css' };
+import SignInFormCSS from './SignInForm.css' with { type: 'css' };
 
 const TEMPLATE = {
   id: 'signInFormTemplate',
@@ -45,8 +51,10 @@ export class SignInForm extends HTMLElement {
     console.log("2. constructor: Custom element added to page.");
     // Necesitamos activar el shadow DOM para poder añadir la plantilla html
     this.attachShadow({ mode: "open" });
-    // this.shadowRoot.adoptedStyleSheets.push(ResetCSS, AppCSS, SignInFormCSS);
+    this.shadowRoot.adoptedStyleSheets.push(ResetCSS, AppCSS, SignInFormCSS);
     this._setUpContent();
+    const signInForm = this.shadowRoot.getElementById("sig-in");
+    signInForm.addEventListener("submit", this._submitSignInin.bind(this));
   }
 
   // ======================= Private Methods ======================= //
@@ -66,6 +74,38 @@ export class SignInForm extends HTMLElement {
      this.shadowRoot.appendChild(this.template.content.cloneNode(true));
    }
  }
+ async _submitSignInin(e){
+  e.preventDefault()
+  const name = this.shadowRoot.getElementById('usuario').value
+  const apellidos = this.shadowRoot.getElementById('apellidos').value
+  const email = this.shadowRoot.getElementById('email').value
+  const password = this.shadowRoot.getElementById('password-usuario').value
+  const telefono = this.shadowRoot.getElementById('n-telefono').value
+  const codClub = this.shadowRoot.getElementById('cod-club').value
+
+  const userLogIng = new Usuario(name, email,telefono,password,apellidos,codClub)
+
+  const payload = JSON.stringify(userLogIng)
+
+  const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, 'POST', payload)
+
+    if(apiData.error){
+        this.shadowRoot.getElementById('error-registro')?.classList.remove('hidden')
+        this.shadowRoot.getElementById('error-registro').innerText = apiData.error
+        setTimeout(() => {
+          this.shadowRoot.getElementById('error-registro')?.classList.add('hidden')
+        }, 2000)
+        return
+    }else{
+      this.shadowRoot.getElementById('registrado')?.classList.remove('hidden')
+        setTimeout(() => {
+          this.shadowRoot.getElementById('registrado')?.classList.add('hidden')
+            //location.href = '/index.html'
+        }, 2000)
+
+        console.log('Respuesta del servidor de APIs', apiData)
+    }
+  }
 }
 
 customElements.define('signin-form', SignInForm);

@@ -5,7 +5,6 @@ import { simpleFetch } from './lib/simpleFetch.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 //TO DO DISEÑAR EL HTML PARA PODER AÑADIR MAS COSAS
-
 const TIMEOUT = 10000
 /**
  * Funcion que se ejecuta cuando se termina de cargar la pagina.

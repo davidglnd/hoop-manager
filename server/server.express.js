@@ -18,8 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // METODOS GET 
 app.get('/api/check/', async (req, res) => {
   const numeroUsuarios = await db.users.count()
-  const numeroClubs = await db.clubs.count()
-  res.send(`Hay ${numeroUsuarios} cuentas de usuarios y  ${numeroClubs} cuentas de clubs`)
+  res.send(`Hay ${numeroUsuarios} cuentas de usuarios`)
 })
 
 app.get('/api/read/users', async (req, res) => {
@@ -29,10 +28,6 @@ app.get('/api/read/users', async (req, res) => {
 app.get('/api/filter/users/:email', async (req, res) => {
     console.log(req.params.email)
     res.json(await db.users.get({ email: req.params.email }))
-})
-
-app.get('/api/read/clubs', async (req, res) => {
-    res.json(await db.clubs.get())
 })
 
 app.get('/api/filter/equipos/:club', async (req, res) => {
@@ -63,10 +58,12 @@ app.put('/api/update/user/:id', async (req, res) => {
 })
 // METODOS POST
 app.post('/api/create/users', async (req, res) => {
-    const existeClubAsociado = await db.clubs.get({codigo : req.body.clubAsoc})
+    const existeClubAsociado = await db.users.get({codigo : req.body.clubAsoc})
     const existeUsuario = await db.users.get({email : req.body.email})
 
-    if(existeClubAsociado.length === 0 ){
+    if(req.body.clubAsoc === ''){
+        res.send({error: `Introduce un codigo de club`})
+    }else if(existeClubAsociado.length === 0 ){
         res.send({error: `El club al que intentas registrarte no existe (CODIGO DE CLUB: ${req.body.clubAsoc})`})
     }else if(existeUsuario > 0){
         res.send({error: 'Email registrado'})
@@ -74,11 +71,12 @@ app.post('/api/create/users', async (req, res) => {
         res.send({error: 'Introduce un email'})
     }else{
         res.json(await db.users.create(req.body))
+        console.log('hola')
     }
 })
-
+                    //----AHORA LOS CREA EN USERS---//
 app.post('/api/create/clubs', async (req, res) => {
-    const existeClub = await db.clubs.get({email: req.body.email})
+    const existeClub = await db.users.get({email: req.body.email})
 
     if(existeClub.length > 0){
         res.send({error: 'Email registrado'})
@@ -86,14 +84,13 @@ app.post('/api/create/clubs', async (req, res) => {
         res.send({error: 'Introduce un email'})
     }else{
         crearCodigoClub(req.body)
-        res.json(await db.clubs.create(req.body))
+        res.json(await db.users.create(req.body))
     }
 
 
 })
 
 app.post('/api/login', async (req, res) => {
-    console.log(req)
     const userLogIn = await db.users.logIn({email: req.body.email, password: req.body.password})
     console.log(userLogIn)
 
@@ -118,6 +115,5 @@ app.post('/api/update/equipo/jugadores', async (req, res) => {
 
 app.listen(port, async () => {
   const usuarios = await db.users.count()
-  const clubs = await db.clubs.count()
-  console.log(`Hoop Manager listening on port ${port}:  ${usuarios} users, ${clubs} clubs`);
+  console.log(`Hoop Manager listening on port ${port}:  ${usuarios} users`);
 })
