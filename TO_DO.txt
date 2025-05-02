@@ -1,0 +1,4 @@
+TO DO 
+rediseñar club panel con mongo y express
+rediseñar toda la funcionalidad 
+rediseñar la estructura de paginas

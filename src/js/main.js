@@ -56,7 +56,7 @@ function datosJugador(event,usuarioLogeado){
  * @param {string} usuario.name - The user's first name.
  * @param {string} usuario.apellidos - The user's surname.
  * @param {string} usuario.email - The user's email address.
- * @param {string} usuario.nTelefono - The user's phone number.
+ * @param {string} usuario.telefono - The user's phone number.
  * @param {string} usuario.rol - The user's phone number.
  */
 
@@ -65,7 +65,7 @@ function mostrarPerfil(usuario){
     let contenedorInformacion = document.getElementById('informacion-usuario')
 
     let nombreApellidos = document.createElement('p')
-    nombreApellidos.innerText = 'Bienvenido a tu perfil: ' + mayusculasInicial(usuario.name) + ' ' + mayusculasInicial(usuario.apellidos)
+    nombreApellidos.innerText = 'Bienvenido a tu perfil: ' + mayusculasInicial(usuario.nombre) + ' ' + mayusculasInicial(usuario.apellidos)
     contenedorInformacion?.appendChild(nombreApellidos)
 
     let email = document.createElement('p')
@@ -73,7 +73,7 @@ function mostrarPerfil(usuario){
     contenedorInformacion?.appendChild(email)
 
     let telefono = document.createElement('p')
-    telefono.innerText = 'Telefono: ' + usuario.nTelefono
+    telefono.innerText = 'Telefono: ' + usuario.telefono
     contenedorInformacion?.appendChild(telefono)
 
     let rol = document.createElement('p')
@@ -98,7 +98,7 @@ function mostrarPerfil(usuario){
  * @param {string} usuario.name - The user's first name.
  * @param {string} usuario.apellidos - The user's surname.
  * @param {string} usuario.email - The user's email address.
- * @param {string} usuario.nTelefono - The user's phone number.
+ * @param {string} usuario.telefono - The user's phone number.
  */
 function modificarPerfil(usuario){
 
@@ -114,7 +114,7 @@ function modificarPerfil(usuario){
     let name = document.createElement('input')
     name.type = 'text'
     name.id = 'name'
-    name.value = usuario?.name
+    name.value = usuario?.nombre
     formulario.appendChild(name)
 
     let apellidos = document.createElement('input')
@@ -132,7 +132,7 @@ function modificarPerfil(usuario){
     let telefono = document.createElement('input')
     telefono.type = 'text'
     telefono.id = 'telefono'
-    telefono.value = usuario.nTelefono
+    telefono.value = usuario.telefono
     formulario.appendChild(telefono)
 
     let guardarCambios = document.createElement('button')
@@ -151,7 +151,7 @@ function modificarPerfil(usuario){
  * @param {string} usuario.name - The user's first name.
  * @param {string} usuario.apellidos - The user's surname.
  * @param {string} usuario.email - The user's email address.
- * @param {string} usuario.nTelefono - The user's phone number.
+ * @param {string} usuario.telefono - The user's phone number.
  */
 async function guardarCambiosPerfil(event,usuario){
     event.preventDefault()
@@ -161,13 +161,13 @@ async function guardarCambiosPerfil(event,usuario){
     let telefono = /** @type {HTMLInputElement} */(document.getElementById('telefono'))?.value
 
     let usuarioModificado = {
-        name: name,
+        nombre: name,
         apellidos:apellidos,
         email: email,
-        nTelefono: telefono
+        telefono: telefono
     }
     
-    if(usuario.name === name && usuario.apellidos === apellidos && usuario.email === email && usuario.nTelefono === telefono){
+    if(usuario.nombre === name && usuario.apellidos === apellidos && usuario.email === email && usuario.telefono === telefono){
         console.log('No hay cambios')
         borradoContenedoresPerfil(document.getElementById('informacion-usuario'))
         mostrarPerfil(usuario)
@@ -254,7 +254,14 @@ function mostrarHerramientasGestion(usuarioBD){
         aCrearEntrenamientos.href = 'crear-entrenamientos.html'
 
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
-
+        
+        /*CREA CALENDARIO POR EQUIPOS */ 
+        const MAIN_CALENDARIO = document.getElementById('calendario')
+        
+        const BOTON_MOD_CALENDARIO = document.createElement('button')
+        BOTON_MOD_CALENDARIO.innerText = 'Modificar calendario'
+        BOTON_MOD_CALENDARIO.id = 'boton-modificar-calendario'
+        MAIN_CALENDARIO?.appendChild(BOTON_MOD_CALENDARIO)
     }
     if (usuarioBD.rol === 'familiar') {
         const MENU_NAVEGACION = document.getElementById('menu-club');

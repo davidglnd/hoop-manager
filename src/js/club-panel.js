@@ -132,7 +132,7 @@ function mostrarDivRol(){
     })
 
 } 
-function borrado(contenedor){
+function borrado(contenedor){// TO DO LLEVAR A UTILS????
     if(contenedor.id === "establecer-roles"){
          while (contenedor.firstChild) {
             contenedor.removeChild(contenedor.firstChild)
