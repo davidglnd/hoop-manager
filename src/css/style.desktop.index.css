@@ -108,6 +108,12 @@ body{
 
         section{
             min-height: 50vh;
+
+            p{
+                font-size: 1.2rem;
+                line-height: 1.6;
+                font-weight: 400;
+            }
         }
 
         aside{
@@ -151,6 +157,7 @@ body{
                 padding-bottom: 30px;
                 text-align: center;
                 border-radius: 40px;
+                cursor: default;
 
                 &:hover{
                     background-color: #013c80;
@@ -164,6 +171,7 @@ body{
                 padding-bottom: 30px;
                 text-align: center;
                 border-radius: 40px;
+                cursor: default;
 
                 &:hover{
                     background-color: #013c80;

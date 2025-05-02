@@ -15,11 +15,19 @@ body{
 
     main{
         background-color: #FFF;
-        color: #013c80;
-        
+        color:#212121;
+
+        h2{
+            color: #013c80;
+        }
+
         aside{
             background-color: #F5F5F5;
             color:#212121;
+
+            h2{
+                color:#212121;
+            }
             
             #boton-sign-in{
                 background-color: #F57C00;
