@@ -2,6 +2,7 @@
  
 import { Jugador } from "./classes/Jugador.js";
 import { getAPIData } from './utils.js'
+import { calculoCategoria, fechaEstandar } from './utils.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
@@ -20,6 +21,10 @@ function onDOMContentLoaded(){
     let añadirJugadores = document.getElementById('añadir-jugador-form')
 
     añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioLogeado) )
+
+    let templateCalendario = document.getElementById('template-calendario')
+
+    templateCalendario.addEventListener('equipo-cambiado', (e) => mostrarCalendario (e))
 
     leerEquipos(usuarioLogeado)
     mostrarPerfil(usuarioLogeado)
@@ -255,13 +260,7 @@ function mostrarHerramientasGestion(usuarioBD){
 
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
         
-        /*CREA CALENDARIO POR EQUIPOS */ 
-        const MAIN_CALENDARIO = document.getElementById('calendario')
-        
-        const BOTON_MOD_CALENDARIO = document.createElement('button')
-        BOTON_MOD_CALENDARIO.innerText = 'Modificar calendario'
-        BOTON_MOD_CALENDARIO.id = 'boton-modificar-calendario'
-        MAIN_CALENDARIO?.appendChild(BOTON_MOD_CALENDARIO)
+        // /*CREA CALENDARIO POR EQUIPOS */ 
     }
     if (usuarioBD.rol === 'familiar') {
         const MENU_NAVEGACION = document.getElementById('menu-club');
@@ -279,22 +278,46 @@ function mostrarHerramientasGestion(usuarioBD){
     }
 }
 
-/**
- * Calculate the category of a player based on their date of birth.
- * @param {string} fnac - The date of birth of the player in the format "yyyy-mm-dd"
- * @returns {string} The category of the player.
- */
-export function calculoCategoria(fnac){ // TO DO LLevar a utils.js
-    const TEMPORADA_ACTUAL = new Date().getFullYear()
-    let stringSpliced = parseInt(fnac.slice(0,4))
-    let edadTemporada = TEMPORADA_ACTUAL - stringSpliced
-    if(edadTemporada === 7 || edadTemporada === 8 || edadTemporada === 9) return "BENJAMIN"
-    if(edadTemporada === 10 || edadTemporada === 11) return "Alevin"
-    if(edadTemporada === 12 || edadTemporada === 13) return "Infantil"
-    if(edadTemporada === 14 || edadTemporada === 15) return "Cadete"
-    if(edadTemporada === 16 || edadTemporada === 17) return "Juvenil"
-    if(edadTemporada >= 18) return "Senior"
-    return "Desconocido"
+async function mostrarCalendario(e){ // TO DO MODIFICACIONES PARA ENTRENADORES
+    let idEquipoSeleccionado = e.detail.equipo // obtenemos el id del equipo seleccionado en el select
+
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/calendario/${idEquipoSeleccionado}`, 'GET')
+
+    const MAIN_CALENDARIO = document.getElementById('main-calendario')
+
+    //borramos el calendario anterior
+    const calendarioExistente = document.getElementById('calendario');
+    if (calendarioExistente) {
+        calendarioExistente.remove();
+    }
+    //creamos el calendario y comprobamos si tiene calendario ya asignado esa categoria
+    if(apiData === null){
+        const DIV_CALENDARIO = document.createElement('div') 
+        DIV_CALENDARIO.id = 'calendario'
+        DIV_CALENDARIO.innerHTML = `<h2>No hay calendario para esta categoria</h2>`
+        MAIN_CALENDARIO?.appendChild(DIV_CALENDARIO)
+    }else{ 
+        const DIV_CALENDARIO = document.createElement('div') 
+        DIV_CALENDARIO.id = 'calendario'
+        DIV_CALENDARIO.innerHTML = `<table id="tabla-calendario"><caption>Temporada ${apiData.temporada}- Categoria ${apiData.categoria} </caption><tr><th></th><th>Fecha</th><th>Equipo local</th><th>Equipo visitante</th><th>Ubicacion</th></tr></table>`
+    
+        MAIN_CALENDARIO?.appendChild(DIV_CALENDARIO)    
+    
+        const TABLA_CALENDARIO = document.getElementById('tabla-calendario')
+        if(apiData.partidos.length === 0){
+            const TR_SIN_PARTIDOS = document.createElement('tr')
+            TR_SIN_PARTIDOS.innerHTML = `<td colspan="5">Añadiendo partidos.....</td>`
+            TABLA_CALENDARIO?.appendChild(TR_SIN_PARTIDOS)
+        }else{
+            apiData.partidos.forEach(partido => {
+                const TR_PARTIDO = document.createElement('tr')
+                TR_PARTIDO.innerHTML = `<td>Jornada nº ${partido.jornada}</td><td>${fechaEstandar(partido.fecha)}</td><td>${partido.local}</td><td>${partido.visitante}</td><td><a href="${partido.ubicacion}">Pabellon de ${partido.local}</a></td>`
+                TABLA_CALENDARIO?.appendChild(TR_PARTIDO)
+            })
+        }
+    }
+
+ 
 }
 function mostrarEquipos(equiposBD){
     const MAIN_ENTRENADOR = document.getElementById('main-entrenador') // declaramos como constante el main en el que vamos a trabajar

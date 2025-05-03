@@ -17,34 +17,6 @@ function onDOMContentLoaded() {
     let formularioLogOut = document.getElementById('cerrar-sesion')
     formularioLogOut?.addEventListener('click', cerrarSesion)
 
-    // if (sessionStorage.getItem('user') !== null){
-    //     const USER_STORAGE = sessionStorage.getItem('user')
-    //     if(USER_STORAGE){
-    //         let numeroAsoc = JSON.parse(USER_STORAGE).clubAsoc//obtengo el club asociado al usario logeado
-    //         //leerClubsBD()// leo los clubs de la base de datos a traves de redux.js
-    
-    //         let listaClubsBD =store.club.getAll()//Creo un array con los clubs de la base de datos
-    
-    //         // Buscamos el club asociado al usuario logeado
-    //         let clubAsociado = listaClubsBD.find((/** @type {{ codigo: any; }} */ club) => club.codigo === numeroAsoc)
-    //         // Pintamos el club logeado
-    //         let cabezeraH1 = document.getElementById("nombre-clubReg2")
-            
-    //         if(cabezeraH1 ){
-    //         cabezeraH1.innerText =  clubAsociado.nombre
-    //         }
-    //     }  
-    // }else if(sessionStorage.getItem('club') !== null){
-    //     const NOMBBRE_CLUB = sessionStorage.getItem('club')
-    //     if(NOMBBRE_CLUB){
-    //         let nombreClub = JSON.parse(NOMBBRE_CLUB).nombre //obtengo el el nombre del club
-    //         let pInfoClub = document.getElementById('club-info')
-    //         if(pInfoClub){
-    //             pInfoClub.innerText = nombreClub
-    //         }
-    //     }
-    // }
-
 }
 /**
  * Handles the sign-out form submission, preventing the default form behavior.
@@ -56,7 +28,6 @@ function onDOMContentLoaded() {
     event.preventDefault()
 
     sessionStorage.removeItem('HOOP_MANAGER')
-    sessionStorage.removeItem('HOOP_MANAGER_CLUB')
     location.href = '/index.html'
 
 }
@@ -137,3 +108,30 @@ function isUserLoggedIn() {
     return userData?.user?.token
 }
 
+/**
+ * Calculate the category of a player based on their date of birth.
+ * @param {string} fnac - The date of birth of the player in the format "yyyy-mm-dd"
+ * @returns {string} The category of the player.
+ */
+export function calculoCategoria(fnac){
+    const TEMPORADA_ACTUAL = new Date().getFullYear()
+    let stringSpliced = parseInt(fnac.slice(0,4))
+    let edadTemporada = TEMPORADA_ACTUAL - stringSpliced
+    if(edadTemporada === 7 || edadTemporada === 8 || edadTemporada === 9) return "BENJAMIN"
+    if(edadTemporada === 10 || edadTemporada === 11) return "Alevin"
+    if(edadTemporada === 12 || edadTemporada === 13) return "Infantil"
+    if(edadTemporada === 14 || edadTemporada === 15) return "Cadete"
+    if(edadTemporada === 16 || edadTemporada === 17) return "Juvenil"
+    if(edadTemporada >= 18) return "Senior"
+    return "Desconocido"
+}
+
+/**
+ * Returns a string representing the given date in the format "dd/mm/yyyy".
+ *
+ * @param {string} fecha - The date in the format "yyyy-mm-dd".
+ * @returns {string} The date in the format "dd/mm/yyyy".
+ */
+export function fechaEstandar(fecha){
+    return `${fecha.slice(8,10)}/${fecha.slice(5,7)}/${fecha.slice(0,4)}`
+}

@@ -19,6 +19,9 @@ export const db = {
     get: getJugadores,
     getById: getJugadoresById,
     updateEquipo: updateJugadoresIdEquipo
+  },
+  calendario:{
+    get: getCalendario,
   }
 }
 // COUNTERS
@@ -126,4 +129,19 @@ async function getEquipoById(id){
   const teamCollection = hoopManagerDB.collection('equipos')
 
   return await teamCollection.findOne({_id: new ObjectId(id)})
+}
+
+/**
+ * Returns a single calendario document from the 'calendario' collection in the 'Hoop-Manager' database.
+ *
+ * @param {string} id - The id of the calendario to retrieve.
+ *
+ * @returns {Promise<Document>} The calendario document with the specified id.
+ */
+async function getCalendario(id){
+  const client = new MongoClient(URI);
+  const hoopManagerDB = client.db('Hoop-Manager')
+  const calendarioCollection = hoopManagerDB.collection('calendario')
+  console.log(id)
+  return await calendarioCollection.findOne({_id_equipo: id})
 }

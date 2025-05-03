@@ -41,6 +41,9 @@ app.get('/api/filter/jugadores/:categoria', async (req, res) => {
 app.get('/api/filter/equipo/:id', async (req, res) => {
     res.json(await db.equipos.getById(req.params.id))
 })
+app.get('/api/filter/calendario/:idEquipo', async (req, res) => {
+    res.json(await db.calendario.get(req.params.idEquipo))
+})
 app.get('/api/read/equipos/jugadores/:idEquipo', async (req, res) => {
     const EQUIPO_SELECCIONADO = await db.equipos.getById(req.params.idEquipo)
     const JUGADORES_EQUIPO = []
