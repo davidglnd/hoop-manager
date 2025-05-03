@@ -24,7 +24,7 @@ function onDOMContentLoaded(){
 
     let templateCalendario = document.getElementById('template-calendario')
 
-    templateCalendario.addEventListener('equipo-cambiado', (e) => mostrarCalendario (e))
+    templateCalendario?.addEventListener('equipo-cambiado', (e) => mostrarCalendario (e))
 
     leerEquipos(usuarioLogeado)
     mostrarPerfil(usuarioLogeado)
