@@ -50,6 +50,7 @@
   "homepage": "https://github.com/davidglnd/hoop-manager#readme",
   "dependencies": {
     "express": "^5.1.0",
+    "lit": "^3.3.0",
     "mongodb": "^6.16.0"
   }
 }

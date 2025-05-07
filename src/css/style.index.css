@@ -24,6 +24,8 @@ body{
         aside{
             background-color: #F5F5F5;
             color:#212121;
+            border-radius: 1rem;
+            box-sizing: border-box;
 
             h2{
                 color:#212121;

@@ -1,12 +1,12 @@
-form{    
+form{
     .hidden{
         display: none;
     }
 }
 
-/* Estilos generales para el formulario de registro de club */
-form#registro-club {
-    background-color: white;
+/* Estilos para el formulario de inicio de sesión */
+form#log-in {
+    background-color: #F5F5F5;
     border-radius: 1rem;
     box-shadow: 0 4px 12px rgb(0 0 0);
     padding: 2rem;
@@ -18,23 +18,15 @@ form#registro-club {
     font-family: 'Segoe UI', sans-serif;
   }
   
-  /* Título */
-  form#registro-club h5 {
-    font-size: 1.5rem;
-    color: #333;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
   /* Etiquetas */
-  form#registro-club label {
+  form#log-in label {
     font-weight: 600;
     color: #444;
     margin-bottom: 0.25rem;
   }
   
   /* Campos de entrada */
-  form#registro-club input {
+  form#log-in input {
     padding: 0.6rem 0.75rem;
     border: 1px solid #ccc;
     border-radius: 0.75rem;
@@ -42,14 +34,14 @@ form#registro-club {
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   
-  form#registro-club input:focus {
+  form#log-in input:focus {
     outline: none;
     border-color: #f97316;
     box-shadow: 0 0 0 2px rgb(249 115 22);
   }
   
   /* Botón */
-  form#registro-club button {
+  form#log-in button {
     background-color: #f97316;
     color: white;
     padding: 0.75rem;
@@ -61,25 +53,21 @@ form#registro-club {
     transition: background-color 0.2s ease;
   }
   
-  form#registro-club button:hover {
+  form#log-in button:hover {
     background-color: #ea580c;
   }
   
   /* Mensajes */
-  form#registro-club p {
+  form#log-in p {
     font-size: 0.9rem;
     text-align: center;
     margin-top: 0.5rem;
   }
   
-  form#registro-club p.hidden {
+  form#log-in p.hidden {
     display: none;
   }
   
-  #registrado-club {
-    color: green;
-  }
-  
-  #error-registro-club {
+  #error-login {
     color: red;
   }

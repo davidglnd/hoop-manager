@@ -57,46 +57,54 @@ body{
         min-height: 10vh;
     }
 
-    nav{
+    nav {
+        background-color: #1f1f1f;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgb(0 0 0);
         width: 80%;
-        min-height: 5vh;
-        display:flex;
-        align-items: center;
-        height: 100%;
-
-        &>ol{
-            width:100%;
-            display:flex;
-            justify-content: space-around;
-            min-height:5vh;
-
-            &>li{
-                width:100%;
-                cursor: pointer;
-                font-size: 1.2rem;
-                line-height: 2.5;
-                font-weight: 200;
-                text-align: center;
-                background-color: #F57C00;
-            }
-
-            &>li>a:visited{
-                color: #000;
-            }
-
-            &>li:hover{
-                background-color: #013c80;
-                color: #fff;
-                
-                &>a:visited{
-                    color:#fff;
-                }
-            }
-
-
-        }
-
-    }
+        
+        #menu-club {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            flex-wrap: wrap;
+          }
+          
+          #menu-club li {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            color: #fff;
+            cursor: pointer;
+          }
+          
+          #menu-club li a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+            height: 100%;
+          }
+          
+          #menu-club li:hover {
+            background-color: #ff6f00;
+            transform: translateY(-2px);
+          }
+          
+          li#cerrar-sesion {
+            font-weight: bold;
+            color: #ff4d4d;
+          }
+          
+          li#cerrar-sesion:hover {
+            background-color: #b22222;
+            color: #fff;
+          }
+    }   
 
     main{
         background-color: #FFF;
@@ -109,7 +117,7 @@ body{
            padding-top: 20px;
         }
 
-        #tabla-calendario{
+        #tabla-calendario , #tabla-equipos, #tabla-jugadores-libres{
             width: 80%;
             margin: 0 auto;
             border-collapse: collapse;
@@ -125,7 +133,7 @@ body{
             }
           }
           
-          #tabla-calendario th {
+          #tabla-calendario th,#tabla-equipos th, #tabla-jugadores-libres th {
             background-color: #ff6f00; /* Naranja baloncesto */
             color: white;
             text-align: center;
@@ -133,7 +141,7 @@ body{
             font-weight: bold;
           }
           
-          #tabla-calendario td {
+          #tabla-calendario td, #tabla-equipos td, #tabla-jugadores-libres td {
             border: 1px solid #ddd;
             text-align: center;
             padding: 20px 0;
@@ -143,31 +151,46 @@ body{
             transition: background-color 0.2s ease;
           }
           
-          #tabla-calendario td:hover {
+          #tabla-calendario td:hover, #tabla-equipos td:hover, #tabla-jugadores-libres td:hover {
             background-color: #f1f1f1;
             cursor: pointer;
           }
-          
-          #tabla-calendario .today {
+
+          #tabla-equipos td.selected, #tabla-jugadores-libres td.selected {
             background-color: #ffe0b2;
             font-weight: bold;
             border: 2px solid #ff9800;
           }
           
-          #tabla-calendario .event {
-            position: absolute;
-            bottom: 5px;
-            left: 5px;
-            right: 5px;
-            background-color: #ff6f00;
-            color: white;
-            font-size: 0.75rem;
-            padding: 2px 4px;
-            border-radius: 4px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+          /* #tabla-calendario .today {
+            background-color: #ffe0b2;
+            font-weight: bold;
+            border: 2px solid #ff9800;
+          } */
+          .select-jugador {
+            width: 20px;
+            height: 20px;
+            appearance: none;
+            border: 2px solid #d1d5db; /* gray-300 */
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgb(0 0 0);
           }
+
+          .select-jugador:hover {
+            box-shadow: 0 2px 4px rgb(0 0 0);
+          }
+
+          .select-jugador:checked {
+            background-color: #f97316; /* orange-500 */
+            border-color: #f97316;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6.00039 10.8002L3.20039 8.00019L2.26606 8.93452L6.00039 12.6689L14.0004 4.66886L13.0661 3.73452L6.00039 10.8002Z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+          }
+          
     }
 
     main#main-inicio{
@@ -199,3 +222,31 @@ body{
         min-height: 5vh;
     }
  }
+ 
+ .button {
+  padding: 0.75rem 1.5rem;
+  background-color: #f97316; 
+  color: white;
+  border: none;
+  border-radius: 0.75rem; 
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+  background-color: #ea580c; 
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button:disabled {
+  background-color: #d4d4d8; 
+  cursor: not-allowed;
+  color: #a1a1aa;
+  box-shadow: none;
+}

@@ -6,6 +6,7 @@ import { simpleFetch } from './lib/simpleFetch.js'
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 //TO DO DISEÑAR EL HTML PARA PODER AÑADIR MAS COSAS
 const TIMEOUT = 10000
+export const API_PORT = location.port ? `:${1337}` : ''
 /**
  * Funcion que se ejecuta cuando se termina de cargar la pagina.
  * Comprueba si hay un usuario logeado en la sesion, si es asi, 

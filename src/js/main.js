@@ -2,7 +2,9 @@
  
 import { Jugador } from "./classes/Jugador.js";
 import { getAPIData } from './utils.js'
-import { calculoCategoria, fechaEstandar } from './utils.js'
+import { calculoCategoria } from './utils.js'
+import {mostrarEquipos} from './logic/equipos.js'
+import {mostrarCalendario} from './logic/calendario.js'
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
@@ -21,12 +23,11 @@ function onDOMContentLoaded(){
     let añadirJugadores = document.getElementById('añadir-jugador-form')
 
     añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioLogeado) )
+    
+    let selectLit = document.getElementById('comp-select-lit')
 
-    let templateCalendario = document.getElementById('template-calendario')
+    selectLit?.addEventListener('equipo-cambiado', (e) => useSelect (e))
 
-    templateCalendario?.addEventListener('equipo-cambiado', (e) => mostrarCalendario (e))
-
-    leerEquipos(usuarioLogeado)
     mostrarPerfil(usuarioLogeado)
     mostrarHerramientasGestion(usuarioLogeado)
 }
@@ -69,6 +70,10 @@ function mostrarPerfil(usuario){
 
     let contenedorInformacion = document.getElementById('informacion-usuario')
 
+    let informacionH1 = document.createElement('h1')
+    informacionH1.innerText = 'Información de perfil'
+    contenedorInformacion?.appendChild(informacionH1)
+
     let nombreApellidos = document.createElement('p')
     nombreApellidos.innerText = 'Bienvenido a tu perfil: ' + mayusculasInicial(usuario.nombre) + ' ' + mayusculasInicial(usuario.apellidos)
     contenedorInformacion?.appendChild(nombreApellidos)
@@ -87,6 +92,7 @@ function mostrarPerfil(usuario){
 
     let editarPerfil = document.createElement('button')
     editarPerfil.innerText = 'Editar perfil'
+    editarPerfil.classList = 'button'
     editarPerfil.addEventListener('click', () => modificarPerfil(usuario))
     contenedorInformacion?.appendChild(editarPerfil)
 
@@ -142,6 +148,7 @@ function modificarPerfil(usuario){
 
     let guardarCambios = document.createElement('button')
     guardarCambios.innerText = 'Guardar cambios'
+    guardarCambios.classList = 'button'
     formulario.appendChild(guardarCambios)
     formulario.addEventListener('submit',(event) => guardarCambiosPerfil(event,usuario))
 }
@@ -166,10 +173,17 @@ async function guardarCambiosPerfil(event,usuario){
     let telefono = /** @type {HTMLInputElement} */(document.getElementById('telefono'))?.value
 
     let usuarioModificado = {
+        ...usuario,
         nombre: name,
         apellidos:apellidos,
         email: email,
-        telefono: telefono
+        telefono: telefono,
+    }
+    const payload = {
+        nombre: name,
+        apellidos:apellidos,
+        email: email,
+        telefono: telefono,
     }
     
     if(usuario.nombre === name && usuario.apellidos === apellidos && usuario.email === email && usuario.telefono === telefono){
@@ -177,7 +191,11 @@ async function guardarCambiosPerfil(event,usuario){
         borradoContenedoresPerfil(document.getElementById('informacion-usuario'))
         mostrarPerfil(usuario)
     }else{
-        await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/user/${usuario._id}`, 'PUT', JSON.stringify(usuarioModificado))
+        await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/user/${usuario._id}`, 'PUT', JSON.stringify(payload))
+        sessionStorage.setItem('HOOP_MANAGER',JSON.stringify(usuarioModificado))
+        borradoContenedoresPerfil(document.getElementById('informacion-usuario'))
+        mostrarPerfil(usuarioModificado)
+        
     }
     
     
@@ -200,26 +218,12 @@ function addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccio
     // TO DO VAMOS POR AQUI AÑADIENDO EL JUGADOR A LA BBDD
 }
 /**
- * Reads the list of Equipos from local storage and updates the store
- * array with the read data.
- *
- * If no data is found in local storage, the global store is left unchanged.
- *
- * @returns {void}
- * @import { Equipo } from "./classes/Equipo.js"; 
- */
-async function leerEquipos(userLogeado){
-    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/equipos/${userLogeado.clubAsoc}`, 'GET')
-
-    mostrarEquipos(apiData)
-}
-/**
  * Removes all child elements from the specified container element.
  *
  * @param {HTMLElement} contenedor - The container element from which all child elements will be removed.
  */
 
-function borradoContenedoresPerfil(contenedor){
+function borradoContenedoresPerfil(contenedor){ // TO DO utils.js
 
     while (contenedor.firstChild) {
         contenedor.removeChild(contenedor.firstChild)
@@ -231,10 +235,12 @@ function borradoContenedoresPerfil(contenedor){
  * @param {string} text - The string to be formatted.
  * @returns {string} The formatted string.
  */
-function mayusculasInicial(text) {
-
-    const PRIMERA_LETRA = text.charAt(0);
-    return PRIMERA_LETRA.toUpperCase() + text.slice(1).toLowerCase();
+function mayusculasInicial(text) { // TO DO utils.js
+    return text
+      .toLowerCase()
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
 }
 /**
  * If the user is an entrenador, this function adds a menu item to the navigation menu
@@ -277,202 +283,19 @@ function mostrarHerramientasGestion(usuarioBD){
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
     }
 }
-
-async function mostrarCalendario(e){ // TO DO MODIFICACIONES PARA ENTRENADORES
-    let idEquipoSeleccionado = e.detail.equipo // obtenemos el id del equipo seleccionado en el select
-
-    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/calendario/${idEquipoSeleccionado}`, 'GET')
-
-    const MAIN_CALENDARIO = document.getElementById('main-calendario')
-
-    //borramos el calendario anterior
-    const calendarioExistente = document.getElementById('calendario');
-    if (calendarioExistente) {
-        calendarioExistente.remove();
+function useSelect(e){
+    if(location.pathname ==='/calendario.html'){
+        mostrarCalendario(e)
     }
-    //creamos el calendario y comprobamos si tiene calendario ya asignado esa categoria
-    if(apiData === null){
-        const DIV_CALENDARIO = document.createElement('div') 
-        DIV_CALENDARIO.id = 'calendario'
-        DIV_CALENDARIO.innerHTML = `<h2>No hay calendario para esta categoria</h2>`
-        MAIN_CALENDARIO?.appendChild(DIV_CALENDARIO)
-    }else{ 
-        const DIV_CALENDARIO = document.createElement('div') 
-        DIV_CALENDARIO.id = 'calendario'
-        DIV_CALENDARIO.innerHTML = `<table id="tabla-calendario"><caption>Temporada ${apiData.temporada}- Categoria ${apiData.categoria} </caption><tr><th></th><th>Fecha</th><th>Equipo local</th><th>Equipo visitante</th><th>Ubicacion</th></tr></table>`
-    
-        MAIN_CALENDARIO?.appendChild(DIV_CALENDARIO)    
-    
-        const TABLA_CALENDARIO = document.getElementById('tabla-calendario')
-        if(apiData.partidos.length === 0){
-            const TR_SIN_PARTIDOS = document.createElement('tr')
-            TR_SIN_PARTIDOS.innerHTML = `<td colspan="5">Añadiendo partidos.....</td>`
-            TABLA_CALENDARIO?.appendChild(TR_SIN_PARTIDOS)
-        }else{
-            apiData.partidos.forEach(partido => {
-                const TR_PARTIDO = document.createElement('tr')
-                TR_PARTIDO.innerHTML = `<td>Jornada nº ${partido.jornada}</td><td>${fechaEstandar(partido.fecha)}</td><td>${partido.local}</td><td>${partido.visitante}</td><td><a href="${partido.ubicacion}">Pabellon de ${partido.local}</a></td>`
-                TABLA_CALENDARIO?.appendChild(TR_PARTIDO)
-            })
-        }
-    }
-
- 
-}
-function mostrarEquipos(equiposBD){
-    const MAIN_ENTRENADOR = document.getElementById('main-entrenador') // declaramos como constante el main en el que vamos a trabajar
-    const userLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER'))
-
-    if(userLogeado.rol === 'entrenador' && location.pathname ==='/equipos.html'){ // si el usuario es entrenador le lanzamos un area para trabajar
-        borradoContenedoresPerfil(MAIN_ENTRENADOR)// le pasamos la constante a la funcion de borrado para dejar limpio el main
-
-        //Creamos la estructura del area de trabajo
-        let h1 = document.createElement('h1') 
-        h1.innerText = 'Gestion de equipos' 
-        MAIN_ENTRENADOR?.appendChild(h1) 
-
-        let h3 = document.createElement('h3')
-        h3.innerText = 'Selecciona un equipo:'
-        MAIN_ENTRENADOR?.appendChild(h3)
-
-        let select = document.createElement('select')
-        select.id = 'select-equipo-gestionar'
-        MAIN_ENTRENADOR?.appendChild(select)
-
-        equiposBD.forEach((/** @type {Equipo} */ equipo) => {
-                let option = document.createElement('option')
-                option.value = equipo._id
-                option.innerText = equipo.nombre
-                select.appendChild(option)
-
-        });
-
-        let sectionEquipoSeleccionado = document.createElement('section')
-        sectionEquipoSeleccionado.id = 'equipo-seleccionado'
-        MAIN_ENTRENADOR?.appendChild(sectionEquipoSeleccionado)
-        
-        select.addEventListener('change', (event) => {
-            let valorSelect = event.target.value
-            borradoContenedoresPerfil(sectionEquipoSeleccionado)
-            
-            let botonGestionJugadores = document.createElement('button')
-            botonGestionJugadores.innerText = 'Gestionar equipo'
-            botonGestionJugadores.addEventListener('click', () => gestionarEquipo(sectionEquipoSeleccionado,valorSelect))
-            
-            let botonVerEquipo = document.createElement('button')
-            botonVerEquipo.innerText = 'Ver equipo'
-            botonVerEquipo.addEventListener('click', () => verEquipo(sectionEquipoSeleccionado,valorSelect))
-
-            sectionEquipoSeleccionado.appendChild(botonGestionJugadores)
-            sectionEquipoSeleccionado.appendChild(botonVerEquipo)
-        })
-        
+    if(location.pathname ==='/equipos.html'){
+        mostrarEquipos(e)
     }
 }
-async function gestionarEquipo(sectionEquipoSeleccionado,valorSelect){
-    borradoContenedoresPerfil(sectionEquipoSeleccionado)
-    let equipoSeleccionado =  await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/equipo/${valorSelect}`, 'GET')
-    console.log(equipoSeleccionado)
-    let form = document.createElement('form')
-    form.id = 'form-añadir-jugadores'
-    sectionEquipoSeleccionado.appendChild(form)
 
-    let h2 = document.createElement('h2')
-    h2.innerText = equipoSeleccionado.nombre + ' - ' + equipoSeleccionado.categoria
-    document.getElementById('form-añadir-jugadores').appendChild(h2)
 
-    let listadoJugadoresSinEquipo = await filtrarJugadores(equipoSeleccionado)
 
-    if(listadoJugadoresSinEquipo.length > 0){
-        listadoJugadoresSinEquipo.forEach((jugador) => {
-            let label = document.createElement('label')
-            label.innerText = jugador.nombre + ' ' + jugador.apellidos + '-' + jugador.fnac
-            let check = document.createElement('input')
-            check.type = 'checkbox'
-            check.name = 'jugador'
-            check.value = jugador._id
-            document.getElementById('form-añadir-jugadores').appendChild(label)
-            document.getElementById('form-añadir-jugadores').appendChild(check)
-            
-        })
-        let addJugadores = document.createElement('button')
-        addJugadores.type = 'submit'
-        addJugadores.id = 'boton-añadir-jugadores'
-        addJugadores.innerText = 'Añadir jugadores seleccionados'
-        document.getElementById('form-añadir-jugadores').appendChild(addJugadores)
-        form.addEventListener('submit',(event) => enviarJugadores(event,equipoSeleccionado))
-    }else{
-        let p = document.createElement('p')
-        p.innerText = 'No hay jugadores seleccionables para este equipo'
-        sectionEquipoSeleccionado.appendChild(p)
-    }
-    //DOING ESTA FUNCION SOLO ES PARA MOSTRAR EQUIPOS DE UN CLUB Y SUS JUGADORES en esa categoria SIN AÑADIR, PARA PODER AÑADIRLOS LUEGO TENDREMOS QUE TENER OTRA QUE MUESTRE LOS YA AÑADIDOS
-}
 
-async function filtrarJugadores(equipo){
-    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/jugadores/${equipo.categoria}`, 'GET')
-    return apiData
-}
 
-async function enviarJugadores(event,idEquipo){
-    event.preventDefault()
-    let checkboxes = event.target.querySelectorAll('input[type="checkbox"][name="jugador"]')
-    const JUGADORES_SELECCIONADOS ={}
-    JUGADORES_SELECCIONADOS.equipo = idEquipo
-    JUGADORES_SELECCIONADOS.jugadores = []
-
-    checkboxes.forEach((checkbox) => {
-        if(checkbox.checked){
-            JUGADORES_SELECCIONADOS.jugadores.push(checkbox.value)
-        }
-    })
-    console.log(JUGADORES_SELECCIONADOS)
-    const payload = JSON.stringify(JUGADORES_SELECCIONADOS)
-    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/equipo/jugadores`, 'POST', payload)
-    console.log(apiData)
-}
-async function verEquipo(sectionEquipoSeleccionado,valorSelect){
-    borradoContenedoresPerfil(sectionEquipoSeleccionado)
-    let equipoSeleccionado =  await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/equipos/jugadores/${valorSelect}`, 'GET')
-    console.log(equipoSeleccionado)
-
-    let nombreEquipo = document.createElement('p')
-    nombreEquipo.innerText = 'Nombre del equipo: ' + equipoSeleccionado.EQUIPO_SELECCIONADO.nombre
-    sectionEquipoSeleccionado.appendChild(nombreEquipo)
-
-    let categoriaEquipo = document.createElement('p')
-    categoriaEquipo.innerText = 'Categoria del equipo: ' + mayusculasInicial(equipoSeleccionado.EQUIPO_SELECCIONADO.categoria)
-    sectionEquipoSeleccionado.appendChild(categoriaEquipo)
-
-    if(equipoSeleccionado.JUGADORES_EQUIPO.length === 0 ){
-        let errorJugadores = document.createElement('p')
-        errorJugadores.innerText = 'Este equipo no tiene jugadores asignados'
-        sectionEquipoSeleccionado.appendChild(errorJugadores)
-    }else{
-        equipoSeleccionado.JUGADORES_EQUIPO.forEach(jugador => {
-            let divJugador = document.createElement('div')
-            sectionEquipoSeleccionado.appendChild(divJugador)
-
-            let nombreJugador = document.createElement('p')
-            nombreJugador.innerText =jugador.nombre + ' ' + jugador.apellidos
-            divJugador.appendChild(nombreJugador)
-
-            let fnacJugador = document.createElement('p')
-            let [dia, mes, anio] = jugador.fnac.split('-')
-            fnacJugador.innerText = 'Fecha de nacimiento: ' + dia + '/' + mes + '/' + anio
-            divJugador.appendChild(fnacJugador)
-
-            if(jugador.categoria === 'alevin' || jugador.categoria === 'benjamin'){
-                let sexoJugador = document.createElement('p')
-                sexoJugador.innerText = 'Sexo: ' + jugador.sexo
-                divJugador.appendChild(sexoJugador)
-            }
-
-            //TO DO un select para cambiar la posicion del jugador y un boton para actualizarla
-            //TO DO un boton para eliminar el jugador del equipo
-        })
-    }
-}   
 
 
 

@@ -123,6 +123,7 @@ body{
             justify-content: space-evenly;
             text-align: center;
             row-gap:30px;
+            padding-bottom: 60px;
 
             nav{
                 width:100%;

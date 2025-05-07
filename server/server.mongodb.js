@@ -80,7 +80,7 @@ async function updateEquiposJugadores(id,updates){
   const client = new MongoClient(URI);
   const hoopManagerDB = client.db('Hoop-Manager')
   const teamCollection = hoopManagerDB.collection('equipos')
-  console.log(updates)
+
   return await teamCollection.updateOne({_id: new ObjectId(id)},{$push: {jugadores: updates} })
   
 }
@@ -88,7 +88,7 @@ async function updateJugadoresIdEquipo(id,updates){
   const client = new MongoClient(URI);
   const hoopManagerDB = client.db('Hoop-Manager')
   const jugadoresCollection = hoopManagerDB.collection('jugadores')
-  console.log(updates)
+
   return await jugadoresCollection.updateOne({_id: new ObjectId(id)},{$set: {_id_equipo: new ObjectId(updates)} })
   
 }
@@ -96,7 +96,7 @@ async function updateUser(id,updates){
   const client = new MongoClient(URI);
   const hoopManagerDB = client.db('Hoop-Manager')
   const userCollection = hoopManagerDB.collection('users')
-  console.log(updates)
+
   return await userCollection.updateOne({_id: new ObjectId(id)},{$set: updates})
 }
 // GET POR ID
@@ -142,6 +142,6 @@ async function getCalendario(id){
   const client = new MongoClient(URI);
   const hoopManagerDB = client.db('Hoop-Manager')
   const calendarioCollection = hoopManagerDB.collection('calendario')
-  console.log(id)
+
   return await calendarioCollection.findOne({_id_equipo: id})
 }

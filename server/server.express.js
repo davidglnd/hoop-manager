@@ -47,12 +47,12 @@ app.get('/api/filter/calendario/:idEquipo', async (req, res) => {
 app.get('/api/read/equipos/jugadores/:idEquipo', async (req, res) => {
     const EQUIPO_SELECCIONADO = await db.equipos.getById(req.params.idEquipo)
     const JUGADORES_EQUIPO = []
-
+    
     for(const ID of EQUIPO_SELECCIONADO.jugadores){
         const JUGADOR = await db.jugadores.getById(ID)
         JUGADORES_EQUIPO.push(JUGADOR)
     }
-    
+
     res.json({EQUIPO_SELECCIONADO,JUGADORES_EQUIPO})
 })
 // METODOS PUT
