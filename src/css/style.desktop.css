@@ -3,9 +3,12 @@
 /* Estilos para escritorio la web una vez hay un user
  logueado y las ventanas a las que pueda acceder	 */
 
+/* Estilos importados de componentes de algunas de las vistas */
+@import url('./variables.css');
+@import url('./components/nav-entrenador.css');
 
- /* Tamaño de fuente */
- html{
+/* Tamaño de fuente */
+html{
     font-size: 16px;
 }
 
@@ -57,7 +60,7 @@ body{
         min-height: 10vh;
     }
 
-    nav {
+    nav#menu-principal {
         background-color: #1f1f1f;
         padding: 1rem 2rem;
         border-radius: 12px;
@@ -134,7 +137,7 @@ body{
           }
           
           #tabla-calendario th,#tabla-equipos th, #tabla-jugadores-libres th {
-            background-color: #ff6f00; /* Naranja baloncesto */
+            background-color: #ff6f00; 
             color: white;
             text-align: center;
             padding: 10px;
@@ -144,24 +147,23 @@ body{
           #tabla-calendario td, #tabla-equipos td, #tabla-jugadores-libres td {
             border: 1px solid #ddd;
             text-align: center;
-            padding: 20px 0;
-            height: 80px;
-            vertical-align: top;
-            position: relative;
+            padding: 5px 0;
+            height: 20px;
             transition: background-color 0.2s ease;
           }
           
           #tabla-calendario td:hover, #tabla-equipos td:hover, #tabla-jugadores-libres td:hover {
             background-color: #f1f1f1;
-            cursor: pointer;
+            cursor: auto;
           }
 
-          #tabla-equipos td.selected, #tabla-jugadores-libres td.selected {
+          /* #tabla-equipos td.selected, #tabla-jugadores-libres td.selected {
             background-color: #ffe0b2;
             font-weight: bold;
             border: 2px solid #ff9800;
           }
-          
+          */
+
           /* #tabla-calendario .today {
             background-color: #ffe0b2;
             font-weight: bold;
@@ -249,4 +251,129 @@ body{
   cursor: not-allowed;
   color: #a1a1aa;
   box-shadow: none;
+}
+
+#informacion-usuario {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgb(0 0 0);
+  font-family: Arial , sans-serif; 
+  color: #333;
+}
+
+#informacion-usuario h1 {
+  font-size: 1.8rem;
+  color: #f97316; 
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+#informacion-usuario p {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+
+#modificar-perfil {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif; /* Fuente limpia */
+}
+
+#modificar-perfil input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9fafb;
+  transition: border-color 0.2s ease-in-out;
+}
+
+#modificar-perfil input:focus {
+  border-color: #f97316; /* Naranja de enfoque */
+  outline: none;
+  box-shadow: 0 0 5px rgb(249 115 22);
+}
+
+#modificar-perfil button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background-color: #f97316; /* Naranja brillante */
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 10px rgb(0 0 0);
+}
+
+#modificar-perfil button:hover {
+  background-color: #ea580c;
+  box-shadow: 0 6px 16px rgb(0 0 0);
+  transform: translateY(-2px);
+}
+
+#modificar-perfil button:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 6px rgba(0 0 0);
+}
+
+#modificar-perfil input::placeholder {
+  color: #888;
+}
+
+#div-convocatorias {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgb(0 0 0);
+  font-family: Arial , sans-serif; 
+  color: #333;
+
+    #select-partidos {
+      appearance: none;
+      background-color: #fff;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 40px 10px 14px;
+      font-size: 1rem;
+      color: #333;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      width: 100%;
+      max-width: 600px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      display: block;
+      margin: 0 auto;
+    }
+}
+
+#div-convocatorias h1 {
+  font-size: 1.8rem;
+  color: #f97316; 
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+#div-convocatorias p {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
 }

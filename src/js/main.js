@@ -30,6 +30,30 @@ function onDOMContentLoaded(){
 
     mostrarPerfil(usuarioLogeado)
     mostrarHerramientasGestion(usuarioLogeado)
+
+    if(location.pathname === '/equipos.html'){ 
+        const userLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER'))
+        const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
+        if(userLogeado.rol === 'entrenador'){
+            const NAV_HERRAMIENTAS = document.createElement('nav')
+            NAV_HERRAMIENTAS.id = 'nav-entrenador'
+            MAIN_ENTRENADOR.appendChild(NAV_HERRAMIENTAS)
+    
+            const OL_HERRAMIENTAS = document.createElement('ol')
+            NAV_HERRAMIENTAS.appendChild(OL_HERRAMIENTAS)
+    
+            const LI_ADD_JUGADORES = document.createElement('li')
+            LI_ADD_JUGADORES.id = 'add-jugadores'
+            LI_ADD_JUGADORES.innerText = 'Añadir jugadores'
+            OL_HERRAMIENTAS.appendChild(LI_ADD_JUGADORES)
+            
+    
+            const LI_CONVOCATORIA = document.createElement('li')
+            LI_CONVOCATORIA.id = 'convocatoria'
+            LI_CONVOCATORIA.innerText = 'Añadir convocatoria'
+            OL_HERRAMIENTAS.appendChild(LI_CONVOCATORIA)
+        }
+    }
 }
 /**
  * Takes the data from the form and creates a new Jugador object with that data.
@@ -266,7 +290,6 @@ function mostrarHerramientasGestion(usuarioBD){
 
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
         
-        // /*CREA CALENDARIO POR EQUIPOS */ 
     }
     if (usuarioBD.rol === 'familiar') {
         const MENU_NAVEGACION = document.getElementById('menu-club');
