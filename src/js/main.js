@@ -1,22 +1,27 @@
-//@ts-expect-error //TO DO arreglar y trabajar en el main
+//@ts-check
  
 import { Jugador } from "./classes/Jugador.js";
 import { getAPIData } from './utils.js'
 import { calculoCategoria } from './utils.js'
-import {mostrarEquipos} from './logic/equipos.js'
+import {mostrarEquipos, cardMatchSubmit} from './logic/equipos.js'
 import {mostrarCalendario} from './logic/calendario.js'
+
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
 const API_PORT = location.port ? `:${1337}` : ''
+
 /**
- * When the page has finished loading, it does the following:
- * 1. Gets the logged in user from session storage.
- * 2. Gets the user from the store with the id of the logged in user.
- * 3. Adds an event listener to the form for adding a player to the user's team so that when the form is submitted, the datosJugador function is called with the event and the user.
- * 4. Calls the leerListaJugadores, mostrarInformacionUsuario, and mostrarHerramientasGestion functions with the user as an argument.
- * 5. Calls the importarJugadores function (but this is commented out for now).
+ * Function executed when the DOM content is fully loaded.
+ * Initializes event listeners and displays user-specific content.
+ * 
+ * - Retrieves the logged-in user's information from session storage.
+ * - Adds a submit event listener to the 'añadir-jugador-form' to handle player data submission.
+ * - Listens for custom events 'equipo-cambiado' and 'convocatoria-creada' to trigger respective handlers.
+ * - Displays the user's profile and management tools.
+ * - If on the '/equipos.html' page and the user role is 'entrenador', dynamically adds navigation tools for the coach.
  */
+
 function onDOMContentLoaded(){
     let usuarioLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') ?? '')
     
@@ -24,20 +29,22 @@ function onDOMContentLoaded(){
 
     añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioLogeado) )
     
-    let selectLit = document.getElementById('comp-select-lit')
+    //custom event que se dispara desde el SHADOWDOM 
+    document.addEventListener('equipo-cambiado', (e) => useSelect (e))
 
-    selectLit?.addEventListener('equipo-cambiado', (e) => useSelect (e))
+    //custom event que se dispara desde el SHADOWDOM 
+    document.addEventListener('convocatoria-creada', (e) => cardMatchSubmit(e))
 
     mostrarPerfil(usuarioLogeado)
     mostrarHerramientasGestion(usuarioLogeado)
 
     if(location.pathname === '/equipos.html'){ 
-        const userLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER'))
+        const userLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') || '')
         const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
         if(userLogeado.rol === 'entrenador'){
             const NAV_HERRAMIENTAS = document.createElement('nav')
             NAV_HERRAMIENTAS.id = 'nav-entrenador'
-            MAIN_ENTRENADOR.appendChild(NAV_HERRAMIENTAS)
+            MAIN_ENTRENADOR?.appendChild(NAV_HERRAMIENTAS)
     
             const OL_HERRAMIENTAS = document.createElement('ol')
             NAV_HERRAMIENTAS.appendChild(OL_HERRAMIENTAS)
@@ -55,12 +62,21 @@ function onDOMContentLoaded(){
         }
     }
 }
+
 /**
- * Takes the data from the form and creates a new Jugador object with that data.
- * It then adds that Jugador to the array of jugadores of the usuarioBD.
- * @param {Event} event - the event that triggered this function.
- * @param {{ _id: string; clubAsoc: string; }} usuarioBD - The user object that is adding the Jugador.
+ * Handles the submission of player data from a form, prevents the default 
+ * form submission, and adds the player to the store and local storage.
+ * 
+ * @param {Event} event - The event that triggered this function.
+ * @param {Object} usuarioLogeado - The logged-in user object containing user information.
+ * @param {string} usuarioLogeado._id - The id of the user.
+ * @param {string} usuarioLogeado.clubAsoc - The club associated with the user.
+ * 
+ * Retrieves player data from the form, calculates their category based on 
+ * their date of birth, and calls the addJugador function to add the player 
+ * to the system.
  */
+
 function datosJugador(event,usuarioLogeado){
     event.preventDefault()
 
@@ -74,20 +90,19 @@ function datosJugador(event,usuarioLogeado){
 
     addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioLogeado,categoriaCalculada)
 }
+
+
 /**
- * Displays the user's profile information on the webpage.
- * This function creates and appends paragraphs containing the 
- * user's name, email, and phone number to the 'informacion-usuario' 
- * element on the page. It formats the user's name and surname with 
- * an initial capital letter.
- * 
- * @param {Object} usuario - The user object containing user information.
- * @param {string} usuario._id - The user's id.
- * @param {string} usuario.name - The user's first name.
+ * Displays the user's profile information in the 'informacion-usuario' container.
+ * Creates HTML elements to show the user's name, email, phone number, and role.
+ * Also adds a button to edit the profile, which triggers the modify profile function.
+ *
+ * @param {Object} usuario - The user object containing profile information.
+ * @param {string} usuario.nombre - The user's first name.
  * @param {string} usuario.apellidos - The user's surname.
  * @param {string} usuario.email - The user's email address.
  * @param {string} usuario.telefono - The user's phone number.
- * @param {string} usuario.rol - The user's phone number.
+ * @param {string} [usuario.rol] - The user's role.
  */
 
 function mostrarPerfil(usuario){
@@ -123,18 +138,18 @@ function mostrarPerfil(usuario){
 }
 
 /**
- * Shows a form to modify the user's profile information. This function
- * creates the form elements and appends them to the 'informacion-usuario'
- * element on the page. It also adds an event listener to the form to
- * capture the 'submit' event and call the 'guardarCambiosPerfil' function
- * with the user's id and the event as arguments.
- * @param {Object} usuario - The user object containing user information.
- * @param {string} usuario._id - The user's id.
- * @param {string} usuario.name - The user's first name.
+ * Transforms the user's profile display into an editable form for updating the profile information.
+ * Clears the existing user information from the display and creates a form with pre-filled values 
+ * from the user's current profile. Adds a submit button to save changes, which triggers the 
+ * `guardarCambiosPerfil` function upon submission.
+ * 
+ * @param {Object} usuario - The user object containing the current profile information.
+ * @param {string} usuario.nombre - The user's first name.
  * @param {string} usuario.apellidos - The user's surname.
  * @param {string} usuario.email - The user's email address.
  * @param {string} usuario.telefono - The user's phone number.
  */
+
 function modificarPerfil(usuario){
 
     const INFORMACION_USUARIO = document.getElementById('informacion-usuario');
@@ -177,17 +192,21 @@ function modificarPerfil(usuario){
     formulario.addEventListener('submit',(event) => guardarCambiosPerfil(event,usuario))
 }
 
+
 /**
- * Modifies the user's profile information in the store and local storage.
- * It takes the data from the form and creates a new User object with that data.
- * It then updates the User object in the store with the new data.
+ * Handles the submission of the user's profile edit form.
+ * Checks if any changes have been made before making a request to update the user's profile.
+ * If no changes have been made, it will not make the request and will just refresh the display.
+ * Otherwise, it will make the request and update the session storage with the new values.
+ * It then calls the `mostrarPerfil` function to refresh the display with the updated information.
+ * 
  * @param {Event} event - the event that triggered this function.
- * @param {Object} usuario - The user object containing user information.
- * @param {string} usuario._id - The user's id.
- * @param {string} usuario.name - The user's first name.
+ * @param {Object} usuario - The user object containing the current profile information.
+ * @param {string} usuario.nombre - The user's first name.
  * @param {string} usuario.apellidos - The user's surname.
  * @param {string} usuario.email - The user's email address.
  * @param {string} usuario.telefono - The user's phone number.
+ * @param {string} [usuario._id] - The user's id.
  */
 async function guardarCambiosPerfil(event,usuario){
     event.preventDefault()
@@ -212,30 +231,48 @@ async function guardarCambiosPerfil(event,usuario){
     
     if(usuario.nombre === name && usuario.apellidos === apellidos && usuario.email === email && usuario.telefono === telefono){
         console.log('No hay cambios')
-        borradoContenedoresPerfil(document.getElementById('informacion-usuario'))
-        mostrarPerfil(usuario)
+
+        const informacionUsuario = document.getElementById('informacion-usuario');
+
+        if (informacionUsuario) {
+            borradoContenedoresPerfil(informacionUsuario);
+            mostrarPerfil(usuario);
+        } else {
+            console.error('Element with id "informacion-usuario" not found');
+        }
     }else{
         await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/user/${usuario._id}`, 'PUT', JSON.stringify(payload))
         sessionStorage.setItem('HOOP_MANAGER',JSON.stringify(usuarioModificado))
-        borradoContenedoresPerfil(document.getElementById('informacion-usuario'))
-        mostrarPerfil(usuarioModificado)
-        
+
+        const informacionUsuario = document.getElementById('informacion-usuario');
+
+        if (informacionUsuario) {
+            borradoContenedoresPerfil(informacionUsuario);
+            mostrarPerfil(usuarioModificado);
+        } else {
+            console.error('Element with id "informacion-usuario" not found');
+        }
     }
     
     
 }
+
+
 /**
- * Adds a new Jugador to the store and to local storage.
- * @param {string} inputNombre - The name of the new Jugador.
- * @param {string} inputApellidos - The surname of the new Jugador.
- * @param {string} inputFnac - The date of birth of the new Jugador.
- * @param {string} inputSexo - The gender of the new Jugador.
- * @param {string} inputDireccion - The address of the new Jugador.
- * @param {Object} usuarioBD - The user object that is adding the Jugador.
- * @param {string} usuarioBD._id - The id of the user.
+ * Creates a new instance of the Jugador class and logs it to the console.
+ * Prepares the player data for adding to the database.
+ * 
+ * @param {string} inputNombre - The player's first name.
+ * @param {string} inputApellidos - The player's surname.
+ * @param {string} inputFnac - The player's date of birth.
+ * @param {string} inputSexo - The player's gender.
+ * @param {string} inputDireccion - The player's address.
+ * @param {Object} usuarioBD - The user object from the database containing user information.
+ * @param {string} usuarioBD._id - The user's id.
  * @param {string} usuarioBD.clubAsoc - The club associated with the user.
- * @param {string} categoriaCalculada - The category of the new Jugador.
+ * @param {string} categoriaCalculada - The calculated category of the player based on their date of birth.
  */
+
 function addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD,categoriaCalculada){
     let nuevoJugador = new Jugador('',usuarioBD._id,inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD.clubAsoc,'',categoriaCalculada)
     console.log(nuevoJugador)
@@ -306,6 +343,12 @@ function mostrarHerramientasGestion(usuarioBD){
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
     }
 }
+/**
+ * Handles the event triggered when the user selects an option from the select
+ * component. Depending on the current path, it will call either
+ * `mostrarCalendario` or `mostrarEquipos` with the event as an argument.
+ * @param {Event} e - The event object.
+ */
 function useSelect(e){
     if(location.pathname ==='/calendario.html'){
         mostrarCalendario(e)
@@ -314,9 +357,6 @@ function useSelect(e){
         mostrarEquipos(e)
     }
 }
-
-
-
 
 
 

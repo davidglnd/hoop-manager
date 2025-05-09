@@ -26,7 +26,7 @@ export class SelectEquipo extends LitElement {
 
         // Llamamos a la API para obtener los equipos del club asociado al usuario
         const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/equipos/${userLogeado.clubAsoc}`,'GET');
-        console.log('Numero de equipos en este club: ' + apiData.length)
+        
         // Guardamos los equipos en la propiedad reactiva (esto hace que se re-renderice)
         this.equipos = apiData;
     }

@@ -118,13 +118,14 @@ export function calculoCategoria(fnac){
     const TEMPORADA_ACTUAL = new Date().getFullYear()
     let stringSpliced = parseInt(fnac.slice(0,4))
     let edadTemporada = TEMPORADA_ACTUAL - stringSpliced
-    if(edadTemporada === 7 || edadTemporada === 8 || edadTemporada === 9) return "BENJAMIN"
-    if(edadTemporada === 10 || edadTemporada === 11) return "Alevin"
-    if(edadTemporada === 12 || edadTemporada === 13) return "Infantil"
-    if(edadTemporada === 14 || edadTemporada === 15) return "Cadete"
-    if(edadTemporada === 16 || edadTemporada === 17) return "Juvenil"
-    if(edadTemporada >= 18) return "Senior"
-    return "Desconocido"
+    if (edadTemporada <= 9) return "BENJAMIN";
+    if (edadTemporada <= 11) return "Alevin";
+    if (edadTemporada <= 13) return "Infantil";
+    if (edadTemporada <= 15) return "Cadete";
+    if (edadTemporada <= 17) return "Juvenil";
+    if (edadTemporada >= 18) return "Senior";
+    
+    return "Desconocido";
 }
 
 /**

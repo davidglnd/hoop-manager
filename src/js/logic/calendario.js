@@ -1,6 +1,17 @@
+//@ts-check
 import { getAPIData,API_PORT } from '../utils.js'
 import { fechaEstandar } from '../utils.js'
 
+/**
+ * Muestra el calendario de un equipo en la pantalla.
+ * 
+ * @param {object} e - Un objeto Event que contiene la informaci n del equipo
+ *                    que se va a mostrar.
+ * @param {object} e.detail - Informacion que trae el evento
+ * @param {string} e.detail.equipo - Informacion del equipo a mostrar
+ * 
+ * @returns {Promise<void>}
+ */
 export async function mostrarCalendario(e){ // TO DO MODIFICACIONES PARA ENTRENADORES
     console.log('mostrando calendario')
     let idEquipoSeleccionado = e.detail.equipo // obtenemos el id del equipo seleccionado en el select
@@ -33,7 +44,7 @@ export async function mostrarCalendario(e){ // TO DO MODIFICACIONES PARA ENTRENA
             TR_SIN_PARTIDOS.innerHTML = `<td colspan="5">Añadiendo partidos.....</td>`
             TABLA_CALENDARIO?.appendChild(TR_SIN_PARTIDOS)
         }else{
-            apiData.partidos.forEach(partido => {
+            apiData.partidos.forEach((/** @type {{ jornada: any; fecha: string; local: any; visitante: any; ubicacion: any; }} */ partido) => {
                 const TR_PARTIDO = document.createElement('tr')
                 TR_PARTIDO.innerHTML = `<td>Jornada nº ${partido.jornada}</td><td>${fechaEstandar(partido.fecha)}</td><td>${partido.local}</td><td>${partido.visitante}</td><td><a href="${partido.ubicacion}">Pabellon de ${partido.local}</a></td>`
                 TABLA_CALENDARIO?.appendChild(TR_PARTIDO)

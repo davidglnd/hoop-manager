@@ -1,3 +1,4 @@
+//@TS-check
 import { getAPIData,API_PORT } from '../utils.js'
 import { fechaEstandar } from '../utils.js'
 
@@ -12,6 +13,15 @@ function resetearEspacio(){
         convocatoriaExistente.remove();
     }
 }
+/**
+ * Muestra la informaci n de un equipo en la pantalla.
+ * 
+ * @param {object} e - Un objeto Event que contiene la informaci n del equipo
+ *                    que se va a mostrar.
+ * @param {object} e.detail - Informacion que trae el evento
+ * @param {object} e.detail.equipo - Informacion del equipo
+ * @returns {Promise<void>}
+ */
 export async function mostrarEquipos(e) {
     
     const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
@@ -30,6 +40,16 @@ export async function mostrarEquipos(e) {
 
     MAIN_ENTRENADOR?.appendChild(DIV_EQUIPOS)
 }
+/**
+ * Creates a table element displaying team information and players.
+ *
+ * @param {Object} apiData - Data containing the selected team's details and players.
+ * @param {Object} apiData.EQUIPO_SELECCIONADO - The selected team object.
+ * @param {string} apiData.EQUIPO_SELECCIONADO.nombre - The name of the selected team.
+ * @param {Array<{ nombre: string, apellidos: string, fnac: string }>} apiData.JUGADORES_EQUIPO - Array of players in the selected team.
+ * @returns {HTMLTableElement} A table element with team and player information.
+ */
+
 function crearTablaEquipo(apiData) {
     const tabla = document.createElement('table')
     tabla.id = 'tabla-equipos'
@@ -66,28 +86,45 @@ function crearTablaEquipo(apiData) {
  * will create a call-up for the team. The function uses the provided `apiData`
  * to obtain details such as the team category, ID, and associated club.
  *
- * @param {Object} apiData - The data containing details of the selected team,
- * including `EQUIPO_SELECCIONADO` which provides team category, ID, and associated club.
+ * @param {Object} apiData - The data containing details of the selected team
+ * @param {Object} apiData.EQUIPO_SELECCIONADO 
+ * @param {string} apiData.EQUIPO_SELECCIONADO.categoria 
+ * @param {string} apiData.EQUIPO_SELECCIONADO._id 
+ * @param {string} apiData.EQUIPO_SELECCIONADO.clubAsoc
  */
 
 function reemplazarBotones(apiData) {
     const oldAdd = document.getElementById('add-jugadores')
     const oldConv = document.getElementById('convocatoria')
 
-    const newAdd = oldAdd.cloneNode(true)
-    const newConv = oldConv.cloneNode(true)
+    const newAdd = oldAdd?.cloneNode(true)
+    const newConv = oldConv?.cloneNode(true)
 
-    oldAdd.replaceWith(newAdd)
-    oldConv.replaceWith(newConv)
+    // @ts-expect-error eror esperado para no añadir mas lineas
+    oldAdd?.replaceWith(newAdd)
+     // @ts-expect-error eror esperado para no añadir mas lineas
+    oldConv?.replaceWith(newConv)
 
-    newAdd.addEventListener('click', () => 
+    newAdd?.addEventListener('click', () => 
         addJugadores(apiData.EQUIPO_SELECCIONADO.categoria, apiData.EQUIPO_SELECCIONADO._id, apiData.EQUIPO_SELECCIONADO.clubAsoc)
     )
-    newConv.addEventListener('click', () => 
+    newConv?.addEventListener('click', () => 
         crearConvocatoria(apiData.EQUIPO_SELECCIONADO._id)
     )
 }
 
+/**
+ * Removes the existing 'add-jugadores' button and 'tabla-equipos' from the DOM and
+ * then creates a new table with the available players from the same category as
+ * the selected team, and a button to add the selected players to the team.
+ * The function uses the provided parameters to obtain the players and display
+ * them in the table. The players that are not part of the selected team or do not
+ * have an associated team are included in the table.
+ *
+ * @param {string} categoria - The category of the selected team
+ * @param {string} idEquipo - The id of the selected team
+ * @param {string} club - The club associated with the selected team
+ */
 async function addJugadores(categoria,idEquipo,club){
     const tablaExistente = document.getElementById('tabla-equipos');
     const tablaJugadoresLibresExistente = document.getElementById('tabla-jugadores-libres');
@@ -106,7 +143,7 @@ async function addJugadores(categoria,idEquipo,club){
     tablaJugadoresLibres.id = 'tabla-jugadores-libres'
     tablaJugadoresLibres.innerHTML = `<tr><th>Nombre</th><th>Apellidos</th><th>Fecha de nacimiento</th><th>Categoria</th><th>Seleccionar</th></tr>`
     console.log(apiData)
-    apiData.forEach((jugador) => {
+    apiData.forEach((/** @type {{ club: string; _id_equipo: string; nombre: any; apellidos: any; fnac: any; categoria: any; _id: any; }} */ jugador) => {
         if(club !== jugador.club){
             
             console.log('hay jugadores que no son del club')
@@ -120,7 +157,7 @@ async function addJugadores(categoria,idEquipo,club){
             
         }
     })
-    DIV_EQUIPOS.appendChild(tablaJugadoresLibres)
+    DIV_EQUIPOS?.appendChild(tablaJugadoresLibres)
     
     const BOTON_ADD_JUGADORES = document.createElement('button')
     BOTON_ADD_JUGADORES.id = 'add-jugadores'
@@ -129,18 +166,29 @@ async function addJugadores(categoria,idEquipo,club){
     BOTON_ADD_JUGADORES.addEventListener('click', (event) => enviarJugadores(event,idEquipo))
 
 
-    DIV_EQUIPOS.appendChild(BOTON_ADD_JUGADORES)
+    DIV_EQUIPOS?.appendChild(BOTON_ADD_JUGADORES)
     
 }
+/**
+ * Handles the submission of the "Añadir seleccion" button.
+ * Prevents the default form submission, retrieves the checked checkboxes
+ * and sends a POST request to the server with the selected players and the
+ * id of the team. Reloads the page after the request is sent.
+ * @param {Event} event - The event that triggered this function.
+ * @param {string} idEquipo - The id of the team.
+ */
 async function enviarJugadores(event,idEquipo){
     event.preventDefault()
     let checkboxes = document.querySelectorAll('input[type="checkbox"][name="jugador"]')
     const JUGADORES_SELECCIONADOS ={}
     JUGADORES_SELECCIONADOS.equipo = idEquipo
+    /**
+     * @type {any[]}
+     */
     JUGADORES_SELECCIONADOS.jugadores = []
 
     checkboxes.forEach((checkbox) => {
-        if(checkbox.checked){
+        if(checkbox instanceof HTMLInputElement && checkbox.checked  ){
             JUGADORES_SELECCIONADOS.jugadores.push(checkbox.value)
         }
     })
@@ -152,12 +200,21 @@ async function enviarJugadores(event,idEquipo){
 
     location.reload()
 }
+    /**
+     * Handles the button to create a call-up for the selected team.
+     * Prevents the default form submission, resets the main space, and
+     * retrieves the team's schedule from the server. If there is no schedule
+     * or no games, it displays a message in the main space. If there are games
+     * it creates a select element with the games and adds an event listener to
+     * it. When a game is selected, it calls the function mostrarPartido with
+     * the event and the id of the team.
+     * @param {string} idEquipo - The id of the team.
+     */
 async function crearConvocatoria(idEquipo) {
     resetearEspacio()
 
     const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
     const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/calendario/${idEquipo}`, 'GET')
-
 
     if(apiData === null){
         const DIV_CONVOCATORIAS = document.createElement('div')
@@ -184,10 +241,10 @@ async function crearConvocatoria(idEquipo) {
     const SELECT_PARTIDOS = document.createElement('select')
     SELECT_PARTIDOS.id = 'select-partidos'
     SELECT_PARTIDOS.classList = 'select'
-    apiData.partidos.forEach((partido) => {
+    apiData.partidos.forEach((/** @type {{ fecha: string | number | Date; local: any; visitante: any; }} */ partido) => {
         if(new Date(partido.fecha) > new Date()){
             const OPTION_PARTIDO = document.createElement('option')
-            OPTION_PARTIDO.value = partido.jornada
+            OPTION_PARTIDO.value = JSON.stringify(partido)
             OPTION_PARTIDO.innerText = `${partido.local} vs ${partido.visitante}`
             SELECT_PARTIDOS.appendChild(OPTION_PARTIDO)
         }else{
@@ -199,11 +256,23 @@ async function crearConvocatoria(idEquipo) {
     })
     DIV_CONVOCATORIAS.appendChild(SELECT_PARTIDOS)
 
-    SELECT_PARTIDOS.addEventListener('change', (event) => mostrarPartido(event))
-    
+    SELECT_PARTIDOS.addEventListener('change', (event) => mostrarPartido(event,idEquipo))
+
 }
-function mostrarPartido(e){
-    console.log(e.target.value)
+
+    /**
+     * Handles the change event of the select element that displays the games
+     * of the selected team. When a game is selected, it resets the main space,
+     * retrieves the team's players from the server, and creates a card-match
+     * component with the selected game and the team's players. The id of the
+     * team is passed as a parameter to this function.
+     * @param {Event} e - The event that triggered this function.
+     * @param {string} idEquipo - The id of the team.
+     */
+async function mostrarPartido(e,idEquipo){
+    // @ts-expect-error TO DO
+    const PARTIDO = JSON.parse(e.target.value)
+
     resetearEspacio()
 
     const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
@@ -212,7 +281,38 @@ function mostrarPartido(e){
     DIV_CONVOCATORIAS.id = 'div-convocatorias'
     MAIN_ENTRENADOR?.appendChild(DIV_CONVOCATORIAS)
 
-    const H1_JORNADA = document.createElement('h1')
-    H1_JORNADA.innerText = `Jornada ${e.target.value}`
-    DIV_CONVOCATORIAS.appendChild(H1_JORNADA)
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/equipos/jugadores/${idEquipo}`, 'GET')
+    
+    const CARD = document.createElement('card-match')
+    // @ts-expect-error TO DO 
+    CARD.partido = PARTIDO
+    // @ts-expect-error TO DO 
+    CARD.jugadores = apiData.JUGADORES_EQUIPO
+    // @ts-expect-error TO DO 
+    CARD.idEquipo = idEquipo
+    CARD.id = 'comp-card-match-lit'
+    DIV_CONVOCATORIAS.appendChild(CARD)
+        
+}
+
+/**
+ * Handles the submission of a match card form. Converts the form details
+ * into a JSON string and sends a POST request to the server to create
+ * a new call-up for the selected match day and season. Upon receiving
+ * the server's response, it displays an alert with the response data
+ * and reloads the page.
+ *
+ * @param {CustomEvent} e - The event that triggered this function, containing
+ * the details of the match card form submission.
+ */
+
+export async function cardMatchSubmit(e){
+    const payload = JSON.stringify(e.detail)
+
+
+    const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/convocatoria/temporada/jornada/seleccionada`, 'POST', payload )
+
+    alert(apiData)
+
+    location.reload()
 }

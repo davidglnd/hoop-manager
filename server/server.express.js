@@ -43,7 +43,7 @@ app.get('/api/filter/equipo/:id', async (req, res) => {
     res.json(await db.equipos.getById(req.params.id))
 })
 app.get('/api/filter/calendario/:idEquipo', async (req, res) => {
-    res.json(await db.calendario.get(req.params.idEquipo))
+    res.json(await db.calendario.getById(req.params.idEquipo))
 })
 app.get('/api/read/equipos/jugadores/:idEquipo', async (req, res) => {
     const EQUIPO_SELECCIONADO = await db.equipos.getById(req.params.idEquipo)
@@ -115,6 +115,25 @@ app.post('/api/update/equipo/jugadores', async (req, res) => {
     });
     res.json(EQUIPO.nombre + ' ha sido actualizado')
 })
+
+app.post('/api/create/convocatoria/temporada/jornada/seleccionada', async (req, res) => {
+    const CONVOCATORIA = {
+        mensaje_convocatoria: req.body.mensaje_convocatoria,
+        jornada: req.body.jornada,
+        jugadores_convocados: []   
+    }
+    req.body.jugadores_convocados.forEach(jugador => {
+        CONVOCATORIA.jugadores_convocados.push(jugador)
+    })
+    await db.calendario.createConvocatoria(CONVOCATORIA,req.body.idEquipo)
+    res.json("Convocatora creada")
+    
+
+    
+})
+
+
+
 // Capturar rutas no encontradas
 app.use((req, res) =>{
     return res.status(404).sendFile(path.join(import.meta.dirname, "../src", "404.html"));

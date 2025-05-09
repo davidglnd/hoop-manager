@@ -1,0 +1,74 @@
+.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0 0 0 / 33%);
+    padding: 20px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: auto;
+}
+
+.card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.info {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.convocatoria {
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.jugadores {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: orange;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+button:hover {
+    background-color: darkorange;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    border: 2px solid #d1d5db; 
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgb(0 0 0);
+}
+
+input[type="checkbox"]:hover {
+    box-shadow: 0 2px 4px rgb(0 0 0);
+}
+
+input[type="checkbox"]:checked {
+    background-color: #f97316; 
+    border-color: #f97316;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6.00039 10.8002L3.20039 8.00019L2.26606 8.93452L6.00039 12.6689L14.0004 4.66886L13.0661 3.73452L6.00039 10.8002Z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}

@@ -21,7 +21,9 @@ export const db = {
     updateEquipo: updateJugadoresIdEquipo
   },
   calendario:{
-    get: getCalendario,
+    getById: getCalendario,
+    getJornada: getCalendarioJornada,
+    createConvocatoria: updateConvocatoria
   }
 }
 // COUNTERS
@@ -58,6 +60,14 @@ async function getJugadores(filter){
     const jugadoresCollection = hoopManagerDB.collection('jugadores');
     return await jugadoresCollection.find(filter).toArray()
 }
+async function getCalendarioJornada(jornada,id){
+  const client = new MongoClient(URI);
+  const hoopManagerDB = client.db('Hoop-Manager');
+  const calendarioCollection = hoopManagerDB.collection('calendario');
+  
+  return await calendarioCollection.findOne({ _id_equipo: id },{ projection: { partidos: { $elemMatch: { jornada: 3 } } } })
+
+}
 // CREATES 
 async function createUser(user){
     const client = new MongoClient(URI);
@@ -65,6 +75,13 @@ async function createUser(user){
     const usersCollection = hoopManagerDB.collection('users');
     console.log('Usuario a crear: ',JSON.stringify(user))
     return  await usersCollection.insertOne(user);
+}
+async function updateConvocatoria(convocatoria,idEquipo){
+    const client = new MongoClient(URI);
+    const hoopManagerDB = client.db('Hoop-Manager');
+    const convocatoriaCollection = hoopManagerDB.collection('calendario');
+    await convocatoriaCollection.updateOne({_id_equipo: idEquipo},{$pull: {convocatoria: {jornada: convocatoria.jornada}} })
+    return await convocatoriaCollection.updateOne({_id_equipo: idEquipo},{$push: {convocatoria: convocatoria} })
 }
 // LOG IN
 async function loginUser({email,password}) {
@@ -142,6 +159,6 @@ async function getCalendario(id){
   const client = new MongoClient(URI);
   const hoopManagerDB = client.db('Hoop-Manager')
   const calendarioCollection = hoopManagerDB.collection('calendario')
-
+  
   return await calendarioCollection.findOne({_id_equipo: id})
 }
