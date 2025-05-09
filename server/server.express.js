@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import bodyParser from 'body-parser';
 import { db } from "./server.mongodb.js";
 
@@ -114,7 +115,10 @@ app.post('/api/update/equipo/jugadores', async (req, res) => {
     });
     res.json(EQUIPO.nombre + ' ha sido actualizado')
 })
-
+// Capturar rutas no encontradas
+app.use((req, res) =>{
+    return res.status(404).sendFile(path.join(import.meta.dirname, "../src", "404.html"));
+})
 
 app.listen(port, async () => {
   const usuarios = await db.users.count()
