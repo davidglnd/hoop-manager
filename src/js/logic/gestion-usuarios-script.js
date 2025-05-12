@@ -1,6 +1,6 @@
-import { Club } from './classes/Club.js'
-import { comprobarSession } from './checkSession.js'
-import { getAPIData } from './utils.js'
+import { Club } from '../classes/Club.js'
+import { comprobarSession } from '../checkSession.js'
+import { getAPIData } from '../utils.js'
 
 //import club from '../api/clubes.json' with { type: "json" }
 

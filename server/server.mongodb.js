@@ -18,7 +18,8 @@ export const db = {
   jugadores:{
     get: getJugadores,
     getById: getJugadoresById,
-    updateEquipo: updateJugadoresIdEquipo
+    updateEquipo: updateJugadoresIdEquipo,
+    create: createJugador
   },
   calendario:{
     getById: getCalendario,
@@ -82,6 +83,12 @@ async function updateConvocatoria(convocatoria,idEquipo){
     const convocatoriaCollection = hoopManagerDB.collection('calendario');
     await convocatoriaCollection.updateOne({_id_equipo: idEquipo},{$pull: {convocatoria: {jornada: convocatoria.jornada}} })
     return await convocatoriaCollection.updateOne({_id_equipo: idEquipo},{$push: {convocatoria: convocatoria} })
+}
+async function createJugador(jugador){
+    const client = new MongoClient(URI);
+    const hoopManagerDB = client.db('Hoop-Manager');
+    const jugadoresCollection = hoopManagerDB.collection('jugadores');
+    return await jugadoresCollection.insertOne(jugador);
 }
 // LOG IN
 async function loginUser({email,password}) {

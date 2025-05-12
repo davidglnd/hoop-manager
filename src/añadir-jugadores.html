@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="shortcut icon" href="img/logo1b.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.desktop.css">
+    <link rel="stylesheet" href="css/pages/add-jugadores.css">
+    <script type="module" src="js/logic/addJugadores.js"></script>
+    <script type="module" src="js/main.js" defer></script>
+    <script type="module" src="js/utils.js" defer></script>
+</head>
+<body>
+    <nav id="menu-principal">            
+        <ol id="menu-club">
+            <li><a href="club.html">Inicio</a></li>
+            <li><a href="equipos.html">Equipos</a></li>
+            <li><a href="entrenamientos.html">Entrenamientos</a></li> 
+            <li><a href="perfil.html">Mi perfil</a></li>
+            <li><a href="calendario.html">Calendario</a></li>
+            <li id="cerrar-sesion">Cerrar sesion</li>
+        </ol>
+    </nav>
+    <main id="añadir-jugadores">
+        <form id="add-jugadores-form">
+            <h2>Añadir Jugador</h2>
+
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" >
+
+            <label for="apellidos">Apellidos</label>
+            <input type="text" id="apellidos" name="apellidos" >
+
+            <label for="sexo">Genero</label>
+            <select id="sexo" name="sexo" >
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+            </select>
+
+            <label for="fecha-nacimiento">Fecha de nacimiento</label>
+            <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" >
+
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" name="direccion" >
+
+            <label for="fotoJugador">Foto del jugador</label>
+            <input type="file" id="fotoJugador" name="fotoJugador" accept="image/*" >
+
+            <label for="dniFrontal">Foto del DNI (frontal)</label>
+            <input type="file" id="dniFrontal" name="dniFrontal" accept="image/*" >
+
+            <label for="dniTrasero">Foto del DNI (trasera)</label>
+            <input type="file" id="dniTrasero" name="dniTrasero" accept="image/*" >
+
+            <label for="documentoExtra">Documento adicional</label>
+            <input type="file" id="documentoExtra" name="documentoExtra" accept=".pdf,.doc,.docx">
+
+            <button type="submit" class="button">Enviar solicitud</button>
+        </form>
+
+    </main>
+    <footer>
+        © 2025 Hoop Manager. Todos los derechos reservados.
+    </footer>
+</body>
+</html>

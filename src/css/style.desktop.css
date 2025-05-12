@@ -251,7 +251,7 @@ body{
   cursor: not-allowed;
   color: #a1a1aa;
   box-shadow: none;
-}
+} /* Para cuando añadamos el boton reset en los formularios */
 
 #informacion-usuario {
   max-width: 600px;
@@ -283,7 +283,7 @@ body{
   max-width: 600px;
   margin: 2rem auto;
   padding: 2rem;
-  font-family: Arial, sans-serif; /* Fuente limpia */
+  font-family: Arial, sans-serif; 
 }
 
 #modificar-perfil input {
@@ -299,7 +299,7 @@ body{
 }
 
 #modificar-perfil input:focus {
-  border-color: #f97316; /* Naranja de enfoque */
+  border-color: #f97316; 
   outline: none;
   box-shadow: 0 0 5px rgb(249 115 22);
 }
@@ -308,7 +308,7 @@ body{
   display: block;
   width: 100%;
   padding: 1rem;
-  background-color: #f97316; /* Naranja brillante */
+  background-color: #f97316; 
   color: white;
   border: none;
   border-radius: 0.75rem;

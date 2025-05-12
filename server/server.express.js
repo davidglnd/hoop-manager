@@ -128,10 +128,10 @@ app.post('/api/create/convocatoria/temporada/jornada/seleccionada', async (req, 
     await db.calendario.createConvocatoria(CONVOCATORIA,req.body.idEquipo)
     res.json("Convocatora creada")
     
-
-    
 })
-
+app.post('/api/create/jugador', async (req, res) => {
+    res.json(await db.jugadores.create(req.body))
+})
 
 
 // Capturar rutas no encontradas

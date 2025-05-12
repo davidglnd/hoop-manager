@@ -1,6 +1,6 @@
 import { importTemplate } from '../../lib/importTemplate.js';
 import { getAPIData} from '../../utils.js';
-import { API_PORT  } from '../../gestion-usuarios-script.js';
+import { API_PORT  } from '../../logic/gestion-usuarios-script.js';
 import { Usuario } from '../../classes/UserClasses.js';
 import ResetCSS from '../../../css/reset.css' with { type: 'css' };
 import AppCSS from '../../../css/style.index.css' with { type: 'css' };

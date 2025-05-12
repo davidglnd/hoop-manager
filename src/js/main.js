@@ -1,9 +1,8 @@
 //@ts-check
  
-import { Jugador } from "./classes/Jugador.js";
 import { getAPIData } from './utils.js'
-import { calculoCategoria } from './utils.js'
 import {mostrarEquipos, cardMatchSubmit} from './logic/equipos.js'
+import {datosJugadores} from './logic/addJugadores.js'
 import {mostrarCalendario} from './logic/calendario.js'
 
 
@@ -20,20 +19,21 @@ const API_PORT = location.port ? `:${1337}` : ''
  * - Listens for custom events 'equipo-cambiado' and 'convocatoria-creada' to trigger respective handlers.
  * - Displays the user's profile and management tools.
  * - If on the '/equipos.html' page and the user role is 'entrenador', dynamically adds navigation tools for the coach.
+ * 
  */
 
 function onDOMContentLoaded(){
     let usuarioLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') ?? '')
-    
-    let añadirJugadores = document.getElementById('añadir-jugador-form')
-
-    añadirJugadores?.addEventListener('submit', (e) => datosJugador (e,usuarioLogeado) )
-    
+        
     //custom event que se dispara desde el SHADOWDOM 
     document.addEventListener('equipo-cambiado', (e) => useSelect (e))
 
     //custom event que se dispara desde el SHADOWDOM 
+    // @ts-expect-error TO DO ARREGLAR ESTO
     document.addEventListener('convocatoria-creada', (e) => cardMatchSubmit(e))
+
+    //evento del submit añadir jugadores
+    document.getElementById('add-jugadores-form')?.addEventListener('submit', (e) => datosJugadores(e))
 
     mostrarPerfil(usuarioLogeado)
     mostrarHerramientasGestion(usuarioLogeado)
@@ -63,33 +63,6 @@ function onDOMContentLoaded(){
     }
 }
 
-/**
- * Handles the submission of player data from a form, prevents the default 
- * form submission, and adds the player to the store and local storage.
- * 
- * @param {Event} event - The event that triggered this function.
- * @param {Object} usuarioLogeado - The logged-in user object containing user information.
- * @param {string} usuarioLogeado._id - The id of the user.
- * @param {string} usuarioLogeado.clubAsoc - The club associated with the user.
- * 
- * Retrieves player data from the form, calculates their category based on 
- * their date of birth, and calls the addJugador function to add the player 
- * to the system.
- */
-
-function datosJugador(event,usuarioLogeado){
-    event.preventDefault()
-
-    let inputNombre = /** @type {HTMLInputElement} */(document.getElementById('jugador-nombre')).value
-    let inputApellidos = /** @type {HTMLInputElement} */(document.getElementById('jugador-apellidos')).value
-    let inputFnac = /** @type {HTMLInputElement} */(document.getElementById('jugador-fnac')).value
-    let inputSexo = /** @type {HTMLInputElement} */(document.getElementById('jugador-sexo')).value
-    let inputDireccion = /** @type {HTMLInputElement} */(document.getElementById('jugador-direccion')).value
-    
-    let categoriaCalculada = calculoCategoria(inputFnac)
-
-    addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioLogeado,categoriaCalculada)
-}
 
 
 /**
@@ -256,28 +229,6 @@ async function guardarCambiosPerfil(event,usuario){
     
     
 }
-
-
-/**
- * Creates a new instance of the Jugador class and logs it to the console.
- * Prepares the player data for adding to the database.
- * 
- * @param {string} inputNombre - The player's first name.
- * @param {string} inputApellidos - The player's surname.
- * @param {string} inputFnac - The player's date of birth.
- * @param {string} inputSexo - The player's gender.
- * @param {string} inputDireccion - The player's address.
- * @param {Object} usuarioBD - The user object from the database containing user information.
- * @param {string} usuarioBD._id - The user's id.
- * @param {string} usuarioBD.clubAsoc - The club associated with the user.
- * @param {string} categoriaCalculada - The calculated category of the player based on their date of birth.
- */
-
-function addJugador(inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD,categoriaCalculada){
-    let nuevoJugador = new Jugador('',usuarioBD._id,inputNombre,inputApellidos,inputFnac,inputSexo,inputDireccion,usuarioBD.clubAsoc,'',categoriaCalculada)
-    console.log(nuevoJugador)
-    // TO DO VAMOS POR AQUI AÑADIENDO EL JUGADOR A LA BBDD
-}
 /**
  * Removes all child elements from the specified container element.
  *
@@ -343,17 +294,19 @@ function mostrarHerramientasGestion(usuarioBD){
         liCrearEntrenamientos.appendChild(aCrearEntrenamientos)
     }
 }
+
 /**
- * Handles the event triggered when the user selects an option from the select
- * component. Depending on the current path, it will call either
- * `mostrarCalendario` or `mostrarEquipos` with the event as an argument.
- * @param {Event} e - The event object.
+ * Depending on the current location, this function calls either `mostrarCalendario`
+ * or `mostrarEquipos` with the given event object `e` as an argument.
+ * @param {Event} e - The event object from the listener.
  */
 function useSelect(e){
     if(location.pathname ==='/calendario.html'){
+        // @ts-expect-error TO DO ARREGLAR
         mostrarCalendario(e)
     }
     if(location.pathname ==='/equipos.html'){
+       // @ts-expect-error TO DO ARREGLAR
         mostrarEquipos(e)
     }
 }
