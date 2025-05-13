@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de administracion</title>
+    <link rel="shortcut icon" href="img/ChatGPT Image 3 abr 2025, 09_55_17.png" type="image/x-icon">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/admin/dashboard.css">
+    <script type="module" src="../js/utils.js" defer></script>
+    <script type="module" src="../js/checkSession.js" defer></script>
+    <script type="module" src="../js/main.js" defer></script>
+</head>
+<body>
+    <header id="header-admin">
+        <p>Hoop Manager - gestion del club</p>
+    </header>
+    <aside id="aside-admin">
+        <nav>            
+            <ol>
+                <li><a href="./admin-club.html">Gestion del club</a></li>
+                <li><a href="./admin-usuarios.html">Gestion de usuarios</a></li>
+                <li><a href="./admin-equipos.html">Gestion de equipos</a></li>
+            </ol>
+        </nav>
+    </aside>
+    <main id="main-admin">
+        <div id="opciones"></div>
+        <div id="tablero"></div>
+    </main>
+    <footer id="footer-admin">
+        <div id="botones">
+            <button id="cerrar-sesion">Cerrar sesion</button>
+        </div>
+        <div id="mensajes"></div>
+    </footer>
+</body>
+</html>

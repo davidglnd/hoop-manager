@@ -1,9 +1,11 @@
 //@ts-check
  
-import { getAPIData } from './utils.js'
+import { getAPIData, borradoContenedoresPerfil } from './utils.js'
 import {mostrarEquipos, cardMatchSubmit} from './logic/equipos.js'
 import {datosJugadores} from './logic/addJugadores.js'
 import {mostrarCalendario} from './logic/calendario.js'
+import { menu } from './admin/admin-usuarios.js'
+import { infoClub } from './admin/admin-club.js'
 
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
@@ -24,7 +26,16 @@ const API_PORT = location.port ? `:${1337}` : ''
 
 function onDOMContentLoaded(){
     let usuarioLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') ?? '')
-        
+    
+    if(usuarioLogeado.rol === 'ADMIN' && location.pathname === '/admin/admin-usuarios.html'){
+        menu(usuarioLogeado)
+        return
+    }
+    if(usuarioLogeado.rol === 'ADMIN' && location.pathname === '/admin/admin-club.html'){
+        infoClub(usuarioLogeado)
+        return
+    }
+
     //custom event que se dispara desde el SHADOWDOM 
     document.addEventListener('equipo-cambiado', (e) => useSelect (e))
 
@@ -39,7 +50,7 @@ function onDOMContentLoaded(){
     mostrarHerramientasGestion(usuarioLogeado)
 
     if(location.pathname === '/equipos.html'){ 
-        const userLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') || '')
+        const userLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') || '')// TO DO ESTO NO ES NECESARIO YA QUE DECLARAMOS LA VARIABLE ARRIBA
         const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
         if(userLogeado.rol === 'entrenador'){
             const NAV_HERRAMIENTAS = document.createElement('nav')
@@ -229,19 +240,7 @@ async function guardarCambiosPerfil(event,usuario){
     
     
 }
-/**
- * Removes all child elements from the specified container element.
- *
- * @param {HTMLElement} contenedor - The container element from which all child elements will be removed.
- */
 
-function borradoContenedoresPerfil(contenedor){ // TO DO utils.js
-
-    while (contenedor.firstChild) {
-        contenedor.removeChild(contenedor.firstChild)
-    }
-
-}
 /**
  * Converts the first letter of a string to uppercase and the rest to lowercase.
  * @param {string} text - The string to be formatted.

@@ -25,7 +25,9 @@ app.get('/api/check/', async (req, res) => {
 app.get('/api/read/users', async (req, res) => {
     res.json(await db.users.get())
 })
-
+app.get('/api/filter/users/:club', async (req, res) => {
+    res.json(await db.users.get({ clubAsoc: req.params.club }))
+})
 app.get('/api/filter/users/:email', async (req, res) => {
     console.log(req.params.email)
     res.json(await db.users.get({ email: req.params.email }))
@@ -56,9 +58,10 @@ app.get('/api/read/equipos/jugadores/:idEquipo', async (req, res) => {
 
     res.json({EQUIPO_SELECCIONADO,JUGADORES_EQUIPO})
 })
-// METODOS PUT
+// METODOS PUT UPDATE
 app.put('/api/update/user/:id', async (req, res) => {
-    res.json(await db.users.update(req.params.id, req.body))
+    await db.users.update(req.params.id, req.body)
+    res.send({message: 'Usuario actualizado'})
 })
 // METODOS POST
 app.post('/api/create/users', async (req, res) => {
@@ -105,7 +108,7 @@ app.post('/api/login', async (req, res) => {
     }
 })
 
-app.post('/api/update/equipo/jugadores', async (req, res) => {
+app.post('/api/update/equipo/jugadores', async (req, res) => {//TO DO ESTE METODO DEBERIA SER PUT
     const JUGADORES_SELECCIONADOS = req.body
     const EQUIPO = await db.equipos.getById(req.body.equipo)
 

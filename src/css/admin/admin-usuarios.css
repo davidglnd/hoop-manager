@@ -1,0 +1,122 @@
+#opciones{
+    display: flex;
+    justify-content:space-around ;
+}
+
+#tabla-usuarios{
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+
+    caption{
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 50px;
+    }
+}
+
+#tabla-usuarios th {
+    background-color: #ff6f00; 
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+}
+
+
+
+#tabla-usuarios td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 5px 0;
+    height: 20px;
+    transition: background-color 0.2s ease;
+    cursor:default;
+}
+
+#tabla-usuarios td.actualizar-rol{
+    cursor: pointer;
+}
+
+#tabla-usuarios td.actualizar-rol:hover{
+    cursor: pointer;
+    background-color: #007e00;
+}
+
+#tabla-usuarios td:hover {
+    background-color: #f1f1f1;
+}
+
+select {
+    appearance: none; /* Oculta el estilo por defecto */
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 40px 10px 14px;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    max-width: 300px;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    display: block;
+    margin: 0 auto;
+}
+  
+select:focus {
+    outline: none;
+    border-color: #ff6f00;
+    box-shadow: 0 0 0 2px rgba(255 111 0);
+}
+  
+select:hover {
+    border-color: #bbb;
+    cursor: pointer;
+}
+
+select option {
+    background-color: #c27a43;
+    color: #333;
+    font-weight: bolder;
+    padding: 10px;
+}
+
+.button {
+    padding: 0.75rem 1.5rem;
+    background-color: #f97316; 
+    color: white;
+    border: none;
+    border-radius: 0.75rem; 
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+    background-color: #ea580c; 
+    transform: translateY(-2px);
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+.button:disabled {
+    background-color: #d4d4d8; 
+    cursor: not-allowed;
+    color: #a1a1aa;
+    box-shadow: none;
+} /* Para cuando añadamos el boton reset en los formularios */
+
+.actualizar-rol-disabled{
+    pointer-events: none;
+}
+

@@ -137,3 +137,16 @@ export function calculoCategoria(fnac){
 export function fechaEstandar(fecha){
     return `${fecha.slice(8,10)}/${fecha.slice(5,7)}/${fecha.slice(0,4)}`
 }
+/**
+ * Removes all child elements from the specified container element.
+ *
+ * @param {HTMLElement} contenedor - The container element from which all child elements will be removed.
+ */
+
+export function borradoContenedoresPerfil(contenedor){ // TO DO utils.js
+
+    while (contenedor.firstChild) {
+        contenedor.removeChild(contenedor.firstChild)
+    }
+
+}

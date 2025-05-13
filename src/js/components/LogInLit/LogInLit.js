@@ -43,7 +43,7 @@ export class LogInLit extends LitElement {
             console.log('Usuario logeado : ' + apiData.name)
             sessionStorage.setItem('HOOP_MANAGER', JSON.stringify(apiData))
             if(apiData.rol === "ADMIN"){
-                location.href = '/admin-club.html'
+                location.href = 'admin/admin-club.html'
             }else{
                 location.href = '/club.html'
             }

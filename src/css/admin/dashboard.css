@@ -1,0 +1,85 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    display: grid;
+    grid-template:
+    "aside header" auto
+    "aside main" 1fr
+    "aside footer" auto / 220px 1fr;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+#aside-admin {
+    grid-area: aside;
+    background-color: #1f1f1f;
+    color: #fff;
+    padding: 2rem 1rem;
+}
+
+#aside-admin nav ol {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#aside-admin a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
+
+#aside-admin a:hover {
+    background-color: #333;
+}
+
+
+#header-admin {
+    grid-area: header;
+    background-color: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 1px 4px rgba(0 0 0 / 20%);
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+
+#main-admin {
+    grid-area: main;
+    padding: 2rem;
+    background-color: #fff;
+    overflow-y: auto;
+    min-height: 80vh;
+}
+
+
+#footer-admin {
+    grid-area: footer;
+    background-color: #eee;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+#footer-admin button {
+    background-color: #f60;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#footer-admin button:hover {
+    background-color: #e55a00;
+}

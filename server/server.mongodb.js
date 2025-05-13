@@ -6,6 +6,7 @@ export const db = {
   users: {
     count: countUsers,
     get: getUsers,
+    getByClub: getUsersByClub,
     create: createUser,
     logIn: loginUser,
     update: updateUser,
@@ -47,7 +48,12 @@ async function getUsers(filter){
   const usersCollection = hoopManagerDB.collection('users');
   return await usersCollection.find(filter).toArray()
 }
-
+async function getUsersByClub(filter){
+  const client = new MongoClient(URI);
+  const hoopManagerDB = client.db('Hoop-Manager');
+  const usersCollection = hoopManagerDB.collection('users');
+  return await usersCollection.find(filter).toArray()
+}
 async function getEquipos(filter){
     const client = new MongoClient(URI);
     const hoopManagerDB = client.db('Hoop-Manager');
