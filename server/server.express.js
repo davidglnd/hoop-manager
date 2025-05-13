@@ -21,7 +21,9 @@ app.get('/api/check/', async (req, res) => {
   const numeroUsuarios = await db.users.count()
   res.send(`Hay ${numeroUsuarios} cuentas de usuarios`)
 })
-
+app.get('/api/read/equipos/:codigo', async (req, res) => {
+    res.json(await db.equipos.get({clubAsoc: req.params.codigo}))
+})
 app.get('/api/read/users', async (req, res) => {
     res.json(await db.users.get())
 })
@@ -135,7 +137,9 @@ app.post('/api/create/convocatoria/temporada/jornada/seleccionada', async (req, 
 app.post('/api/create/jugador', async (req, res) => {
     res.json(await db.jugadores.create(req.body))
 })
-
+app.post('/api/create/equipo', async (req, res) => {
+    res.json(await db.equipos.create(req.body))
+})
 
 // Capturar rutas no encontradas
 app.use((req, res) =>{

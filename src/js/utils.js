@@ -150,3 +150,15 @@ export function borradoContenedoresPerfil(contenedor){ // TO DO utils.js
     }
 
 }
+/**
+ * Converts the first letter of a string to uppercase and the rest to lowercase.
+ * @param {string} text - The string to be formatted.
+ * @returns {string} The formatted string.
+ */
+export function mayusculasInicial(text) { 
+    return text
+      .toLowerCase()
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+}

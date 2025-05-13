@@ -1,3 +1,5 @@
+@import url('./admin-equipos.css');
+
 body {
     font-family: 'Segoe UI', sans-serif;
     display: grid;
@@ -64,8 +66,13 @@ body {
     background-color: #eee;
     padding: 1rem 2rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 15rem;
+
+    .error{
+        color:red;
+        font-weight: bolder;
+    }
     
 }
 

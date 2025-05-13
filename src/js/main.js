@@ -1,16 +1,16 @@
 //@ts-check
  
-import { getAPIData, borradoContenedoresPerfil } from './utils.js'
+import { getAPIData, borradoContenedoresPerfil, API_PORT, mayusculasInicial } from './utils.js'
 import {mostrarEquipos, cardMatchSubmit} from './logic/equipos.js'
 import {datosJugadores} from './logic/addJugadores.js'
 import {mostrarCalendario} from './logic/calendario.js'
-import { menu } from './admin/admin-usuarios.js'
-import { infoClub } from './admin/admin-club.js'
+import { menu, mostrarUsuariosAdmin } from './admin/admin-usuarios.js'
+import { menuAdminClub } from './admin/admin-club.js'
+import { menuAdminEquipo, mostrarEquiposAdmin, crearEquipo} from './admin/admin-equipos.js'
 
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
-const API_PORT = location.port ? `:${1337}` : ''
 
 /**
  * Function executed when the DOM content is fully loaded.
@@ -24,15 +24,28 @@ const API_PORT = location.port ? `:${1337}` : ''
  * 
  */
 
-function onDOMContentLoaded(){
+async function onDOMContentLoaded(){
     let usuarioLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') ?? '')
     
     if(usuarioLogeado.rol === 'ADMIN' && location.pathname === '/admin/admin-usuarios.html'){
-        menu(usuarioLogeado)
+        const USUARIOS = await menu(usuarioLogeado)
+        // @ts-expect-error Arreglar estos errores
+        document.addEventListener('filter-bar-clicked', (e) => mostrarUsuariosAdmin(e,USUARIOS))
         return
     }
     if(usuarioLogeado.rol === 'ADMIN' && location.pathname === '/admin/admin-club.html'){
-        infoClub(usuarioLogeado)
+        menuAdminClub()
+        return
+    }
+    if(usuarioLogeado.rol === 'ADMIN' && location.pathname === '/admin/admin-equipos.html'){
+        //Llamamos una primera funcion que trae los equipos para que cuando hagamos el custom
+        //event tengamos solo que filtrar esos equipos, es decir ya estan leidos los equipos de ese club
+        const EQUIPOS = await menuAdminEquipo(usuarioLogeado)
+        //custom event que se dispara desde el SHADOWDOM 
+        document.addEventListener('filter-bar-clicked', (e) => mostrarEquiposAdmin (e,EQUIPOS))
+        //custom event que se dispara desde el SHADOWDOM, que usamos porque en el parametro de 
+        //la funcion menuAdminEquipo pasamos el parametro boton como true
+        document.addEventListener('boton-lit-admin-filter-bar', (e) => crearEquipo(e,usuarioLogeado))
         return
     }
 
@@ -241,18 +254,7 @@ async function guardarCambiosPerfil(event,usuario){
     
 }
 
-/**
- * Converts the first letter of a string to uppercase and the rest to lowercase.
- * @param {string} text - The string to be formatted.
- * @returns {string} The formatted string.
- */
-function mayusculasInicial(text) { // TO DO utils.js
-    return text
-      .toLowerCase()
-      .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-}
+
 /**
  * If the user is an entrenador, this function adds a menu item to the navigation menu
  * to allow them to use others functions.

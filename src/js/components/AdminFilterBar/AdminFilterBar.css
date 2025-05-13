@@ -1,0 +1,60 @@
+.admin-filter-bar-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.admin-filter-bar {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem ;
+    flex-wrap: wrap;
+}
+
+.admin-filter-bar li {
+    margin: 0;
+}
+
+#menu-p {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    user-select: none;
+}
+
+#menu-p:hover {
+    background-color: #d4d4d4;
+    transform: scale(1.03);
+}
+
+#menu-p.active {
+    background-color: #e55a00;
+    color:white;
+    transform: scale(0.80);
+}
+
+.btn-add-icono {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-add-icono:hover {
+  background-color: #e55a00;
+}
+
+.btn-add-icono svg {
+  fill: currentcolor;
+}

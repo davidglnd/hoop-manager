@@ -1,7 +1,13 @@
-// import { getAPIData, API_PORT,borradoContenedoresPerfil } from '../utils.js'
+import {borradoContenedoresPerfil } from '../utils.js'
 
-// export async function infoClub(usuarioLogeado) {
-//     borradoContenedoresPerfil(document.getElementById('tablero'));
+export function menuAdminClub() {
+    const DIV_TABLERO = document.getElementById('tablero')
+
+    if(DIV_TABLERO) {
+        borradoContenedoresPerfil(DIV_TABLERO)
+    }
+
+    DIV_TABLERO.innerHTML = `<h2>Pagina en desarrollo..	&#128517;</h2>`
 
 
-// }
+}

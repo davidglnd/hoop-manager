@@ -16,13 +16,13 @@ select {
   display: block;
   margin: 0 auto;
 }
-  
+
 select:focus {
   outline: none;
   border-color: #ff6f00;
   box-shadow: 0 0 0 2px rgba(255 111 0);
 }
-  
+
 select:hover {
   border-color: #bbb;
   cursor: pointer;

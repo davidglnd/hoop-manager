@@ -15,6 +15,7 @@ export const db = {
     get: getEquipos,
     getById: getEquipoById,
     updateJugadores: updateEquiposJugadores,
+    create: createEquipo
   },
   jugadores:{
     get: getJugadores,
@@ -95,6 +96,12 @@ async function createJugador(jugador){
     const hoopManagerDB = client.db('Hoop-Manager');
     const jugadoresCollection = hoopManagerDB.collection('jugadores');
     return await jugadoresCollection.insertOne(jugador);
+}
+async function createEquipo(equipo){
+    const client = new MongoClient(URI);
+    const hoopManagerDB = client.db('Hoop-Manager');
+    const equiposCollection = hoopManagerDB.collection('equipos');
+    return await equiposCollection.insertOne(equipo);
 }
 // LOG IN
 async function loginUser({email,password}) {
