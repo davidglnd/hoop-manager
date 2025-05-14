@@ -20,7 +20,7 @@ Creado para el bootcamp de **Neoland** como práctica full-stack.
 | MongoDB        | `^6.16.0`         | Base de datos                  |
 | TypeScript     | `^5.8.2`          | Tipado y mantenimiento         |
 | Jest           | `^29.7.0`         | Testing                        |
-| Lit            | `^3.3.0`          | Web components (frontend base) |
+| Lit            | `^3.3.0`          | Web components |
 | ESLint/Stylelint | `^9+ / ^16+`    | Linter de código y estilos     |
 
 ---
