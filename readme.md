@@ -1,54 +1,68 @@
-# Hoop manager
+# 🏀 Hoop Manager
 
-Hoop manager es una plataforma para gestionar clubes de baloncesto amateur, permitiendo registrar jugadores, equipos, gestionar calendarios y registrar resultados.
+Hoop Manager es un proyecto para gestionar clubes de baloncesto. Pensado para aprender de forma práctica cómo montar servidores, endpoints y lógica básica de backend.
 
-## Lenguajes usados
+---
 
--HTML
--CSS
--JAVASCRIPT
+## 🌐 Descripción
 
-## Características
+**Hoop Manager** es un servidor modular hecho con Node.js y Express, conectado a MongoDB.
+Creado para el bootcamp de **Neoland** como práctica full-stack.
 
-### Registro de usuarios
+---
 
-- Admin
-- Club (sera la cuenta para la persona que sea el responsable del club)
-- Entrenador
-- Jugador
-- Familiares
+## 🔧 Tecnologías usadas
 
-### Gestion de club (solo para el responsable del club)
+| Tecnología     | Versión Requerida | Uso principal                  |
+|----------------|-------------------|--------------------------------|
+| Node.js        | `>= 20`           | Runtime JS                     |
+| Express        | `^5.1.0`          | Servidor web                   |
+| MongoDB        | `^6.16.0`         | Base de datos                  |
+| TypeScript     | `^5.8.2`          | Tipado y mantenimiento         |
+| Jest           | `^29.7.0`         | Testing                        |
+| Lit            | `^3.3.0`          | Web components (frontend base) |
+| ESLint/Stylelint | `^9+ / ^16+`    | Linter de código y estilos     |
 
-- Establecer roles
-- Dar de alta/baja usuarios
-- Establecer/modificar calendarios
-- Borrar usuarios
-- Enviar mensajes generales
+---
 
-### Gestion de equipo (para entrenadores)
+## 📦 Scripts disponibles
 
-- Convocatorias
-- Dar de alta/baja jugadores
-- Gestion de estadisticas
-- Gestion de calendario
-- Enviar mensaje general para su equipo
-- Enviar mensaje a familiar de un jugador
-- Enviar mensaje a un jugador
-- Visualizacion de fichas de jugadores
+### ▶️ Servidores
 
-### Visualizacion de jugadores
+```bash
+npm run server:express:start     # Server Express completo
+```
 
-- Ver antigüedad en el club
-- Ver estadisticas personales
-- Ver informacion personal
+## 🧪 Tests y documentación
 
-## Diagrama
+```bash
+npm test                         # Ejecuta los tests con JEST
+npm run test:watch               # Ejecuta tests en modo watch
+npm run docs                     # Genera documentación con JSDoc
+```
 
-![Diagrama de ventanas 1](./src/img/diagrama1.PNG)
-![Diagrama de ventanas 2](/src/img/diagrama2.PNG)
+## 📁 Estructura del proyecto
 
-## Autor
+```bash
+hoop-manager/
+├── server/               # Diferentes versiones del servidor
+├── src/                  # Código fuente (componentes, lógica, etc.)
+├── .env                  # Variables de entorno
+├── package.json          # Config y scripts del proyecto
+├── tsconfig.json         # Configuración
+└── readme.md             # Este archivo
 
-- [[David Galindo](https://github.com/davidglnd)]
-- Proyecto neoland
+```
+
+## ⚙️ Requisitos de entorno
+
+* Node.js >= 20
+
+* MongoDB en local o remoto
+
+* Archivo .env con tu conexión
+
+## 👨‍💻 Autor
+
+Hecho con mucho café ☕ por
+[David Galindo](https://github.com/davidglnd)
