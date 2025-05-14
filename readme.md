@@ -64,5 +64,4 @@ hoop-manager/
 
 ## 👨‍💻 Autor
 
-Hecho con mucho café ☕ por
 [David Galindo](https://github.com/davidglnd)
