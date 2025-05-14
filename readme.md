@@ -15,7 +15,7 @@ Creado para el bootcamp de **Neoland** como práctica full-stack.
 
 | Tecnología     | Versión Requerida | Uso principal                  |
 |----------------|-------------------|--------------------------------|
-| Node.js        | `>= 20`           | Runtime JS                     |
+| Node.js        | `>= 20`           | Servidor web                    |
 | Express        | `^5.1.0`          | Servidor web                   |
 | MongoDB        | `^6.16.0`         | Base de datos                  |
 | TypeScript     | `^5.8.2`          | Tipado y mantenimiento         |
