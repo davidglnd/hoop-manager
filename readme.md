@@ -6,7 +6,7 @@ Hoop Manager es un proyecto para gestionar clubes de baloncesto. Pensado para ap
 
 ## 🌐 Descripción
 
-**Hoop Manager** es un servidor modular hecho con Node.js y Express, conectado a MongoDB.
+**Hoop Manager** es una web hecha con Node.js y Express, conectada a MongoDB.
 Creado para el bootcamp de **Neoland** como práctica full-stack.
 
 ---
