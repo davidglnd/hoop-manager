@@ -4,7 +4,7 @@
   "type": "module",
   "node": ">=20.0.0",
   "description": "proyecto practicas hoops manager para el bootcamp neoland",
-  "main": "server/server.basic.js",
+  "main": "server/server.express.js",
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
@@ -31,7 +31,8 @@
     "server:api:start": "node --env-file=.env --watch server/server.api.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll",
-    "docs": "jsdoc ./src -r"
+    "docs": "jsdoc ./src -r",
+    "start": "node --env-file=.env server/server.express.js"
   },
   "repository": {
     "type": "git",
