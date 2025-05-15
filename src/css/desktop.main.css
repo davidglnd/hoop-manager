@@ -1,0 +1,82 @@
+/* Estilos importados de componentes de algunas de las vistas */
+@import url('./variables.css');
+@import url('./components/nav-entrenador.css');
+@import url('./components/nav-principal.css');
+@import url('./components/tablas.css');
+@import url('./components/boton.css');
+
+/* Tamaños de las fuentes */
+html{
+  font-size: 16px;
+}
+
+h1 {
+  font-size: 2.5rem;   /* ~40px */
+  line-height: 1.2;
+  font-weight: 700;
+  }
+  
+h2 {
+  font-size: 2rem;     /* ~32px */
+  line-height: 1.3;
+  font-weight: 600;
+}
+  
+h3 {
+  font-size: 1.5rem;   /* ~24px */
+  line-height: 1.4;
+  font-weight: 600;
+}
+  
+h4 {
+  font-size: 1.25rem;  /* ~20px */
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+p, li {
+  font-size: 1rem;     /* 16px */
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.hidden {
+  display: none;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+header {
+  padding: 1rem;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+main {
+  padding: 1.5rem;
+  min-height: 75vh;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+footer {
+  background-color: var(--color-secondary);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  font-size: var(--font-size-base);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  box-shadow: var(--box-shadow);
+}

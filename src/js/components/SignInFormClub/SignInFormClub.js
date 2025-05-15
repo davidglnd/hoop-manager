@@ -3,7 +3,7 @@ import { getAPIData} from '../../utils.js';
 import { API_PORT  } from '../../logic/gestion-usuarios-script.js';
 import { Club } from '../../classes/UserClasses.js';
 import ResetCSS from '../../../css/reset.css' with { type: 'css' };
-import AppCSS from '../../../css/style.index.css' with { type: 'css' };
+// import AppCSS from '../../../css/desktop.main.css' with { type: 'css' };
 import SignInFormCSS from './SignInFormClub.css' with { type: 'css' };
 
 const TEMPLATE = {
@@ -44,7 +44,7 @@ export class SignInFormClub extends HTMLElement {
     console.log("2. constructor: Custom element added to page.");
     // Necesitamos activar el shadow DOM para poder añadir la plantilla html
     this.attachShadow({ mode: "open" });
-    this.shadowRoot.adoptedStyleSheets.push(ResetCSS, AppCSS, SignInFormCSS);
+    this.shadowRoot.adoptedStyleSheets.push(ResetCSS, SignInFormCSS);
     this._setUpContent();
     const signInForm = this.shadowRoot.getElementById("registro-club");
     signInForm.addEventListener("submit", this.__submitSignIninClub.bind(this));

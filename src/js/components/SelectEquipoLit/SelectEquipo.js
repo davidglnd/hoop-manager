@@ -2,11 +2,11 @@ import { LitElement, html } from 'https://cdn.jsdelivr.net/gh/lit/dist@3/all/lit
 import { getAPIData} from '../../utils.js';
 import { API_PORT  } from '../../logic/gestion-usuarios-script.js';
 import ResetCSS from '../../../css/reset.css' with { type: 'css' };
-import AppCSS from '../../../css/style.index.css' with { type: 'css' };
+// import AppCSS from '../../../css/desktop.main.css' with { type: 'css' };
 import SelectEquipoCSS from './SelectEquipo.css' with { type: 'css' };
 
 export class SelectEquipo extends LitElement {
-    static styles = [ResetCSS, AppCSS, SelectEquipoCSS];
+    static styles = [ResetCSS, SelectEquipoCSS];
 
     static properties = {
         equipos: {type: Array},
@@ -43,6 +43,7 @@ export class SelectEquipo extends LitElement {
 
     render() {
         return html`
+            <h3>Selecciona equipo</h3>
             <select id="select-equipo" @change=${this._handleChange}>
                 <!-- Opción inicial deshabilitada -->
                 <option disabled selected value="">-- Elige un equipo --</option>

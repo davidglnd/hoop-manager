@@ -1,0 +1,86 @@
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--box-shadow);
+  padding: 1rem 0;
+}
+
+header nav ol {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+header nav li {
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+header nav li:hover {
+  color: #ffe6cc;
+}
+
+main {
+  padding: 3rem 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+section h2 {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+section h2::before {
+  content: "🏀";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+section p {
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+section ul {
+  list-style-type: disc;
+  padding-left: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+section ul li {
+  margin-bottom: 0.75rem;
+  font-size: var(--font-size-base);
+  color: var(--color-secondary);
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  color: #fff;
+  background-color: var(--color-secondary);
+  margin-top: 3rem;
+}

@@ -2,11 +2,11 @@ import { LitElement, html } from 'https://cdn.jsdelivr.net/gh/lit/dist@3/all/lit
 import { getAPIData} from '../../utils.js';
 import { API_PORT  } from '../../logic/gestion-usuarios-script.js';
 import ResetCSS from '../../../css/reset.css' with { type: 'css' };
-import AppCSS from '../../../css/style.index.css' with { type: 'css' };
+// import AppCSS from '../../../css/desktop.main.css' with { type: 'css' };
 import LogInCSS from './LogIn.css' with { type: 'css' };
 
 export class LogInLit extends LitElement {
-    static styles = [ResetCSS, AppCSS, LogInCSS];
+    static styles = [ResetCSS,  LogInCSS];
 
     static properties = {
       email: {type: String},

@@ -1,7 +1,13 @@
 //@TS-check
-import { getAPIData,API_PORT } from '../utils.js'
-import { fechaEstandar } from '../utils.js'
+import { getAPIData,API_PORT,fechaEstandar } from '../utils.js'
 
+
+/**
+ * Borra el contenido de los divs #div-equipos y #div-convocatorias si existen.
+ *
+ * Este m todo se utiliza para resetear el contenido de la pantalla cada vez
+ * que se muestra o se actualiza la informaci n de un equipo o una convocatoria.
+ */
 function resetearEspacio(){
     const equipoExistente = document.getElementById('div-equipos');
     if (equipoExistente) {
@@ -71,7 +77,7 @@ function crearTablaEquipo(apiData) {
     } else {
         apiData.JUGADORES_EQUIPO.forEach(jugador => {
             const tr = document.createElement('tr')
-            tr.innerHTML = `<td>${jugador.nombre}</td><td>${jugador.apellidos}</td><td>${fechaEstandar(jugador.fnac)}</td>`
+            tr.innerHTML = `<td><a href="jugador.html" target="_blank">${jugador.nombre}</a></td><td>${jugador.apellidos}</td><td>${fechaEstandar(jugador.fnac)}</td>`
             tbody.appendChild(tr)
         })
     }

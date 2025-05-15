@@ -1,17 +1,17 @@
 :root {
-    --color-primary: #f97316; /* Naranja principal */
-    --color-secondary: #333; /* Gris oscuro */
-    --color-background: #f9fafb; /* Fondo claro */
-    --color-text: #555;
-    --color-border: #ddd;
+  --color-primary: #f97316; /* Naranja principal */
+  --color-secondary: #333; /* Gris  */
+  --color-background: #f9fafb; /* Fondo */
+  --color-text: #555;
+  --color-border: #ddd;
 
-    /* Tamaños de fuente */
-    --font-size-base: 1rem;
-    --font-size-lg: 1.2rem;
-    --font-size-xl: 1.5rem;
-    
-    /* Tamaños de borde y sombra */
-    --border-radius: 0.75rem;
-    --box-shadow: 0 4px 12px color(rgb 0 0 0 / 10%);
-  }
+  /* Tamaños de fuente */
+  --font-size-base: 1rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.5rem;
+  
+  /* Tamaños de borde y sombra */
+  --border-radius: 0.75rem;
+  --box-shadow: 0 4px 12px color(rgb 0 0 0 / 10%);
+}
   

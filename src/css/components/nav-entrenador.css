@@ -1,8 +1,7 @@
 /* nav-entrenador.css */
 #nav-entrenador {
-    width: 60%;
     margin: 1.5rem auto;
-    background-color: #264088; /* Azul intenso estilo */
+    background-color: var(--color-secondary);
     padding: 0.5rem 1rem;
     box-shadow: var(--box-shadow);
     border-radius: var(--border-radius);
@@ -27,6 +26,6 @@
   }
   
   #nav-entrenador ol>li:hover {
-    background-color: var(--color-primary); /* Azul más oscuro al hover */
+    background-color: var(--color-primary); 
   }
   

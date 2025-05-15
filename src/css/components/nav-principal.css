@@ -1,0 +1,42 @@
+nav#menu-principal {
+  background-color: var(--color-secondary);
+  padding: 0.5rem 1rem;
+}
+
+nav#menu-principal ol#menu-club {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+
+nav#menu-principal ol#menu-club li {
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+nav#menu-principal ol#menu-club li a {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  display: block;
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+nav#menu-principal ol#menu-club li a:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+nav#menu-principal ol#menu-club li#cerrar-sesion {
+  color: var(--color-primary);
+  padding: 0.5rem 0.75rem;
+  font-weight: 700;
+}
+
+nav#menu-principal ol#menu-club li#cerrar-sesion:hover {
+  color: #e25800; 
+  cursor: pointer;
+}

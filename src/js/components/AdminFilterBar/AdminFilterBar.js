@@ -1,6 +1,6 @@
 import { LitElement, html } from 'https://cdn.jsdelivr.net/gh/lit/dist@3/all/lit-all.min.js';
 import ResetCSS from '../../../css/reset.css' with { type: 'css' };
-import AppCSS from '../../../css/style.index.css' with { type: 'css' };
+// import AppCSS from '../../../css/admin/dashboard.css' with { type: 'css' };
 import AdminFilterBarCSS from './adminFilterBar.css' with { type: 'css' };
 
 export class AdminFilterBar extends LitElement {
@@ -8,7 +8,7 @@ export class AdminFilterBar extends LitElement {
         opciones: { type: Array },
         boton: { type: Boolean },
     };
-    static styles = [ResetCSS, AppCSS, AdminFilterBarCSS];
+    static styles = [ResetCSS,  AdminFilterBarCSS];
     constructor() {
         super();
         this.opciones = [];

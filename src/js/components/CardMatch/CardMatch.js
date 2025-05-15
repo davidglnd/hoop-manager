@@ -1,10 +1,10 @@
 import { LitElement, html } from 'https://cdn.jsdelivr.net/gh/lit/dist@3/all/lit-all.min.js';
 import ResetCSS from '../../../css/reset.css' with { type: 'css' };
-import AppCSS from '../../../css/style.index.css' with { type: 'css' };
+// import AppCSS from '../../../css/desktop.main.css' with { type: 'css' };
 import CardMatchCSS from './cardMatch.css' with { type: 'css' };
 
 export class CardMatch extends LitElement {
-    static styles = [ResetCSS, AppCSS, CardMatchCSS];
+    static styles = [ResetCSS,  CardMatchCSS];
 
     static properties = {
         partido: {type: Object},
