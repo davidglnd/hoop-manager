@@ -3,8 +3,6 @@ body {
   background-color: var(--color-background);
   color: var(--color-text);
   font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
 }
 
 header {
@@ -17,16 +15,36 @@ header {
 header nav ol {
   list-style: none;
   display: flex;
-  justify-content: center;
+  justify-content:flex-end;
   gap: 2.5rem;
   padding: 0;
   margin: 0;
+
+  #log-in{
+    background-color: #fff;
+    color: rgb(0 0 0);
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    margin: 0 0.5rem;
+  }
 }
 
 header nav li {
   font-weight: 600;
   cursor: pointer;
   transition: color 0.2s ease;
+  padding: 0.5rem 1rem;
+
+  
+}
+
+header nav li a {
+  display: block;
 }
 
 header nav li:hover {
@@ -34,9 +52,6 @@ header nav li:hover {
 }
 
 main {
-  padding: 3rem 1rem;
-  max-width: 900px;
-  margin: 0 auto;
   background-color: white;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -48,13 +63,7 @@ section h2 {
   margin-bottom: 1rem;
   position: relative;
   padding-left: 1.5rem;
-}
-
-section h2::before {
-  content: "🏀";
-  position: absolute;
-  left: 0;
-  top: 0;
+  grid-area: section;
 }
 
 section p {
