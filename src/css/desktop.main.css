@@ -1,6 +1,6 @@
 /* Estilos importados de componentes de algunas de las vistas */
 @import url('./variables.css');
-@import url('./components/nav-entrenador.css');
+@import url('./components/nav-herramientas.css');
 @import url('./components/nav-principal.css');
 @import url('./components/tablas.css');
 @import url('./components/boton.css');

@@ -33,10 +33,12 @@ async function onDOMContentLoaded(){
         document.addEventListener('filter-bar-clicked', (e) => mostrarUsuariosAdmin(e,USUARIOS))
         return
     }
+
     if(usuarioLogeado.rol === 'ADMIN' && location.pathname === '/admin/admin-club.html'){
         menuAdminClub()
         return
     }
+
     if(usuarioLogeado.rol === 'ADMIN' && location.pathname === '/admin/admin-equipos.html'){
         //Llamamos una primera funcion que trae los equipos para que cuando hagamos el custom
         //event tengamos solo que filtrar esos equipos, es decir ya estan leidos los equipos de ese club
@@ -63,27 +65,7 @@ async function onDOMContentLoaded(){
     mostrarHerramientasGestion(usuarioLogeado)
 
     if(location.pathname === '/equipos.html'){ 
-        const userLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') || '')// TO DO ESTO NO ES NECESARIO YA QUE DECLARAMOS LA VARIABLE ARRIBA
-        const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
-        if(userLogeado.rol === 'entrenador'){
-            const NAV_HERRAMIENTAS = document.createElement('nav')
-            NAV_HERRAMIENTAS.id = 'nav-entrenador'
-            MAIN_ENTRENADOR?.appendChild(NAV_HERRAMIENTAS)
-    
-            const OL_HERRAMIENTAS = document.createElement('ol')
-            NAV_HERRAMIENTAS.appendChild(OL_HERRAMIENTAS)
-    
-            const LI_ADD_JUGADORES = document.createElement('li')
-            LI_ADD_JUGADORES.id = 'add-jugadores'
-            LI_ADD_JUGADORES.innerText = 'Añadir jugadores'
-            OL_HERRAMIENTAS.appendChild(LI_ADD_JUGADORES)
-            
-    
-            const LI_CONVOCATORIA = document.createElement('li')
-            LI_CONVOCATORIA.id = 'convocatoria'
-            LI_CONVOCATORIA.innerText = 'Añadir convocatoria'
-            OL_HERRAMIENTAS.appendChild(LI_CONVOCATORIA)
-        }
+        mostrarNav(usuarioLogeado)
     }
 }
 
@@ -312,7 +294,50 @@ function useSelect(e){
     }
 }
 
+/**
+ * Depending on the user's role, this function adds a navigation menu item 
+ * to the 'main-entrenador' element to allow them to use others functions.
+ * If the user is an entrenador, it adds two menu items 'Añadir jugadores' and
+ * 'Añadir convocatoria'.
+ * @param {Object} usuarioLogeado - The user object from the database.
+ * @param {string} usuarioLogeado.rol - The role of the user.
+ */
+function mostrarNav(usuarioLogeado){
+    const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
+    if(usuarioLogeado.rol === 'entrenador'){
+        const NAV_HERRAMIENTAS = document.createElement('nav')
+        NAV_HERRAMIENTAS.id = 'nav-entrenador'
+        MAIN_ENTRENADOR?.appendChild(NAV_HERRAMIENTAS)
 
+        const OL_HERRAMIENTAS = document.createElement('ol')
+        NAV_HERRAMIENTAS.appendChild(OL_HERRAMIENTAS)
+
+        const LI_ADD_JUGADORES = document.createElement('li')
+        LI_ADD_JUGADORES.id = 'add-jugadores'
+        LI_ADD_JUGADORES.innerText = 'Añadir jugadores'
+        OL_HERRAMIENTAS.appendChild(LI_ADD_JUGADORES)
+        
+
+        const LI_CONVOCATORIA = document.createElement('li')
+        LI_CONVOCATORIA.id = 'convocatoria'
+        LI_CONVOCATORIA.innerText = 'Añadir convocatoria'
+        OL_HERRAMIENTAS.appendChild(LI_CONVOCATORIA)
+    }
+
+    if(usuarioLogeado.rol === 'familiar'){
+        const NAV_HERRAMIENTAS = document.createElement('nav')
+        NAV_HERRAMIENTAS.id = 'nav-entrenador'
+        MAIN_ENTRENADOR?.appendChild(NAV_HERRAMIENTAS)
+
+        const OL_HERRAMIENTAS = document.createElement('ol')
+        NAV_HERRAMIENTAS.appendChild(OL_HERRAMIENTAS)
+
+        const LI_CONVOCATORIA = document.createElement('li')
+        LI_CONVOCATORIA.id = 'ver-convocatoria'
+        LI_CONVOCATORIA.innerText = 'Convocatorias disponibles'
+        OL_HERRAMIENTAS.appendChild(LI_CONVOCATORIA)
+    }
+}
 
 
 

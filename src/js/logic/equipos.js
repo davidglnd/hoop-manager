@@ -29,7 +29,8 @@ function resetearEspacio(){
  * @returns {Promise<void>}
  */
 export async function mostrarEquipos(e) {
-    
+    let usuarioLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') ?? '')
+
     const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
     resetearEspacio()
 
@@ -41,8 +42,12 @@ export async function mostrarEquipos(e) {
 
     const tabla = crearTablaEquipo(apiData)
     DIV_EQUIPOS.appendChild(tabla)
-
-    reemplazarBotones(apiData)
+    console.log(usuarioLogeado)
+    if(usuarioLogeado.rol === 'entrenador'){
+        reemplazarBotonesEntrenador(apiData)
+    }else if (usuarioLogeado.rol === 'familiar') {
+        reemplazarBotonesFamiliar(apiData)
+    }
 
     MAIN_ENTRENADOR?.appendChild(DIV_EQUIPOS)
 }
@@ -99,10 +104,11 @@ function crearTablaEquipo(apiData) {
  * @param {string} apiData.EQUIPO_SELECCIONADO.clubAsoc
  */
 
-function reemplazarBotones(apiData) {
+function reemplazarBotonesEntrenador(apiData) {
     const oldAdd = document.getElementById('add-jugadores')
     const oldConv = document.getElementById('convocatoria')
 
+    //cloneNode(true) copia el elemento y su HTML interno, pero no los event listeners.
     const newAdd = oldAdd?.cloneNode(true)
     const newConv = oldConv?.cloneNode(true)
 
@@ -119,6 +125,28 @@ function reemplazarBotones(apiData) {
     )
 }
 
+/**
+ * Reemplaza el bot n 'ver-convocatoria' con uno nuevo que tiene un event listener
+ * que llama a la funci n verConvocatorias() con el id del equipo seleccionado.
+ *
+ * @param {Object} apiData - The data containing details of the selected team
+ * @param {Object} apiData.EQUIPO_SELECCIONADO - The selected team object
+ * @param {string} apiData.EQUIPO_SELECCIONADO._id - The ID of the selected team
+ */
+function reemplazarBotonesFamiliar(apiData) {
+    const oldConv = document.getElementById('ver-convocatoria')
+    
+    //cloneNode(true) copia el elemento y su HTML interno, pero no los event listeners.
+    const newConv = oldConv?.cloneNode(true)
+
+    // @ts-expect-error eror esperado para noañadir mas lineas
+    oldConv?.replaceWith(newConv)
+    console.log(apiData.EQUIPO_SELECCIONADO._id)
+    newConv?.addEventListener('click', () => 
+        verConvocatorias(apiData.EQUIPO_SELECCIONADO._id)
+    )
+
+}
 /**
  * Removes the existing 'add-jugadores' button and 'tabla-equipos' from the DOM and
  * then creates a new table with the available players from the same category as
@@ -300,7 +328,77 @@ async function mostrarPartido(e,idEquipo){
     DIV_CONVOCATORIAS.appendChild(CARD)
         
 }
+/**
+ * Resets the main space and creates a div with the id 'div-convocatorias' where
+ * it displays the convocatorias of the selected team. If there are no convocatorias
+ * published, it displays an h2 with the text 'No hay convocatorias publicadas'. If
+ * there are convocatorias, it displays an h2 with the text 'Selecciona una jornada'
+ * and creates an unordered list with the convocatorias, each li with the id of the
+ * corresponding jornada and the text of the jornada. When a li is clicked, it
+ * should call the lit component with the selected convocatoria.
+ * @param {string} idEquipo - The id of the team.
+ */
+async function verConvocatorias(idEquipo) {//EXPLICACION DE ESTA FUNCION PARA NO PERDERNOS
+    resetearEspacio()
 
+    const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
+
+    const DIV_CONVOCATORIAS = document.createElement('div')
+    DIV_CONVOCATORIAS.id = 'div-convocatorias'
+    MAIN_ENTRENADOR?.appendChild(DIV_CONVOCATORIAS)
+
+    
+    const apiData = await getAPIData(`/api/filter/calendario/${idEquipo}`, 'GET')
+
+
+
+    if(!apiData.convocatoria){
+        const H2_CONVOCATORIAS = document.createElement('h2')
+        H2_CONVOCATORIAS.innerText = 'No hay convocatorias publicadas'
+        DIV_CONVOCATORIAS.appendChild(H2_CONVOCATORIAS)
+        return
+    }else{
+        const UL_CONVOCATORIAS = document.createElement('ul')
+        UL_CONVOCATORIAS.id = 'ul-convocatorias'
+        DIV_CONVOCATORIAS.appendChild(UL_CONVOCATORIAS)
+        //AQUI CUANDO YA SABEMOS QUE HAY CONVOCATORIA EMPIEZA EL FOLLON 
+        apiData.convocatoria.forEach((/** @type {{ jornada: string; mensaje_convocatoria: string; jugadores_convocados: any[]; }} */ convocatoria) => { // RECORREMOS PRIMERO LA CONVOCATORIA
+            const LI_CONVOCATORIA = document.createElement('li')
+            const LIT_CARD_CONVOCATORIA = document.createElement('card-convocatoria')// CREAMOS EL ELEMENTO DE LIT
+            LIT_CARD_CONVOCATORIA.setAttribute('jornada', convocatoria.jornada) // LE METEMOS LA PRIMERA PROPIEDAD (JORNADA QUE LA SACAMOS DE LA CONVOCATORIA)
+            LIT_CARD_CONVOCATORIA.setAttribute('mensaje',convocatoria.mensaje_convocatoria)
+
+            apiData.partidos.forEach((/** @type {{ jornada: { toString: () => string; }; fecha: string; local: string; mensaje_convocatoria: string; visitante: any; }} */ partido) => {// RECORREMOS LOS PARTIDOS DE LA TEMPORADA 
+                if(partido.jornada.toString() === convocatoria.jornada){// CUANDO EL PARTIDO DE LA TEMPORADA TENGA LA JORNADA DE LA CONVOCATORIA
+                    LIT_CARD_CONVOCATORIA.setAttribute('fecha', fechaEstandar(partido.fecha))// EMPEZAMOS A METER MAS PROPIEDADES EN EL LIT COMPONENT
+                    LIT_CARD_CONVOCATORIA.setAttribute('ubicacion',partido.local)
+
+                    let equipos = []
+                    equipos.push(partido.local, partido.visitante)
+                    // @ts-expect-error TO DO 
+                    LIT_CARD_CONVOCATORIA.equipos = equipos
+                    console.log(partido.mensaje_convocatoria)
+                }
+            })
+            /**
+             * @type {{ nombre: any; apellidos: any; }[]}
+             */
+            let jugadores = []
+
+
+            convocatoria.jugadores_convocados.forEach((/** @type {{ nombre: any; apellidos: any; }} */ jugador) => {// PARA METER LOS JUGADORES NECESITAMOS RECORRER LA CONVOCATORIA Y METER LOS JUGADORES_CONVOCADOS
+                jugadores.push({nombre: jugador.nombre,apellidos: jugador.apellidos})
+            })
+
+            // @ts-expect-error TO DO
+            LIT_CARD_CONVOCATORIA.jugadores = jugadores
+
+            UL_CONVOCATORIAS.appendChild(LI_CONVOCATORIA)// AÑADIMOS EL LI
+            LI_CONVOCATORIA.appendChild(LIT_CARD_CONVOCATORIA)// AÑADIMOS EL LIT COMPONENT AL LI
+
+        })
+    }
+}
 /**
  * Handles the submission of a match card form. Converts the form details
  * into a JSON string and sends a POST request to the server to create
