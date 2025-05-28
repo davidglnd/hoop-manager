@@ -12,8 +12,8 @@ import { fechaEstandar } from '../utils.js'
  * 
  * @returns {Promise<void>}
  */
-export async function mostrarCalendario(e){ // TO DO MODIFICACIONES PARA ENTRENADORES
-    console.log('mostrando calendario')
+export async function mostrarCalendario(e){
+
     let idEquipoSeleccionado = e.detail.equipo // obtenemos el id del equipo seleccionado en el select
 
     const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/calendario/${idEquipoSeleccionado}`, 'GET')
@@ -54,3 +54,4 @@ export async function mostrarCalendario(e){ // TO DO MODIFICACIONES PARA ENTRENA
 
  
 }
+

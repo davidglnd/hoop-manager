@@ -1,4 +1,4 @@
-import { HttpError } from '../classes/HttpError.js'
+import { HttpError } from 'classes/HttpError'
 
 /**
  * Makes a fetch call and returns the json response. If the response status is not 2xx,
@@ -10,6 +10,7 @@ import { HttpError } from '../classes/HttpError.js'
  * @throws {HttpError} If the response status is not 2xx.
  */
 export async function simpleFetch (url, options) {
+  console.log('simpleFetch', url);
   const result = await fetch(url, options);
   if (!result.ok) {
     throw new HttpError(result);

@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipos</title>
+    <title>Añadir calendario</title>
     <link rel="shortcut icon" href="img/logo1b.png" type="image/x-icon">
     <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/pages/equipos.css">
     <link rel="stylesheet" href="css/desktop.main.css">
     <script type="module" src="./js/components/bundle.js" defer></script>
     <script type="module" src="js/main.js" defer></script>
@@ -14,7 +13,7 @@
 </head>
 <body>
     <header>
-        
+
     </header>
     <nav id="menu-principal">            
         <ol id="menu-club">
@@ -26,8 +25,14 @@
             <li id="cerrar-sesion">Cerrar sesion</li>
         </ol>
     </nav>
-    <main id="main-entrenador">
+    <main id="añadir-calendario">
         <lit-select-equipo id="comp-select-lit"></lit-select-equipo>
+        <form id="form-crear-calendario">
+            <label for="partidos">Partidos</label>
+            <input type="number" name="partidos" id="partidos" required>
+            <input type="hidden" name="id-equipo" id="id-equipo">
+            <button class="button" type="submit">Crear calendario</button>
+        </form>
     </main>
     <footer>
         © 2025 Hoop Manager. Todos los derechos reservados.

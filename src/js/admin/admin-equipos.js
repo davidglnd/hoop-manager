@@ -118,7 +118,7 @@ export function crearEquipo(e,usuarioLogeado){
     const opciones = ['Benjamin','Alevin','Infantil','Cadete','Juvenil','Senior']
     opciones.forEach(opcion => {
         const option = document.createElement('option')
-        option.value = opcion
+        option.value = opcion.toLowerCase()
         option.textContent = opcion
         input_categoria.appendChild(option)
     })

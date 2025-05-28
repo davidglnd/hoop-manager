@@ -26,6 +26,7 @@ export const db = {
   calendario:{
     getById: getCalendario,
     getJornada: getCalendarioJornada,
+    create: createCalendario,
     createConvocatoria: updateConvocatoria
   }
 }
@@ -84,13 +85,7 @@ async function createUser(user){
     console.log('Usuario a crear: ',JSON.stringify(user))
     return  await usersCollection.insertOne(user);
 }
-async function updateConvocatoria(convocatoria,idEquipo){
-    const client = new MongoClient(URI);
-    const hoopManagerDB = client.db('Hoop-Manager');
-    const convocatoriaCollection = hoopManagerDB.collection('calendario');
-    await convocatoriaCollection.updateOne({_id_equipo: idEquipo},{$pull: {convocatoria: {jornada: convocatoria.jornada}} })
-    return await convocatoriaCollection.updateOne({_id_equipo: idEquipo},{$push: {convocatoria: convocatoria} })
-}
+
 async function createJugador(jugador){
     const client = new MongoClient(URI);
     const hoopManagerDB = client.db('Hoop-Manager');
@@ -102,6 +97,12 @@ async function createEquipo(equipo){
     const hoopManagerDB = client.db('Hoop-Manager');
     const equiposCollection = hoopManagerDB.collection('equipos');
     return await equiposCollection.insertOne(equipo);
+}
+async function createCalendario(calendario){
+  const client = new MongoClient(URI);
+  const hoopManagerDB = client.db('Hoop-Manager')
+  const calendarioCollection = hoopManagerDB.collection('calendario')
+  return await calendarioCollection.insertOne(calendario)
 }
 // LOG IN
 async function loginUser({email,password}) {
@@ -135,6 +136,13 @@ async function updateUser(id,updates){
   const userCollection = hoopManagerDB.collection('users')
 
   return await userCollection.updateOne({_id: new ObjectId(id)},{$set: updates})
+}
+async function updateConvocatoria(convocatoria,idEquipo){
+    const client = new MongoClient(URI);
+    const hoopManagerDB = client.db('Hoop-Manager');
+    const convocatoriaCollection = hoopManagerDB.collection('calendario');
+    await convocatoriaCollection.updateOne({_id_equipo: idEquipo},{$pull: {convocatoria: {jornada: convocatoria.jornada}} })
+    return await convocatoriaCollection.updateOne({_id_equipo: idEquipo},{$push: {convocatoria: convocatoria} })
 }
 // GET POR ID
 
@@ -182,3 +190,4 @@ async function getCalendario(id){
   
   return await calendarioCollection.findOne({_id_equipo: id})
 }
+

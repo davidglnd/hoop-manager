@@ -7,23 +7,35 @@ import {mostrarCalendario} from './logic/calendario.js'
 import { menu, mostrarUsuariosAdmin } from './admin/admin-usuarios.js'
 import { menuAdminClub } from './admin/admin-club.js'
 import { menuAdminEquipo, mostrarEquiposAdmin, crearEquipo} from './admin/admin-equipos.js'
+import {addIdEquipoCalendario,handleSubmitAddCalendario} from './logic/addCalendario.js'
 
 
 window.addEventListener("DOMContentLoaded", onDOMContentLoaded)
 
 
-/**
- * Function executed when the DOM content is fully loaded.
- * Initializes event listeners and displays user-specific content.
- * 
- * - Retrieves the logged-in user's information from session storage.
- * - Adds a submit event listener to the 'añadir-jugador-form' to handle player data submission.
- * - Listens for custom events 'equipo-cambiado' and 'convocatoria-creada' to trigger respective handlers.
- * - Displays the user's profile and management tools.
- * - If on the '/equipos.html' page and the user role is 'entrenador', dynamically adds navigation tools for the coach.
- * 
- */
 
+
+/**
+ * Funcion que se ejecuta al cargar el DOM. Comprueba que haya un usuario logeado
+ * y en funcion de su rol y la ruta actual, lanza una funcion u otra.
+ * 
+ * - Si el usuario esta logeado como ADMIN y la ruta es /admin/admin-usuarios.html
+ *   lanza la funcion menu(usuarioLogeado) y se suscribe al custom event 'filter-bar-clicked'
+ *   para llamar a la funcion mostrarUsuariosAdmin(e,USUARIOS).
+ * - Si el usuario esta logeado como ADMIN y la ruta es /admin/admin-club.html
+ *   lanza la funcion menuAdminClub() y sale.
+ * - Si el usuario esta logeado como ADMIN y la ruta es /admin/admin-equipos.html
+ *   lanza la funcion menuAdminEquipo(usuarioLogeado) y se suscribe a dos custom events:
+ *   'filter-bar-clicked' para llamar a la funcion mostrarEquiposAdmin (e,EQUIPOS) y
+ *   'boton-lit-admin-filter-bar' para llamar a la funcion crearEquipo(e,usuarioLogeado).
+ * - Si no se cumple ninguna de las condiciones anteriores, se suscribe a los siguientes
+ *   custom events:
+ *   - 'equipo-cambiado' para llamar a la funcion useSelect(e)
+ *   - 'convocatoria-creada' para llamar a la funcion cardMatchSubmit(e)
+ *   - 'submit' en el formulario de agregar jugadores para llamar a la funcion datosJugadores(e)
+ *   - Llama a las funciones mostrarPerfil(usuarioLogeado), mostrarHerramientasGestion(usuarioLogeado)
+ *     y mostrarNav(usuarioLogeado)
+ */
 async function onDOMContentLoaded(){
     let usuarioLogeado = JSON.parse(sessionStorage.getItem('HOOP_MANAGER') ?? '')
     
@@ -51,6 +63,15 @@ async function onDOMContentLoaded(){
         return
     }
 
+    if(location.pathname === '/crear-calendario.html'){
+        const FORM_CALENDARIO = document.getElementById('form-crear-calendario')
+
+        FORM_CALENDARIO?.addEventListener('submit',(e) => {
+            e.preventDefault()
+            handleSubmitAddCalendario()
+        })
+    }
+
     //custom event que se dispara desde el SHADOWDOM 
     document.addEventListener('equipo-cambiado', (e) => useSelect (e))
 
@@ -63,13 +84,9 @@ async function onDOMContentLoaded(){
 
     mostrarPerfil(usuarioLogeado)
     mostrarHerramientasGestion(usuarioLogeado)
+    mostrarNav(usuarioLogeado)
 
-    if(location.pathname === '/equipos.html'){ 
-        mostrarNav(usuarioLogeado)
-    }
 }
-
-
 
 /**
  * Displays the user's profile information in the 'informacion-usuario' container.
@@ -292,6 +309,10 @@ function useSelect(e){
        // @ts-expect-error TO DO ARREGLAR
         mostrarEquipos(e)
     }
+    if(location.pathname ==='/crear-calendario.html'){
+        // ts-expect-error TO DO ARREGLAR
+        addIdEquipoCalendario(e)
+    }
 }
 
 /**
@@ -304,7 +325,9 @@ function useSelect(e){
  */
 function mostrarNav(usuarioLogeado){
     const MAIN_ENTRENADOR = document.getElementById('main-entrenador')
-    if(usuarioLogeado.rol === 'entrenador'){
+    const MAIN_CALENDARIO = document.getElementById('main-calendario')
+
+    if(usuarioLogeado.rol === 'entrenador' && location.pathname === '/equipos.html'){
         const NAV_HERRAMIENTAS = document.createElement('nav')
         NAV_HERRAMIENTAS.id = 'nav-entrenador'
         MAIN_ENTRENADOR?.appendChild(NAV_HERRAMIENTAS)
@@ -324,7 +347,7 @@ function mostrarNav(usuarioLogeado){
         OL_HERRAMIENTAS.appendChild(LI_CONVOCATORIA)
     }
 
-    if(usuarioLogeado.rol === 'familiar'){
+    if(usuarioLogeado.rol === 'familiar' && location.pathname === '/equipos.html'){
         const NAV_HERRAMIENTAS = document.createElement('nav')
         NAV_HERRAMIENTAS.id = 'nav-entrenador'
         MAIN_ENTRENADOR?.appendChild(NAV_HERRAMIENTAS)
@@ -336,6 +359,26 @@ function mostrarNav(usuarioLogeado){
         LI_CONVOCATORIA.id = 'ver-convocatoria'
         LI_CONVOCATORIA.innerText = 'Convocatorias disponibles'
         OL_HERRAMIENTAS.appendChild(LI_CONVOCATORIA)
+    }
+
+    if(usuarioLogeado.rol === 'entrenador' && location.pathname === '/calendario.html'){
+        const NAV_HERRAMIENTAS = document.createElement('nav')
+        NAV_HERRAMIENTAS.id = 'nav-entrenador'
+        MAIN_CALENDARIO?.appendChild(NAV_HERRAMIENTAS)
+
+        const OL_HERRAMIENTAS = document.createElement('ol')
+        NAV_HERRAMIENTAS.appendChild(OL_HERRAMIENTAS)
+
+        const LI_ADD_CALENDARIO = document.createElement('li')
+        LI_ADD_CALENDARIO.id = 'add-calendario'
+
+        const A_ADD_CALENDARIO = document.createElement('a')
+        A_ADD_CALENDARIO.setAttribute('href','crear-calendario.html')
+        A_ADD_CALENDARIO.innerText = 'Añadir calendario'
+        LI_ADD_CALENDARIO.appendChild(A_ADD_CALENDARIO)
+
+        OL_HERRAMIENTAS.appendChild(LI_ADD_CALENDARIO)
+
     }
 }
 

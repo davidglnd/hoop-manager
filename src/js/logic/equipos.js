@@ -352,7 +352,7 @@ async function verConvocatorias(idEquipo) {//EXPLICACION DE ESTA FUNCION PARA NO
 
 
 
-    if(!apiData.convocatoria){
+    if(!apiData || !apiData.convocatoria || apiData.convocatoria.length === 0){
         const H2_CONVOCATORIAS = document.createElement('h2')
         H2_CONVOCATORIAS.innerText = 'No hay convocatorias publicadas'
         DIV_CONVOCATORIAS.appendChild(H2_CONVOCATORIAS)
